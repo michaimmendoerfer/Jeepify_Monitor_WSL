@@ -547,6 +547,10 @@ void Ui_Init_Custom(lv_event_t * e)
 	lv_obj_add_event_cb (ui_Keyboard, Keyboard_cb, LV_EVENT_READY, NULL);
 
 	lv_label_set_text(ui_LblMenuVersion, Module.GetVersion());
+
+	#ifndef BATTERY_PORT
+		lv_obj_add_flag(ui_LblMenuBatt, LV_OBJ_FLAG_HIDDEN);
+	#endif
 }
 
 void Keyboard_cb(lv_event_t * event)

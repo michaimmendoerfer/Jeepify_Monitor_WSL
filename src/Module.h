@@ -60,8 +60,6 @@
     #define NODE_TYPE MONITOR_ROUND
     #define SCREEN_RES_HOR 240
     #define SCREEN_RES_VER 240
-    #define BATTERY_PORT    1
-    #define BATTERY_DEVIDER 2
     #define UI_H_DIR        "Ui_240/ui.h"
     #define UI_EVENTS_H_DIR "Ui_240/ui_events.h" 
 #endif

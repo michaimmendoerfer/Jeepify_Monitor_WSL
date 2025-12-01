@@ -1,0 +1,103 @@
+#ifndef MAIN_H
+#define MAIN_H
+
+#include <Arduino.h>
+#include "Jeepify.h"
+#include <esp_now.h>
+#include <WiFi.h>
+#include <ArduinoJson.h>
+#include "pref_manager.h"
+#include "PeerClass.h"
+#include "LinkedList.h"
+#include <lvgl.h>
+#include "Module.h"
+#include UI_H_DIR
+#include UI_EVENTS_H_DIR
+#include <nvs_flash.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <Preferences.h>
+
+#define DEBUG1(...) if ((Module.GetDebugMode()) and (DEBUG_LEVEL > 0)) Serial.printf(__VA_ARGS__)
+#define DEBUG2(...) if ((Module.GetDebugMode()) and (DEBUG_LEVEL > 1)) Serial.printf(__VA_ARGS__)
+#define DEBUG3(...) if ((Module.GetDebugMode()) and (DEBUG_LEVEL > 2)) Serial.printf(__VA_ARGS__)
+#define JX(...) (doc[__VA_ARGS__].is<JsonVariant>())
+
+struct ConfirmStruct {
+    uint8_t  Address[6];
+    char     Message[250];
+    volatile uint32_t TSMessage;
+    int      Try;
+    bool     Confirmed;
+};
+struct ReceivedMessagesStruct {
+    uint8_t  From[6];
+    uint32_t TS;
+    uint32_t SaveTime;
+};
+
+struct KnobStruct {
+    uint32_t LastClicked;
+    uint32_t Clicked;
+    int32_t  Diff;
+    int32_t  Invd;
+    uint32_t Last;
+};
+
+void   PrintMAC(const uint8_t * mac_addr);
+
+//3.4.1 void OnDataSent(const wifi_tx_info_t* tx_info, esp_now_send_status_t status);
+void OnDataSent(const uint8_t* tx_info, esp_now_send_status_t status);
+#ifdef MODULE_MONITOR_360 
+    void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int len);
+#endif
+#ifdef MODULE_MONITOR_240
+    void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len);
+#endif
+#ifdef MODULE_MONITOR_240_C3
+    void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int len);
+#endif
+
+void   SendPing(lv_timer_t * timer);
+bool   ToggleSwitch(PeerClass *P, int PerNr);
+bool   ToggleSwitch(PeriphClass *Periph);
+void   SendCommand(PeerClass *P, int Cmd, String Value="");
+void   SendPairingConfirm(PeerClass *Peer);
+void   SendStatus();
+
+void   ShowMessageBox(const char * Titel, const char *Txt, int delay, int opa=255);
+void   TopUpdateTimer(lv_timer_t * timer);
+
+bool   ToggleSleepMode();
+bool   ToggleDebugMode();
+bool   TogglePairMode();
+
+void   CalibVolt();
+void   CalibAmp();
+void   PrepareJSON();
+void   PrintMAC(const uint8_t * mac_addr);
+void   MacCharToByte(uint8_t *mac, char *MAC);
+char  *MacByteToChar(char *MAC, uint8_t *mac);
+void   GarbageMessages(lv_timer_t * timer);
+
+void   InitWebServer();
+
+esp_err_t  JeepifySend(const uint8_t *peer, const uint8_t *data, size_t len, bool ConfirmNeeded);
+
+extern volatile uint32_t TSMsgRcv;
+extern volatile uint32_t TSMsgSnd;
+extern volatile uint32_t TSPair;
+
+extern lv_obj_t *Ui_LedSnd;
+extern lv_obj_t *Ui_LedRcv;
+extern lv_obj_t *Ui_LedPair;
+
+extern PeerClass Module;
+
+extern int ActiveMultiScreen;
+extern const char *_Version;
+extern void ToggleWebServer();
+extern bool WebServerActive;
+
+extern KnobStruct Knob;
+#endif

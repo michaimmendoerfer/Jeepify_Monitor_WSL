@@ -56,7 +56,7 @@
 #endif
 
 #ifdef DEV_240_KLEIN
-    #define NODE_NAME "Monitor 240"
+    #define NODE_NAME "M240_1"
     #define NODE_TYPE MONITOR_ROUND
     #define SCREEN_RES_HOR 240
     #define SCREEN_RES_VER 240

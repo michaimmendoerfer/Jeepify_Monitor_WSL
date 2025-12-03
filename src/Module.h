@@ -3,27 +3,19 @@
 
 #include <Jeepify.h>
 
-//#define MODULE_MONITOR_360_SILVER
-//#define MODULE_MONITOR_360_KNOB
-//#define MODULE_MONITOR_466_RED
-//#define MODULE_MONITOR_480
-//#define MODULE_MONITOR_240
-//#define MODULE_MONITOR_240_C3
-//#define MODULE_MONITOR_240_S3
-
 #define MODULE_VERSION          "4.30"  
 #define PROTOKOLL_VERSION       "3.10"
 
-#ifdef MODULE_MONITOR_466_RED
+#ifdef DEV_466_RED
     #define NODE_NAME "466-red"
     #define NODE_TYPE MONITOR_ROUND
     #define SCREEN_RES_HOR 466
     #define SCREEN_RES_VER 466
-    #define UI_H_DIR        "Ui_360/ui.h"
-    #define UI_EVENTS_H_DIR "Ui_360/ui_events.h" 
+    #define UI_H_DIR        "Ui_All/ui.h"
+    #define UI_EVENTS_H_DIR "Ui_All/ui_events.h" 
 #endif
 
-#ifdef MODULE_MONITOR_360_SILVER
+#ifdef DEV_360_SILVER
     #define NODE_NAME "360_Slv"
     #define NODE_TYPE MONITOR_ROUND
     #define SCREEN_RES_HOR 360
@@ -32,7 +24,7 @@
     #define UI_EVENTS_H_DIR "Ui_360/ui_events.h" 
 #endif
 
-#ifdef MODULE_MONITOR_360_KNOB
+#ifdef DEV_360_KNOB
     #define NODE_NAME "360_knob"
     #define NODE_TYPE MONITOR_ROUND
     #define BATTERY_PORT    1
@@ -44,7 +36,7 @@
     #define UI_EVENTS_H_DIR "Ui_360/ui_events.h" 
 #endif
 
-#ifdef MODULE_MONITOR_480
+#ifdef DEV_480_YELLOW
     #include "scr_tft480.h"
     #define NODE_NAME "Monitor 480"
     #define NODE_TYPE MONITOR_BIG

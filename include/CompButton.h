@@ -11,6 +11,67 @@
 #include "Jeepify.h"
 #include "CompButton.h"
 
+#ifdef DEV_240_KLEIN
+    #define IMG_BTN1_RELEASED     &ui_img_237434643
+    #define IMG_BTN1_PRESSED      &ui_img_1471590615
+    #define IMG_BTN1_CHK_PRESSED  &ui_img_1471590615
+    #define IMG_BTN1_CHK_RELEASED &ui_img_434995191
+    #define WIDTH_BTN1            45
+    #define HEIGHT_BTN1           77
+    
+    #define IMG_BTN2_RELEASED     &ui_img_1640860301
+    #define IMG_BTN2_PRESSED      &ui_img_743505413
+    #define IMG_BTN2_CHK_PRESSED  &ui_img_743505413
+    #define IMG_BTN2_CHK_RELEASED &ui_img_888658411
+    #define WIDTH_BTN2            70
+    #define HEIGHT_BTN2           120
+    
+    #define MY_FONT1              &lv_font_montserrat_10
+    #define MY_FONT2              &lv_font_montserrat_12
+    #define MY_FONT3              &lv_font_montserrat_14
+    #define MY_FONT4              &lv_font_montserrat_18
+#endif
+#ifdef DEV_360_SILVER
+    #define IMG_BTN1_RELEASED     &ui_img_1640860301
+    #define IMG_BTN1_PRESSED      &ui_img_743505413
+    #define IMG_BTN1_CHK_PRESSED  &ui_img_743505413
+    #define IMG_BTN1_CHK_RELEASED  &ui_img_888658411
+    #define WIDTH_BTN1            70
+    #define HEIGHT_BTN1           120
+    
+    #define IMG_BTN2_RELEASED     &ui_img_1134846501
+    #define IMG_BTN2_PRESSED      &ui_img_1528892059
+    #define IMG_BTN2_CHK_PRESSED  &ui_img_1528892059
+    #define IMG_BTN2_CHK_RELEASED &ui_img_715952573
+    #define WIDTH_BTN2            120
+    #define HEIGHT_BTN2           205
+
+    #define MY_FONT1              &lv_font_montserrat_12
+    #define MY_FONT2              &lv_font_montserrat_14
+    #define MY_FONT3              &lv_font_montserrat_18
+    #define MY_FONT4              &lv_font_montserrat_22
+#endif
+#ifdef DEV_466_RED  
+    #define IMG_BTN1_RELEASED     &ui_img_1640860301
+    #define IMG_BTN1_PRESSED      &ui_img_743505413
+    #define IMG_BTN1_CHK_PRESSED  &ui_img_743505413
+    #define IMG_BTN1_CHK_RELEASED  &ui_img_888658411
+    #define WIDTH_BTN1            70
+    #define HEIGHT_BTN1           120
+    
+    #define IMG_BTN2_RELEASED     &ui_img_1134846501
+    #define IMG_BTN2_PRESSED      &ui_img_1528892059
+    #define IMG_BTN2_CHK_PRESSED  &ui_img_1528892059
+    #define IMG_BTN2_CHK_RELEASED &ui_img_715952573
+    #define WIDTH_BTN2            120
+    #define HEIGHT_BTN2           205
+    
+    #define MY_FONT1              &lv_font_montserrat_12
+    #define MY_FONT2              &lv_font_montserrat_18
+    #define MY_FONT3              &lv_font_montserrat_22
+    #define MY_FONT4              &lv_font_montserrat_24
+#endif
+
 class CompThing {
     static int  _ClassId;
 

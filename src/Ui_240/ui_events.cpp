@@ -253,10 +253,10 @@ void Ui_Multi_Loaded(lv_event_t * e)
 		int x; int y;
 		
 		switch (Pos) {
-			case 0: x= (int)-SCREEN_RES_HOR/5; y=(int)-SCREEN_RES_VER/5; break;
-			case 1: x= (int) SCREEN_RES_HOR/5; y=(int)-SCREEN_RES_VER/5; break;
-			case 2: x= (int)-SCREEN_RES_HOR/5; y=(int) SCREEN_RES_VER/6; break;
-			case 3: x= (int) SCREEN_RES_HOR/5; y=(int) SCREEN_RES_VER/6; break;
+			case 0: x= (int)-SCREEN_RES_HOR/5; y=(int)-SCREEN_RES_VER/4.7; break;
+			case 1: x= (int) SCREEN_RES_HOR/5; y=(int)-SCREEN_RES_VER/4.7; break;
+			case 2: x= (int)-SCREEN_RES_HOR/5; y=(int) SCREEN_RES_VER/5.3; break;
+			case 3: x= (int) SCREEN_RES_HOR/5; y=(int) SCREEN_RES_VER/5.3; break;
 		}
 
 		PeriphClass *Periph =  Screen[ActiveMultiScreen].GetPeriph(Pos);

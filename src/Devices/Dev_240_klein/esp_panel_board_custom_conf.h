@@ -115,7 +115,7 @@
     #define ESP_PANEL_BOARD_LCD_SPI_IO_CS           (10)     // -1 if not used
     #define ESP_PANEL_BOARD_LCD_SPI_IO_DC           (2)
     #define ESP_PANEL_BOARD_LCD_SPI_MODE            (0)     // 0-3. Typically set to 0
-    #define ESP_PANEL_BOARD_LCD_SPI_CLK_HZ          (27 * 1000 * 1000)
+    #define ESP_PANEL_BOARD_LCD_SPI_CLK_HZ          (40 * 1000 * 1000)
                                                             // Should be an integer divisor of 80M, typically set to 40M
     #define ESP_PANEL_BOARD_LCD_SPI_CMD_BITS        (8)     // Typically set to 8
     #define ESP_PANEL_BOARD_LCD_SPI_PARAM_BITS      (8)     // Typically set to 8
@@ -309,14 +309,14 @@
  */
 #define ESP_PANEL_BOARD_LCD_COLOR_BITS          (ESP_PANEL_LCD_COLOR_BITS_RGB565)
                                                         // ESP_PANEL_LCD_COLOR_BITS_RGB565/RGB666/RGB888
-#define ESP_PANEL_BOARD_LCD_COLOR_BGR_ORDER     (0)     // 0: RGB, 1: BGR
-#define ESP_PANEL_BOARD_LCD_COLOR_INEVRT_BIT    (0)     // 0/1
+#define ESP_PANEL_BOARD_LCD_COLOR_BGR_ORDER     (1)     // 0: RGB, 1: BGR
+#define ESP_PANEL_BOARD_LCD_COLOR_INEVRT_BIT    (1)     // 0/1
 
 /**
  * @brief LCD transformation configuration
  */
 #define ESP_PANEL_BOARD_LCD_SWAP_XY             (0)     // 0/1
-#define ESP_PANEL_BOARD_LCD_MIRROR_X            (0)     // 0/1
+#define ESP_PANEL_BOARD_LCD_MIRROR_X            (1)     // 0/1
 #define ESP_PANEL_BOARD_LCD_MIRROR_Y            (0)     // 0/1
 #define ESP_PANEL_BOARD_LCD_GAP_X               (0)     // [0, ESP_PANEL_BOARD_WIDTH]
 #define ESP_PANEL_BOARD_LCD_GAP_Y               (0)     // [0, ESP_PANEL_BOARD_HEIGHT]
@@ -399,7 +399,7 @@
     #define ESP_PANEL_BOARD_TOUCH_I2C_IO_SDA            (4)
 #endif
     /* For panel */
-    #define ESP_PANEL_BOARD_TOUCH_I2C_ADDRESS           (0x15)     // Typically set to 0 to use the default address.
+    #define ESP_PANEL_BOARD_TOUCH_I2C_ADDRESS           (0)     // Typically set to 0 to use the default address.
                                                                 // - For touchs with only one address, set to 0
                                                                 // - For touchs with multiple addresses, set to 0 or
                                                                 //   the address. Like GT911, there are two addresses:

@@ -8,13 +8,13 @@
     #include "esp_panel_board_custom_conf.h"
 #endif
 
-#ifdef MODULE_MONITOR_360_SILVER
+#ifdef DEV_360_SILVER
     #include "Dev_360_silver_scr_tft.h"
 #endif
-#ifdef MODULE_MONITOR_360_KNOB
+#ifdef DEV_360_KNOB
     #include "Dev_360_knob_scr_tft.h"
 #endif
-#ifdef MODULE_MONITOR_466_RED
+#ifdef DEV_466_RED
     #include "Dev_466_red_scr_tft.h" 
 #endif
 
@@ -437,11 +437,11 @@ void ToggleWebServer()
 
 #pragma region Main
 
-#ifndef MODULE_MONITOR_240
+//#ifndef MODULE_MONITOR_240
     void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int len) 
-#else
-    void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len)
-#endif
+//#else
+//    void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len)
+//#endif
 {
     PeerClass *P;
     

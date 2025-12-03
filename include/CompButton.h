@@ -10,6 +10,7 @@
 #include "LinkedList.h"
 #include "Jeepify.h"
 #include "CompButton.h"
+#include "MyFonts.h"
 
 #ifdef DEV_240_KLEIN
     #define IMG_BTN1_RELEASED     &ui_img_237434643

@@ -404,15 +404,15 @@ void CompSensor::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, 
     lv_obj_set_height(_LblPeriph, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(_LblPeriph, LV_ALIGN_CENTER);
     
-    lv_obj_set_style_text_font(_LblPeriph, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
-    SetPeriphPos(0, -SCREEN_RES_VER * 0.06);
+    lv_obj_set_style_text_font(_LblPeriph, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
+    SetPeriphPos(0, -SCREEN_RES_VER * 0.07);
     
     _LblValue = lv_label_create(_Button);
     lv_obj_set_width(_LblValue, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(_LblValue, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(_LblValue, LV_ALIGN_CENTER);
     
-    lv_obj_set_style_text_font(_LblValue, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(_LblValue, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
     SetValuePos(0, 5);
     
     _LblPeriphId = lv_label_create(_Button);
@@ -455,7 +455,7 @@ void CompSensor::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, 
     lv_obj_set_style_pad_top(_Arc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_bottom(_Arc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
-    if (_GraphVisible) ChartInit(x, y+_Height*0.25, _Width*0.7, _Height*0.4, RECORDED_VALUES);
+    if (_GraphVisible) ChartInit(x, y+_Height*0.25, _Width*0.7, _Height*0.3, RECORDED_VALUES);
         
     lv_obj_add_event_cb(_Button, _event_cb, LV_EVENT_ALL, NULL);  
 }

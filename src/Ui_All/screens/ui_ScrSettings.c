@@ -4,6 +4,7 @@
 // Project name: SQ-Jeepify-Monitor-All
 
 #include "../ui.h"
+#include "MyFonts.h"
 
 lv_obj_t * ui_ScrSettings = NULL;
 lv_obj_t * ui_Container1 = NULL;

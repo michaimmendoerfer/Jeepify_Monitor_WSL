@@ -5,7 +5,6 @@
 
 #ifdef DEV_240_KLEIN
     #include "Dev_240_klein_scr_tft.h"
-    #include "esp_panel_board_custom_conf.h"
 #endif
 
 #ifdef DEV_360_SILVER

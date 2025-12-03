@@ -549,7 +549,6 @@ void TopUpdateTimer(lv_timer_t * timer)
 		TSMsgSnd = 0;
 
 	}
-
 	if ((TSMsgRcv) and (millis() - TSMsgRcv < MSGLIGHT_INTERVAL)) {
 		lv_led_on(Ui_LedRcv);
 	}
@@ -578,6 +577,16 @@ void TopUpdateTimer(lv_timer_t * timer)
 
 void Ui_Init_Custom(lv_event_t * e)
 {
+	// Override things
+	lv_obj_set_style_text_font(ui_LblMultiScreenName, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(ui_LblMenuVersion,     MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_img_set_zoom(ui_ImgRubicon, 300/240*SCREEN_RES_HOR);
+	lv_obj_set_style_text_font(ui_Container1,   MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(ui_Container3,   MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(ui_RollerPeers1, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_BtnPeer9,     MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+
 	//LED-Layer
 	static uint32_t user_data = 10; 
 	char LEDSize = (int) SCREEN_RES_HOR / 36;
@@ -586,15 +595,17 @@ void Ui_Init_Custom(lv_event_t * e)
 
 	lv_timer_t * timer = lv_timer_create(TopUpdateTimer, 100,  &user_data);
 
-	ui_LblMenuBatt = lv_label_create(lv_layer_top());
-	lv_obj_set_width(ui_LblMenuBatt, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_LblMenuBatt, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_LblMenuBatt, 0);
-    lv_obj_set_y(ui_LblMenuBatt, 150);
-    lv_obj_set_align(ui_LblMenuBatt, LV_ALIGN_CENTER);
-    lv_obj_set_style_text_color(ui_LblMenuBatt, lv_color_hex(0xADADAD), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_LblMenuBatt, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_LblMenuBatt, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+	//#ifdef BATTERY_PORT
+		ui_LblMenuBatt = lv_label_create(lv_layer_top());
+		lv_obj_set_width(ui_LblMenuBatt, LV_SIZE_CONTENT);   /// 1
+		lv_obj_set_height(ui_LblMenuBatt, LV_SIZE_CONTENT);    /// 1
+		lv_obj_set_x(ui_LblMenuBatt, 0);
+		lv_obj_set_y(ui_LblMenuBatt, lv_pct(80));
+		lv_obj_set_align(ui_LblMenuBatt, LV_ALIGN_CENTER);
+		lv_obj_set_style_text_color(ui_LblMenuBatt, lv_color_hex(0xADADAD), LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_text_opa(ui_LblMenuBatt, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_text_font(ui_LblMenuBatt, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
+	//#endif
 
 	Ui_LedRcv  = lv_led_create(lv_layer_top());
 	lv_obj_set_size(Ui_LedRcv, LEDSize, LEDSize);

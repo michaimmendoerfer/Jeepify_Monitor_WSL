@@ -32,8 +32,8 @@
     #define HAS_ROTARY      1
     #define SCREEN_RES_HOR 360
     #define SCREEN_RES_VER 360
-    #define UI_H_DIR        "Ui_360/ui.h"
-    #define UI_EVENTS_H_DIR "Ui_360/ui_events.h" 
+    #define UI_H_DIR        "Ui_All/ui.h"
+    #define UI_EVENTS_H_DIR "Ui_All/ui_events.h" 
 #endif
 
 #ifdef DEV_480_YELLOW
@@ -52,8 +52,8 @@
     #define NODE_TYPE MONITOR_ROUND
     #define SCREEN_RES_HOR 240
     #define SCREEN_RES_VER 240
-    #define UI_H_DIR        "Ui_240/ui.h"
-    #define UI_EVENTS_H_DIR "Ui_240/ui_events.h" 
+    #define UI_H_DIR        "Ui_All/ui.h"
+    #define UI_EVENTS_H_DIR "Ui_All/ui_events.h" 
 #endif
 
 #ifdef MODULE_MONITOR_240_S3

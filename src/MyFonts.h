@@ -7,10 +7,10 @@
     #define MY_FONT3              &lv_font_montserrat_14
     #define MY_FONT4              &lv_font_montserrat_18
 #endif
-#ifdef DEV_360_SILVER
+#if defined DEV_360_SILVER || defined DEV_360_KNOB
     #define MY_FONT1              &lv_font_montserrat_12
-    #define MY_FONT2              &lv_font_montserrat_14
-    #define MY_FONT3              &lv_font_montserrat_18
+    #define MY_FONT2              &lv_font_montserrat_18
+    #define MY_FONT3              &lv_font_montserrat_20
     #define MY_FONT4              &lv_font_montserrat_22
 #endif
 #ifdef DEV_466_RED  

@@ -565,13 +565,24 @@ void TopUpdateTimer(lv_timer_t * timer)
 		TSPair = 0;
 		Module.SetPairMode(false);
 	}
+	static int BattCount;
+	static int BattRaw;
+
 	#ifdef BATTERY_PORT
 		char buf[10];
-		pinMode(0, INPUT);
-		float Batt = analogRead(BATTERY_PORT) * BATTERY_DEVIDER / 4095 * 3.3;
-		dtostrf(Batt, 0, 3, buf);
-		strcat(buf, "V");
-		lv_label_set_text(ui_LblMenuBatt, buf);
+		
+		BattRaw += analogRead(BATTERY_PORT);
+		BattCount++;
+
+		if (BattCount == 20)
+		{
+			float Batt = 3.3/4095 * BattRaw/BattCount * BATTERY_DEVIDER;
+			dtostrf(Batt, 0, 2, buf);
+			strcat(buf, "V");
+			lv_label_set_text(ui_LblMenuBatt, buf);
+			BattCount = 0;
+			BattRaw   = 0;
+		}
 	#endif
 }
 
@@ -580,9 +591,9 @@ void Ui_Init_Custom(lv_event_t * e)
 	// Override things
 	lv_obj_set_style_text_font(ui_LblMultiScreenName, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
 	lv_obj_set_style_text_font(ui_LblMenuVersion,     MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_img_set_zoom(ui_ImgRubicon, 300/240*SCREEN_RES_HOR);
-	lv_obj_set_style_text_font(ui_Container1,   MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_text_font(ui_Container3,   MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_img_set_zoom(ui_ImgRubicon, 400/240*SCREEN_RES_HOR);
+	lv_obj_set_style_text_font(ui_Container1,   MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);			//Settings
+	lv_obj_set_style_text_font(ui_Container3,   MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);			//Peer
 	lv_obj_set_style_text_font(ui_RollerPeers1, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_BtnPeer9,     MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -595,17 +606,19 @@ void Ui_Init_Custom(lv_event_t * e)
 
 	lv_timer_t * timer = lv_timer_create(TopUpdateTimer, 100,  &user_data);
 
-	//#ifdef BATTERY_PORT
+	#ifdef BATTERY_PORT
 		ui_LblMenuBatt = lv_label_create(lv_layer_top());
 		lv_obj_set_width(ui_LblMenuBatt, LV_SIZE_CONTENT);   /// 1
 		lv_obj_set_height(ui_LblMenuBatt, LV_SIZE_CONTENT);    /// 1
 		lv_obj_set_x(ui_LblMenuBatt, 0);
-		lv_obj_set_y(ui_LblMenuBatt, lv_pct(80));
+		lv_obj_set_y(ui_LblMenuBatt, SCREEN_RES_VER*0.87-SCREEN_RES_VER/2);
 		lv_obj_set_align(ui_LblMenuBatt, LV_ALIGN_CENTER);
 		lv_obj_set_style_text_color(ui_LblMenuBatt, lv_color_hex(0xADADAD), LV_PART_MAIN | LV_STATE_DEFAULT);
 		lv_obj_set_style_text_opa(ui_LblMenuBatt, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 		lv_obj_set_style_text_font(ui_LblMenuBatt, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	//#endif
+		lv_label_set_text(ui_LblMenuBatt, "Batt");
+		pinMode(BATTERY_PORT, INPUT_PULLDOWN);
+	#endif
 
 	Ui_LedRcv  = lv_led_create(lv_layer_top());
 	lv_obj_set_size(Ui_LedRcv, LEDSize, LEDSize);

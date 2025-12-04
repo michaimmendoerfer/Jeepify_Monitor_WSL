@@ -706,7 +706,7 @@ void setup()
 }
 void loop() 
 {
-    #ifdef MODULE_MONITOR_360_KNOB
+    #ifdef DEV_360_KNOB
         static auto lv_last_tick = millis();
         auto const  now = millis();
         lv_tick_inc(now - lv_last_tick);

@@ -31,7 +31,7 @@
     #define IMG_BTN1_RELEASED     &ui_img_1640860301
     #define IMG_BTN1_PRESSED      &ui_img_743505413
     #define IMG_BTN1_CHK_PRESSED  &ui_img_743505413
-    #define IMG_BTN1_CHK_RELEASED  &ui_img_888658411
+    #define IMG_BTN1_CHK_RELEASED &ui_img_888658411
     #define WIDTH_BTN1            70
     #define HEIGHT_BTN1           120
     

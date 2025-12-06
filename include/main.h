@@ -14,9 +14,10 @@
 #include UI_H_DIR
 #include UI_EVENTS_H_DIR
 #include <nvs_flash.h>
-#include <AsyncTCP.h>
-#include <ESPAsyncWebServer.h>
 #include <Preferences.h>
+#include "webserver.h"
+
+#define DEBUG_LEVEL 3
 
 #define DEBUG1(...) if ((Module.GetDebugMode()) and (DEBUG_LEVEL > 0)) Serial.printf(__VA_ARGS__)
 #define DEBUG2(...) if ((Module.GetDebugMode()) and (DEBUG_LEVEL > 1)) Serial.printf(__VA_ARGS__)
@@ -96,8 +97,8 @@ extern PeerClass Module;
 
 extern int ActiveMultiScreen;
 extern const char *_Version;
-extern void ToggleWebServer();
 extern bool WebServerActive;
+extern Preferences preferences;
 
 extern KnobStruct Knob;
 #endif

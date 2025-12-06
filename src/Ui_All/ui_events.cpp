@@ -5,6 +5,7 @@
 #include "lv_meter.h"
 #include "CompButton.h"
 #include "CustomScreens.h"
+#include "webserver.h"
 
 #pragma region Global_Definitions
 uint8_t MultiPosToChange;

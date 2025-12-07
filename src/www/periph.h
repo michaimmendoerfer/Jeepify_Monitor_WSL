@@ -22,7 +22,16 @@ input[type='submit']:hover{ background-color: #22a6b3;}
 <h2>%PeriphName%</h2>
 <div class="part"></div>
 <table>
-%PeriphValues%
-</table>
-</form></body></html>
+<form id="Nullwert" class="box" action="/get"></form>
+<div class='part'><input name='Nullwert' type='%TYPE%' placeholder='%Nullwert%' />
+<input name='periph' type='submit' label='hllo' value='UpdNullwert' /></div>
+</form>
+<form id="VperAmp" class="box" action="/get"></form>
+<div class='part'><input name='VperAmp' type='%TYPE%' placeholder='%VperAmp%' />
+<input name='periph' type='submit' value='VperAmp' /></div>
+</form>
+<form id="Nullwert" class="box" action="/get"></form>
+<input name='periph' type='submit' value='back' /></div>
+</form>
+</table></body></html>
 )rawliteral";

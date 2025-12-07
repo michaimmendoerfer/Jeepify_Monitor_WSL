@@ -17,6 +17,7 @@ const char* MESSAGE_PERIPH = "periph";
 
 PeerClass   *ActiveWebPeer = NULL;
 PeriphClass *ActiveWebPeriph = NULL;
+bool SaveNeeded = false;
 
 String processor(const String& var)
 {
@@ -56,19 +57,6 @@ String processor(const String& var)
                 ReturnString += "'/</td></tr>";
             }
         }
-        return ReturnString;
-    }
-
-    if (var == "PeriphValues")
-    {
-        
-        ReturnString += "<div class='part'><input name='Nullwert' type='%TYPE%' placeholder='%Nullwert%' />";
-        ReturnString += "<input name='periph' type='submit' value='UpdNullwert' /></div>";
-        ReturnString += "<div class='part'><input name='VperAmp' type='%TYPE%' placeholder='%VperAmp%' />";
-        ReturnString += "<input name='periph' type='submit' value='UpdVperAmp' /></div>";
-        ReturnString += "<div class='part'><input name='Vin' type='%TYPE%' placeholder='%Vin%' />";
-        ReturnString += "<input name='periph' type='submit' value='UpdVin' /></div>";
-
         return ReturnString;
     }
     
@@ -239,9 +227,10 @@ void InitWebServer()
     server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
         String message;
         String WebBuffer;
-        Serial.println("in get");
+        //Serial.println("in get");
         
-        if (request->hasParam(MESSAGE_ROOT)) {
+        if      (request->hasParam(MESSAGE_ROOT)) 
+        {
             message = request->getParam(MESSAGE_ROOT)->value();
             Serial.printf("Server: message->value: %s\n\r", message);
             
@@ -255,9 +244,27 @@ void InitWebServer()
             {
                 ActiveWebPeer = FindPeerByName((char *)message.c_str());
                 ActivePage = peer_html;
+            }            
+        } 
+        else if (request->hasParam(MESSAGE_PEER)) 
+        {
+            message = request->getParam(MESSAGE_PEER)->value();
+            //Serial.printf("Server: peer-message->value: %s\n\r", message);
+            
+            for (int Si=0; Si<MAX_PERIPHERALS; Si++)
+            {
+                if (message == ActiveWebPeer->GetPeriphName(Si)) 
+                {
+                    ActiveWebPeriph = ActiveWebPeer->GetPeriphPtr(Si);
+                    ActivePage = periph_html;
+                    break;
+                }
             }
-           
-            /*if (message == "UpdPeriphName") 
+        }
+        else if (request->hasParam(MESSAGE_PERIPH)) 
+        {
+            message = request->getParam(MESSAGE_PERIPH)->value();
+            if (message == "UpdPeriphName") 
             {    
                 if (request->hasParam("PeriphName"))
                 {
@@ -286,7 +293,7 @@ void InitWebServer()
                         {
                             SaveNeeded = true;
                             ActiveWebPeriph->SetNullwert(atof(WebBuffer.c_str()));
-                            if (ActiveWebPeer != &Module) SendWebNullwertChange();
+                            SendWebNullwertChange();
                         }
                     }
                 }
@@ -307,100 +314,15 @@ void InitWebServer()
                         }
                     }
                 }
-            }
-            if (message == "UpdVin") 
-            {
-                if (request->hasParam("Vin"))
-                {
-                  WebBuffer = request->getParam("Vin")->value();
-                  if (WebBuffer != "")
-                    { 
-                        DEBUG3 ("Received from web: NewVin = %s\n\r", WebBuffer.c_str());  
-                        if (ActiveWebPeriph) 
-                        {
-                            SaveNeeded = true;
-                            ActiveWebPeriph->SetVperAmp(atoi(WebBuffer.c_str()));
-                            if (ActiveWebPeer != &Module) SendWebVinChange();
-                        }
-                    }
-                }  
-            }
+            }   
             
-            if (message == "module") 
-            {
-                DEBUG3 ("Module aufgerufen\n\r");
-                ActiveWebPeer   = &Module;
-                ActiveWebPeriph = NULL;
-                DEBUG2 ("aktueller Name = %s\n\r", ActiveWebPeer->GetName());
-            }
-            if (message == "prev") 
-            {
-                DEBUG3 ("Prev aufgerufen\n\r");
-                if (ActiveWebPeer == &Module) 
-                {
-                    PeerClass *TempP = FindPrevPeer(NULL, MODULE_ALL, CIRCULAR, ONLINE);
-                    if (TempP) ActiveWebPeer = TempP;
-                    ActiveWebPeriph = FindNextPeriph(ActiveWebPeer, NULL, SENS_TYPE_ALL, ONLINE);  
-                }
-                else
-                {
-                    ActiveWebPeriph = FindPrevPeriph(NULL, ActiveWebPeriph, SENS_TYPE_ALL, CIRCULAR, ONLINE);
-                    ActiveWebPeer   = FindPeerById(ActiveWebPeriph->GetPeerId());
-                }
-
-            }
-            if (message == "next") 
-            {
-                DEBUG3 ("Next aufgerufen\n\r");
-                if (ActiveWebPeer == &Module) 
-                {
-                    PeerClass *TempP = FindNextPeer(NULL, MODULE_ALL, CIRCULAR, ONLINE);
-                    if (TempP) ActiveWebPeer = TempP;
-                    ActiveWebPeriph = FindNextPeriph(ActiveWebPeer, NULL, SENS_TYPE_ALL, CIRCULAR, ONLINE);  
-                }
-                else
-                {
-                    ActiveWebPeriph = FindNextPeriph(NULL, ActiveWebPeriph, SENS_TYPE_ALL, CIRCULAR, ONLINE);
-                    ActiveWebPeer   = FindPeerById(ActiveWebPeriph->GetPeerId());
-                }
-            }*/
-        } 
-        else if (request->hasParam(MESSAGE_PEER)) 
-        {
-            message = request->getParam(MESSAGE_PEER)->value();
-            Serial.printf("Server: peer-message->value: %s\n\r", message);
-            
-            for (int Si=0; Si<MAX_PERIPHERALS; Si++)
-            {
-                if (message == ActiveWebPeer->GetPeriphName(Si)) 
-                {
-                    ActiveWebPeriph = ActiveWebPeer->GetPeriphPtr(Si);
-                    ActivePage = periph_html;
-                    break;
-                }
-            }
-        }
-        else if (request->hasParam(MESSAGE_PERIPH)) 
-        {
-            message = request->getParam(MESSAGE_PERIPH)->value();
-            Serial.printf("Server: periph-message->value: %s\n\r", message);
-            
-            for (int Si=0; Si<MAX_PERIPHERALS; Si++)
-            {
-                if (message == ActiveWebPeer->GetPeriphName(Si)) 
-                {
-                    ActiveWebPeriph = ActiveWebPeer->GetPeriphPtr(Si);
-                    ActivePage = periph_html;
-                    break;
-                }
-            }
         }
         else {
             ActivePage = index_html;
         }
         request->send_P(200, "text/html", ActivePage, processor);
         
-        /*if (SaveNeeded)
+        if (SaveNeeded)
         {   
             if (ActiveWebPeer != &Module) SavePeers();
             else 
@@ -411,7 +333,7 @@ void InitWebServer()
                 DEBUG2 ("Neuer Module Name:%s gespeichert\n\r", Module.GetName());
             }
             SaveNeeded = false;
-        }*/
+        }
     });
     
   server.onNotFound(notFound);

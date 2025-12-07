@@ -1,4 +1,4 @@
-const char peer_html[] PROGMEM = R"rawliteral(
+const char change_confirm_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,13 +19,14 @@ input[type='submit']:hover{ background-color: #22a6b3;}
 <p>&nbsp;</p>
 <form id="values" class="box" action="/get">
 <h1>%PeerName%</h1>
-<form id="Nullwert" class="box" action="/get"></form>
-<input name='peer' type='submit' value='UpdPeerName' /></div>
-</form>
-%Periphs%
+<h2>%PeriphName%</h2>
 <div class="part"></div>
 <table>
+Change confirmed...
 
-</table>
-</form></body></html>
+Actual values are:
+
+Zero-Line at)
+VperAmp
+</table></body></html>
 )rawliteral";

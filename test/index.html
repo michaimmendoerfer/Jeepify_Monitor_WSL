@@ -17,10 +17,27 @@ input[type='submit']:hover{ background-color: #22a6b3;}
 <body>
     
 <p>&nbsp;</p>
-<form id="values" class="box" action="/get">
+<div class='box'>
+    <h1>%PeerName%</h1>
 
-<input name='peer' class='box' type='submit' value='UpdPeerName' />
-<div class="part"></div>
-%Peers%
-</form></div></body></html>
-)
+    <div>
+        <div class='part'>
+            <form id='peers' action='/get'>
+                <input name='PeerName' type='text' placeholder='new PeerName'>
+                <input name='peer' type='submit' value='ChangePeerName'>
+            </form>
+            <form>
+                <tr><td><input name='peer' type='submit' value='Rel0'>
+                </td></tr>
+                <tr><td><input name='peer' type='submit' value='Rel1'>
+                </td></tr>
+            </form>
+            
+        </div>    
+    </div>
+
+
+
+    
+</div>
+</body></html>

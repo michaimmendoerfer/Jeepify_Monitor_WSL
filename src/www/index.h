@@ -18,21 +18,14 @@ const char index_html[] PROGMEM = R"rawliteral(
     <body>
         <p>&nbsp;</p>
         <div class='box'>
-            <h1>%PeerName%</h1>
+            <h1>Jeepify</h1>
+            <h3>%AnzPeers% Peers with %AnzPeriphs% Periphs</h3>
 
             <div>
                 <div class='part'>
                     <form id='peers' action='/get'>
-                        <input name='PeerName' type='text' placeholder='new PeerName'>
-                        <input name='peer' type='submit' value='ChangePeerName'>
+                        %Peers%
                     </form>
-                    <form>
-                        <tr><td><input name='peer' type='submit' value='Rel0'>
-                        </td></tr>
-                        <tr><td><input name='peer' type='submit' value='Rel1'>
-                        </td></tr>
-                    </form>
-                    
                 </div>    
             </div>
         </div>

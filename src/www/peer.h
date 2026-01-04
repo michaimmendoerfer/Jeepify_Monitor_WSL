@@ -31,8 +31,16 @@ const char peer_html[] PROGMEM = R"rawliteral(
             <p>&nbsp;</p>
 
             <div class='part'>
-                <form>
+                <form id='peers' action='/get'>
                     %Periphs%
+                </form>
+            </div>
+
+            <p>&nbsp;</p>
+
+            <div class='part'>
+                <form id='peers' action='/get'>
+                    <input name='peer' type='submit' value='back'>
                 </form>
             </div>
         </div>

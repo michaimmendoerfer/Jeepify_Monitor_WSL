@@ -23,13 +23,17 @@ const char periph_html[] PROGMEM = R"rawliteral(
             <h2>%PeriphName%</h2>
 
             <table>
-                <form id="Nullwert" class="box" action="/get">
+                <form id="PeriphName" class="box" action="/get">
+                    <div class='part'><input name='PeriphName' type='%TYPE%' placeholder='%PeriphName%' />
+                    <input name='periph' type='submit' value='Update PeriphName' /></div>
+                </form>
+                </form><form id="Nullwert" class="box" action="/get">
                     <div class='part'><input name='Nullwert' type='%TYPE%' placeholder='%Nullwert%' />
-                    <input name='periph' type='submit' label='hllo' value='UpdNullwert' /></div>
+                    <input name='periph' type='submit' label='hllo' value='Update Nullwert' /></div>
                 </form>
                 <form id="VperAmp" class="box" action="/get">
                     <div class='part'><input name='VperAmp' type='%TYPE%' placeholder='%VperAmp%' />
-                    <input name='periph' type='submit' value='UpdVperAmp' /></div>
+                    <input name='periph' type='submit' value='Update VperAmp' /></div>
                 </form>
                 <form id="back" class="box" action="/get">
                     <input name='periph' type='submit' value='back' />

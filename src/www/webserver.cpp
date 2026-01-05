@@ -68,6 +68,33 @@ String processor(const String& var)
     
     if (var == "AnzPeers")    return String(PeerList.size()+1);
     if (var == "AnzPeriphs")  return String(PeriphList.size());
+
+    if (var == "PeerStatus") 
+    {
+        for (int Si=0; Si<MAX_PERIPHERALS; Si++)
+        {
+            if (!ActiveWebPeer->isPeriphEmpty(Si))
+            {
+                ReturnString += "<table><tr><td width=90>";
+                ReturnString += ActiveWebPeer->GetPeriphName(Si);
+                ReturnString += "</td><td>";
+                
+                dtostrf(ActiveWebPeer->GetPeriphValue(Si,0), 0, 0, Buf);
+                ReturnString += Buf;
+                ReturnString += "</td><td>";
+                dtostrf(ActiveWebPeer->GetPeriphValue(Si,1), 0, 0, Buf);
+                ReturnString += Buf;
+                ReturnString += "</td><td>";
+                dtostrf(ActiveWebPeer->GetPeriphValue(Si,2), 0, 2, Buf);
+                ReturnString += Buf;
+                ReturnString += "</td><td>";
+                dtostrf(ActiveWebPeer->GetPeriphValue(Si,3), 0, 2, Buf);
+                ReturnString += Buf;
+                ReturnString += "</td></tr></table>";
+            }
+        }
+        return ReturnString;
+    }
     
     return String();
 }
@@ -228,7 +255,10 @@ void InitWebServer()
         Serial.println("schicke periph.html");
         if (ActiveWebPeriph) request->send(200, "text/html", periph_html, processor);
         });
-
+    server.on("/status", HTTP_GET, [](AsyncWebServerRequest *request){
+        Serial.println("schicke peerstatus.html");
+        if (ActiveWebPeer) request->send(200, "text/html", peerstatus_html, processor);
+        });
     server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
         String message = "dumm";
         String WebBuffer;
@@ -285,12 +315,16 @@ void InitWebServer()
             {   
                 request->redirect("/");
             } 
+            if (message == "status") 
+            {   
+                request->redirect("/status");
+            } 
        
         }
         else if (request->hasParam(MESSAGE_PERIPH) and !request->getParam(MESSAGE_PERIPH)->value().isEmpty()) 
         {
             message = request->getParam(MESSAGE_PERIPH)->value();
-            if (message == "UpdPeriphName") 
+            if (message == "Update PeriphName") 
             {    
                 if (request->hasParam("PeriphName") and !request->getParam("PeriphName")->value().isEmpty())
                 {
@@ -305,7 +339,7 @@ void InitWebServer()
                     }
                 }
             }
-            if (message == "UpdNullwert") 
+            if (message == "Update Nullwert") 
             {
                 if (request->hasParam("Nullwert") and !request->getParam("Nullwert")->value().isEmpty())
                 {
@@ -320,7 +354,7 @@ void InitWebServer()
                     }
                 }
             }
-            if (message == "UpdVperAmp") 
+            if (message == "Update VperAmp") 
             {   
                 if (request->hasParam("VperAmp")  and !request->getParam("VperAmp")->value().isEmpty())
                 {
@@ -343,7 +377,6 @@ void InitWebServer()
         else {
             request->redirect("/");
         }
-        //request->send_P(200, "text/html", ActivePage, processor);
         
         if (SaveNeeded)
         {   

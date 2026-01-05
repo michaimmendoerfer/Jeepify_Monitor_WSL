@@ -1,10 +1,11 @@
-const char peer_html[] PROGMEM = R"rawliteral(
+const char peerstatus_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>%PeerName%</title>
+        <meta http-equiv="refresh" content="1">
+        <title>Jeepify</title>
         <style>
             body{ margin: 0;padding: 0;font-family: Arial, Helvetica, sans-serif;background-color: #2c257a;}
             .box{ width: 70%%; padding: 10px; position: absolute; top: 50%%; left: 50%%; transform: translate(-50%%,-50%%); background-color: #191919; color: white; text-align: center; border-radius: 24px; box-shadow: 0px 1px 32px 0px rgba(0,227,197,0.59);}
@@ -17,34 +18,14 @@ const char peer_html[] PROGMEM = R"rawliteral(
     </head>
     <body>
         <p>&nbsp;</p>
-
         <div class='box'>
             <h1>%PeerName%</h1>
 
             <div class='part'>
-                <form id='peers' action='/get'>
-                    <input name='PeerName' type='text' placeholder='new PeerName'>
-                    <input name='peer' type='submit' value='Change PeerName'>
-                </form>
-            </div>    
-        
-            <p>&nbsp;</p>
-
-            <div class='part'>
-                <form id='peers' action='/get'>
-                    %Periphs%
-                </form>
-            </div>
-
-            <p>&nbsp;</p>
-
-            <div class='part'>
-                <form id='peers' action='/get'>
+                %PeerStatus%    
+                <form id="back" class="part" action="/get">
                     <input name='peer' type='submit' value='back'>
-                </form>
-                <form id='peers' action='/get'>
-                    <input name='peer' type='submit' value='status'>
-                </form>
+                </form> 
             </div>
         </div>
     </body>

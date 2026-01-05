@@ -4,6 +4,7 @@
 #include "www/index.h"
 #include "www/peer.h"
 #include "www/periph.h"
+#include "www/peerstatus.h"
 
 #define DEBUG1(...) if ((Module.GetDebugMode()) and (DEBUG_LEVEL > 0)) Serial.printf(__VA_ARGS__)
 #define DEBUG2(...) if ((Module.GetDebugMode()) and (DEBUG_LEVEL > 1)) Serial.printf(__VA_ARGS__)

@@ -9,7 +9,7 @@ body{ margin: 0;padding: 0;font-family: Arial, Helvetica, sans-serif;background-
 h1{ text-transform: uppercase; font-weight: 500;}
 input{ border: 0; background: none; margin: 20px auto; text-align: center; border: 2px solid #4834d4; padding: 14px 10px; width: 40%; outline: none; border-radius: 24px; color: white; font-size: smaller; transition: 0.3s;}
 input:focus{ width: 40%; border-color:#22a6b3 ;}
-input[type='submit']{ border: 0;background: none; margin: 20px auto; text-align: center; border: 2px solid #22a6b3; padding: 14px 10px; width: 120px; outline: none; border-radius: 24px; color: white; transition: 0.3s; cursor: pointer;}
+input[type='submit']{ border: 0;background: none; margin: 20px auto; text-align: center; border: 2px solid #22a6b3; padding: 14px 10px; width: 180px; outline: none; border-radius: 24px; color: white; transition: 0.3s; cursor: pointer;}
 input[type='submit']:hover{ background-color: #22a6b3;}
 </style>
 </head>
@@ -20,13 +20,17 @@ input[type='submit']:hover{ background-color: #22a6b3;}
         <h2>%PeriphName%</h2>
 
         <table>
-            <form id="Nullwert" class="box" action="/periph/get">
+            <form id="PeriphName" class="box" action="/periph/get">
+                <div class='part'><input name='PeriphName' type='%TYPE%' placeholder='%PeriphName%' />
+                <input name='periph' type='submit' value='Update PeriphName' /></div>
+            </form>
+            </form><form id="Nullwert" class="box" action="/get">
                 <div class='part'><input name='Nullwert' type='%TYPE%' placeholder='%Nullwert%' />
-                <input name='periph' type='submit' label='hllo' value='UpdNullwert' /></div>
+                <input name='periph' type='submit' label='hllo' value='Update Nullwert' /></div>
             </form>
             <form id="VperAmp" class="box" action="/get">
                 <div class='part'><input name='VperAmp' type='%TYPE%' placeholder='%VperAmp%' />
-                <input name='periph' type='submit' value='VperAmp' /></div>
+                <input name='periph' type='submit' value='Update VperAmp' /></div>
             </form>
             <form id="back" class="box" action="/get">
                 <input name='periph' type='submit' value='back' />

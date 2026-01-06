@@ -24,7 +24,7 @@ const char peer_html[] PROGMEM = R"rawliteral(
             <div class='part'>
                 <form id='peers' action='/get'>
                     <input name='PeerName' type='text' placeholder='new PeerName'>
-                    <input name='peer' type='submit' value='Change PeerName'>
+                    <input name='peer' type='submit' value='Update'>
                 </form>
             </div>    
         
@@ -41,8 +41,6 @@ const char peer_html[] PROGMEM = R"rawliteral(
             <div class='part'>
                 <form id='peers' action='/get'>
                     <input name='peer' type='submit' value='back'>
-                </form>
-                <form id='peers' action='/get'>
                     <input name='peer' type='submit' value='status'>
                 </form>
             </div>

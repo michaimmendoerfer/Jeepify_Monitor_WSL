@@ -54,6 +54,34 @@ String processor(const String& var)
             {
                 ReturnString += "<tr><td><input name='peer' type='submit' value='";
                 ReturnString += ActiveWebPeer->GetPeriphName(Si);
+                ReturnString += ": ";
+                if (ActiveWebPeer->isPeriphSwitch(Si)) 
+                {
+                    if (ActiveWebPeer->GetPeriphValue(Si, 0) ==  1) 
+                        ReturnString += "on";
+                    else
+                        ReturnString += "off";
+                }
+                if (ActiveWebPeer->isPeriphCombo(Si)) 
+                {
+                    dtostrf(ActiveWebPeer->GetPeriphValue(Si,3), 0, 2, Buf);
+                    ReturnString += " (";
+                    ReturnString += Buf;
+                    ReturnString += " A)";
+                }  
+                if (ActiveWebPeer->GetPeriphType(Si) == SENS_TYPE_AMP) 
+                {
+                    dtostrf(ActiveWebPeer->GetPeriphValue(Si,3), 0, 2, Buf);
+                    ReturnString += Buf;
+                    ReturnString += " A";
+                }
+                if (ActiveWebPeer->GetPeriphType(Si) == SENS_TYPE_VOLT) 
+                {
+                    dtostrf(ActiveWebPeer->GetPeriphValue(Si,2), 0, 2, Buf);
+                    ReturnString += Buf;
+                    ReturnString += " V";
+                }
+
                 ReturnString += "'/</td></tr>";
             }
         }
@@ -71,28 +99,29 @@ String processor(const String& var)
 
     if (var == "PeerStatus") 
     {
+        ReturnString += "<table><tr><td width=90>";
+        ReturnString += "<b>Periph</b></td><td><b>on</b></td><td><b>off</b></td><td><b>Volt</b></td><td><b>Amp</b></td></tr><tr></tr>";
+                
         for (int Si=0; Si<MAX_PERIPHERALS; Si++)
         {
             if (!ActiveWebPeer->isPeriphEmpty(Si))
             {
-                ReturnString += "<table><tr><td width=90>";
+                ReturnString += "<tr><td>";
                 ReturnString += ActiveWebPeer->GetPeriphName(Si);
                 ReturnString += "</td><td>";
-                
-                dtostrf(ActiveWebPeer->GetPeriphValue(Si,0), 0, 0, Buf);
-                ReturnString += Buf;
+                if (ActiveWebPeer->GetPeriphValue(Si,0) == 1) ReturnString += "*";
                 ReturnString += "</td><td>";
-                dtostrf(ActiveWebPeer->GetPeriphValue(Si,1), 0, 0, Buf);
-                ReturnString += Buf;
+                if (ActiveWebPeer->GetPeriphValue(Si,1) == 1) ReturnString += "*";
                 ReturnString += "</td><td>";
                 dtostrf(ActiveWebPeer->GetPeriphValue(Si,2), 0, 2, Buf);
                 ReturnString += Buf;
                 ReturnString += "</td><td>";
                 dtostrf(ActiveWebPeer->GetPeriphValue(Si,3), 0, 2, Buf);
                 ReturnString += Buf;
-                ReturnString += "</td></tr></table>";
+                ReturnString += "</td></tr>";
             }
         }
+        ReturnString += "</table>";
         return ReturnString;
     }
     
@@ -288,14 +317,14 @@ void InitWebServer()
             
             for (int Si=0; Si<MAX_PERIPHERALS; Si++)
             {
-                if (message == ActiveWebPeer->GetPeriphName(Si)) 
+                if (strncmp(message.c_str(), ActiveWebPeer->GetPeriphName(Si), strlen(ActiveWebPeer->GetPeriphName(Si))) == 0)
                 {
                     ActiveWebPeriph = ActiveWebPeer->GetPeriphPtr(Si);
                     request->redirect("/periph");
                     break;
                 }
             }
-            if (message == "ChangePeerName")
+            if (message == "Update")
             {
                 if (request->hasParam("PeerName") and !request->getParam("PeerName")->value().isEmpty())
                 {
@@ -310,6 +339,10 @@ void InitWebServer()
                         request->redirect("/peer");
                     }
                 }
+                else
+                {
+                    request->redirect("/peer");
+                }
             }
             if (message == "back") 
             {   
@@ -319,12 +352,11 @@ void InitWebServer()
             {   
                 request->redirect("/status");
             } 
-       
         }
         else if (request->hasParam(MESSAGE_PERIPH) and !request->getParam(MESSAGE_PERIPH)->value().isEmpty()) 
         {
             message = request->getParam(MESSAGE_PERIPH)->value();
-            if (message == "Update PeriphName") 
+            if (message == "Update Name") 
             {    
                 if (request->hasParam("PeriphName") and !request->getParam("PeriphName")->value().isEmpty())
                 {
@@ -339,7 +371,7 @@ void InitWebServer()
                     }
                 }
             }
-            if (message == "Update Nullwert") 
+            if (message == "Update Null") 
             {
                 if (request->hasParam("Nullwert") and !request->getParam("Nullwert")->value().isEmpty())
                 {
@@ -354,7 +386,7 @@ void InitWebServer()
                     }
                 }
             }
-            if (message == "Update VperAmp") 
+            if (message == "Update VpA") 
             {   
                 if (request->hasParam("VperAmp")  and !request->getParam("VperAmp")->value().isEmpty())
                 {

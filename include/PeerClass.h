@@ -1,6 +1,6 @@
 /*
 include PeerList and PeriphList
-Version 3.30
+Version 3.31
 */
 
 #ifndef PEERCLASS_H
@@ -212,6 +212,7 @@ class PeerClass
         bool isPeriphEmpty(int SNr) { return Periph[SNr].isEmpty(); }
         bool isPeriphSensor(int SNr) { return Periph[SNr].IsSensor(); }
         bool isPeriphSwitch(int SNr) { return Periph[SNr].IsSwitch(); }
+        bool isPeriphCombo(int SNr) { return Periph[SNr].IsCombo(); }
 };
 
 PeerClass *FindPeerByMAC(const uint8_t *BroadcastAddress);

@@ -272,26 +272,7 @@ int FindPeerListPos(PeerClass *Peer)
     }
     return -1;
 }
-/*
-PeerClass *FindFirstPeer(int Type, int Status) 
-// returns first Peer with Type, otherwise NULL, Status: 0=offline, 1=online, 2=egal
-{
-    for(int i = 0; i < PeerList.size(); i++) 
-    {   
-        PeerClass *Peer = PeerList.get(i);
-        if ((Peer->GetType() == Type) or (Type == MODULE_ALL)) 
-        {
-            switch (Status)
-            {
-                case 0: if (!IsOnline(Peer)) return Peer; break; // Peer ist offline
-                case 1: if ( IsOnline(Peer)) return Peer; break; // Peer ist  online
-                case 2: return Peer; break;
-            }
-        }
-    }
-    return NULL;
-}
-*/
+
 PeerClass *FindNextPeer(PeerClass *P, int Type, bool circular, int Status)
 // returns next Peer, tries PeerList.size() times, otherwise returns NULL
 {
@@ -353,53 +334,7 @@ PeriphClass *FindPeriphById(int Id)
     }
     return NULL;
 }
-/*PeriphClass *FindFirstPeriph(PeerClass *Peer, int Type, int Status)
-// return first Periph of Type. If Peer=NULL Peer is ignored
-{
-    PeriphClass *Periph;
 
-    if (PeriphList.size() == 0) return NULL;
-    
-    for(int i = 0; i < PeriphList.size(); i++) 
-    {   
-        Periph = PeriphList.get(i);
-        if ((Peer == NULL) or (Peer->GetId() == Periph->GetPeerId()))
-        // Peer fits
-        {
-           switch (Status)
-            {
-                case 0: if ((!IsOnline(Periph)) and (Periph->IsType(Type))) return Periph; break; // Periph ist offline
-                case 1: if (( IsOnline(Periph)) and (Periph->IsType(Type))) return Periph; break; // Periph ist  online
-                case 2: if (Periph->IsType(Type)) return Periph; break;
-            }
-        }
-    }
-    return NULL;
-}
-*/
-/*PeriphClass *FindLastPeriph(PeerClass *Peer, int Type, int Status)
-// return last Periph of Type. If Peer=NULL Peer is ignored, otherwise NULL
-{
-    PeriphClass *Periph;
-
-    for(int i = PeriphList.size()-1; i>=0; i--) 
-    {   
-        Periph = PeriphList.get(i);
-
-        if ((Peer == NULL) or (Peer->GetId() == Periph->GetPeerId()))
-        // Peer fits
-        {
-            switch (Status)
-            {
-                case 0: if ((!IsOnline(Periph)) and (Periph->IsType(Type))) return Periph; break; // Periph ist offline
-                case 1: if (( IsOnline(Periph)) and (Periph->IsType(Type))) return Periph; break; // Periph ist  online
-                case 2: if (Periph->IsType(Type)) return Periph; break;
-            }
-        }
-    }
-    return NULL;
-}
-*/
 PeriphClass *FindNextPeriph(PeerClass *Peer, PeriphClass *Periph, int Type, bool circular, int Status)
 // return next Periph of Type. If Peer=NULL Peer is ignored, if Periph=NULL find first - otherwise NULL, circular...
 {

@@ -15,8 +15,8 @@
 #endif
 #ifdef DEV_466_RED  
     #define MY_FONT1              &lv_font_montserrat_12
-    #define MY_FONT2              &lv_font_montserrat_18
-    #define MY_FONT3              &lv_font_montserrat_22
+    #define MY_FONT2              &lv_font_montserrat_24
+    #define MY_FONT3              &lv_font_montserrat_24
     #define MY_FONT4              &lv_font_montserrat_24
 #endif
 

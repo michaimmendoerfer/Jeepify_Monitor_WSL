@@ -598,7 +598,9 @@ void Ui_Init_Custom(lv_event_t * e)
 	lv_obj_set_style_text_font(ui_RollerPeers1, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_BtnPeer9,     MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-
+	lv_img_set_zoom(ui_ImgPeerChoice, 256*LV_HOR_RES/240);
+	lv_obj_set_y(ui_LblPeriphChoicePeer, lv_pct(30));
+	
 	//LED-Layer
 	static uint32_t user_data = 10; 
 	char LEDSize = (int) SCREEN_RES_HOR / 36;

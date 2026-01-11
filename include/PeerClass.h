@@ -220,12 +220,9 @@ PeerClass *FindPeerById(int Id);
 PeerClass *FindPeerByName(char *Name);
 PeerClass *PeerOf(PeriphClass *P);
 
-//PeerClass *FindFirstPeer(int Type, int Status=2);
-PeerClass *FindNextPeer(PeerClass *P, int Type, bool circular, int Status=2);
-PeerClass *FindPrevPeer(PeerClass *P, int Type, bool circular, int Status=2);
+PeerClass   *FindNextPeer(PeerClass *P, int Type, bool circular, int Status=2);
+PeerClass   *FindPrevPeer(PeerClass *P, int Type, bool circular, int Status=2);
 PeriphClass *FindPeriphById(int Id);
-//PeriphClass *FindFirstPeriph(PeerClass *P, int Type, int Status=2);
-//PeriphClass *FindLastPeriph (PeerClass *P, int Type, int Status=2);
 PeriphClass *FindPrevPeriph(PeerClass *P, PeriphClass *Periph, int Type, bool circular, int Status=2);
 PeriphClass *FindNextPeriph(PeerClass *P, PeriphClass *Periph, int Type, bool circular, int Status=2);
 

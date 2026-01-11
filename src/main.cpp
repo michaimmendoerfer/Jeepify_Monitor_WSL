@@ -626,7 +626,8 @@ void ShowMessageBox(const char * Titel, const char *Txt, int delay, int opa)
     lv_obj_set_style_text_color(MsgBox, lv_color_hex(0xDBDBDB), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(MsgBox, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    lv_obj_set_style_text_font(lv_msgbox_get_title(MsgBox), &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_size(MsgBox, LV_HOR_RES*0.7, LV_VER_RES*0.33);
+    lv_obj_set_style_text_font(lv_msgbox_get_title(MsgBox), MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
     
     lv_obj_center(MsgBox);
     lv_obj_del_delayed(MsgBox, delay);

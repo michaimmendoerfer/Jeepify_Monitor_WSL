@@ -16,6 +16,7 @@
 #include <nvs_flash.h>
 #include <Preferences.h>
 #include "webserver.h"
+#include "MyFonts.h"
 
 #define DEBUG_LEVEL 3
 

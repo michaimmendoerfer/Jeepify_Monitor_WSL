@@ -32,6 +32,7 @@ void Ui_Peer_Reset(lv_event_t * e);
 void Ui_Peer_ToggleSleep(lv_event_t * e);
 void Ui_Peer_ToggleDemo(lv_event_t * e);
 void Ui_Peer_Delete(lv_event_t * e);
+void Ui_Eichen_Prepare(lv_event_t * e);
 void Ui_Eichen_Start(lv_event_t * e);
 void Ui_Volt_Prepare(lv_event_t * e);
 void Ui_Volt_Start(lv_event_t * e);

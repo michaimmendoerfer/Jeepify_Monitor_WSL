@@ -1,4 +1,4 @@
-// Ui_All 3.30
+// Ui_All 3.31
 
 #include <Arduino.h>
 #include "main.h"
@@ -20,6 +20,7 @@ lv_obj_t *Ui_LedPair;
 lv_obj_t *ui_LblMenuBatt;
 
 lv_timer_t *MultiTimer;
+lv_timer_t *PeerTimer;
 lv_timer_t *SwitchTimer;
 lv_timer_t *SettingsTimer;
 lv_timer_t *ChoiceTimer;
@@ -33,6 +34,7 @@ CompThing   *CompThingArray[4] = {NULL, NULL, NULL, NULL};
 void Keyboard_cb(lv_event_t * event);
 
 void MultiUpdateTimer(lv_timer_t * timer);
+void PeerUpdateTimer(lv_timer_t * timer);
 void ChoiceUpdateTimer(lv_timer_t * timer);
 void SettingsUpdateTimer(lv_timer_t * timer);
 void Ui_Multi_Clicked(lv_event_t * e);
@@ -71,6 +73,17 @@ void Ui_Peer_Prepare()
 }
 void Ui_Peer_Loaded(lv_event_t * e)
 {
+	static uint32_t user_data = 10;
+	
+	if (PeerTimer) 
+	{
+		lv_timer_resume(PeerTimer);
+	}
+	else 
+	{
+		PeerTimer = lv_timer_create(PeerUpdateTimer, 100,  &user_data);
+	}
+
 	if (!ActivePeer) ActivePeer = FindNextPeer(NULL, MODULE_ALL, CIRCULAR);
 	Ui_Peer_Prepare();
 }
@@ -94,7 +107,24 @@ void Ui_Peer_ToggleDemo(lv_event_t * e)
 {
 	if (ActivePeer) SendCommand(ActivePeer, SEND_CMD_DEMOMODE_TOGGLE);
 }
-
+void PeerUpdateTimer(lv_timer_t * timer)
+{
+	if (Knob.Clicked)
+	{
+		Knob.LastClicked = Knob.Clicked;
+		Knob.Clicked     = 0;
+		
+		if (Knob.Diff < 0) 
+		{
+			Ui_Peer_Last(NULL);
+		}
+		else
+		{
+			ActivePeer = FindNextPeer(ActivePeer, MODULE_ALL, CIRCULAR); 
+			if (ActivePeer) Ui_Peer_Prepare();
+		}
+	}
+}
 void Ui_Peer_Next(lv_event_t * e)
 {
 	ActivePeer = FindNextPeer(ActivePeer, MODULE_ALL, CIRCULAR); 
@@ -109,6 +139,7 @@ void Ui_Peer_Delete(lv_event_t * e)
 {
 	if (ActivePeer) DeletePeer(ActivePeer);
 }
+
 #pragma endregion Screen_Peer
 #pragma region Screen_Settings
 void Ui_Set_WebSvr(lv_event_t * e)
@@ -220,7 +251,8 @@ void Ui_Peers_Selected(lv_event_t * e)
 	SelectedName[End-Start-1] = 0;
 	
 	PeerClass *TempPeer = FindPeerByName(SelectedName);
-
+	DEBUG3("Selected Peer: %s, GetPeerName()=%s", SelectedName, TempPeer->GetName());
+	
 	if ((TempPeer) and (strcmp(SelectedName, "") != 0)) {
 		ActivePeer = TempPeer;
 		_ui_screen_change(&ui_ScrPeer, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrPeer_screen_init);
@@ -590,17 +622,49 @@ void TopUpdateTimer(lv_timer_t * timer)
 void Ui_Init_Custom(lv_event_t * e)
 {
 	// Override things
-	lv_obj_set_style_text_font(ui_LblMultiScreenName, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_text_font(ui_LblMenuVersion,     MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_img_set_zoom(ui_ImgRubicon, 400/240*SCREEN_RES_HOR);
-	lv_obj_set_style_text_font(ui_Container1,   MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);			//Settings
-	lv_obj_set_style_text_font(ui_Container3,   MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);			//Peer
-	lv_obj_set_style_text_font(ui_RollerPeers1, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_BtnPeer9,     MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-	lv_img_set_zoom(ui_ImgPeerChoice, 256*LV_HOR_RES/240);
-	lv_obj_set_y(ui_LblPeriphChoicePeer, lv_pct(30));
+	lv_obj_set_style_text_font(ui_LblMultiScreenName,    MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			//Menu
+	lv_obj_set_style_text_font(ui_LblMenuVersion,        MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
+	   
+	lv_obj_set_style_text_font(ui_Container1,            MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);			//Settings
+	   
+	lv_obj_set_style_text_font(ui_RollerPeers1,          MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			//Peers
+    lv_obj_set_style_text_font(ui_BtnPeer9,              MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
+	   
+	lv_obj_set_style_text_font(ui_LblEichenText,         MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			//Eichen
+	lv_obj_set_style_text_font(ui_LblBtnEichen,          MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(ui_LblEichenPeer,         MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
 	
+	lv_obj_set_style_text_font(ui_LblVoltPeer,           MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);		 	//Volt
+	lv_obj_set_style_text_font(ui_Keyboard,              MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(ui_TxtVolt,               MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
+	
+	lv_obj_set_style_text_font(ui_Container3,            MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);			//Peer
+	lv_obj_set_style_text_font(ui_LblPeerName,           MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
+	
+	lv_obj_set_style_text_font(ui_LblPeriphChoicePeer,   MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			//PeriphChoice
+	lv_obj_set_style_text_font(ui_LblPeriphChoicePeriph, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
+	lv_obj_set_style_text_font(ui_LblPeriphChoiceType,   MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
+	lv_obj_set_style_text_font(ui_LblPeriphChoiceOnline, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
+	
+	lv_img_set_zoom(ui_ImgPeerChoice, 256*LV_HOR_RES/240);
+	
+	//BG-Size
+	uint16_t newSize = 256*SCREEN_RES_HOR/360;
+	
+	lv_img_set_zoom(ui_ImgBGMenu,     newSize);
+	lv_img_set_zoom(ui_ImgBGPeer,     newSize);
+	lv_img_set_zoom(ui_ImgBGPeers,    newSize);
+	lv_img_set_zoom(ui_ImgBGEichen,   newSize);
+	lv_img_set_zoom(ui_ImgBGJSON,     newSize);
+	lv_img_set_zoom(ui_ImgBGMulti,    newSize);
+	lv_img_set_zoom(ui_ImgBGPeriph,   newSize);
+	lv_img_set_zoom(ui_ImgBGSettings, newSize);
+	lv_img_set_zoom(ui_ImgBGVolt,     newSize);
+	
+	newSize = 400*SCREEN_RES_HOR/360;
+	lv_img_set_zoom(ui_ImgRubicon,    newSize);
+	
+
 	//LED-Layer
 	static uint32_t user_data = 10; 
 	char LEDSize = (int) SCREEN_RES_HOR / 36;
@@ -664,6 +728,15 @@ void Keyboard_cb(lv_event_t * event)
 }
 #pragma endregion System_TimerAndInit
 #pragma region System_Eichen
+void Ui_Eichen_Prepare(lv_event_t * e)
+{
+	if (ActivePeer) 
+	{
+		Serial.printf("Setzte neuen Peer: %s\n\r", ActivePeer->GetName());
+		lv_label_set_text_static(ui_LblEichenPeer, ActivePeer->GetName());
+	}
+	
+}
 void Ui_Eichen_Start(lv_event_t * e)
 {
 	TSMsgSnd = millis();
@@ -671,7 +744,6 @@ void Ui_Eichen_Start(lv_event_t * e)
 	
 	_ui_screen_change(&ui_ScrMenu, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMenu_screen_init);
 }
-
 void Ui_Volt_Prepare(lv_event_t * e)
 {
 	if (ActivePeer) lv_label_set_text(ui_LblVoltPeer, ActivePeer->GetName());
@@ -681,7 +753,6 @@ void Ui_Volt_Start(lv_event_t * e)
 	CalibVolt();
 	_ui_screen_change(&ui_ScrMenu, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMenu_screen_init);
 }
-
 #pragma endregion System_Eichen
 #pragma region Menu
 void Ui_Menu_Loaded(lv_event_t * e)

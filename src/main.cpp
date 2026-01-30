@@ -474,10 +474,8 @@ void SendPairingConfirm(PeerClass *P) {
 
     char mac[13];
 
-    MacByteToChar(mac, Module.GetBroadcastAddress());
-    doc[SEND_CMD_JSON_FROM]        = mac;
-    MacByteToChar(mac, P->GetBroadcastAddress());
-    doc[SEND_CMD_JSON_TO]          = mac;
+    doc[SEND_CMD_JSON_FROM]        = MacByteToChar(mac, Module.GetBroadcastAddress());
+    doc[SEND_CMD_JSON_TO]          = MacByteToChar(mac, P->GetBroadcastAddress());
     doc[SEND_CMD_JSON_TS]          = millis();
     doc[SEND_CMD_JSON_ORDER]       = SEND_CMD_YOU_ARE_PAIRED;
     doc[SEND_CMD_JSON_MODULE_TYPE] = Module.GetType();
@@ -505,10 +503,8 @@ bool ToggleSwitch(PeriphClass *Periph)
     
     char mac[13];
 
-    MacByteToChar(mac, Module.GetBroadcastAddress());
-    doc[SEND_CMD_JSON_FROM]        = mac;
-    MacByteToChar(mac, FindPeerById(Periph->GetPeerId())->GetBroadcastAddress());
-    doc[SEND_CMD_JSON_TO]          = mac;
+    doc[SEND_CMD_JSON_FROM]        = MacByteToChar(mac, Module.GetBroadcastAddress());
+    doc[SEND_CMD_JSON_TO]          = MacByteToChar(mac, FindPeerById(Periph->GetPeerId())->GetBroadcastAddress());
     doc[SEND_CMD_JSON_TS]          = millis();
     doc[SEND_CMD_JSON_ORDER]       = SEND_CMD_SWITCH_TOGGLE;
     doc[SEND_CMD_JSON_PERIPH_NAME] = Periph->GetName();
@@ -527,10 +523,8 @@ void SendCommand(PeerClass *P, int Cmd, String Value) {
     JsonDocument doc; String jsondata; 
     char mac[13];
 
-    MacByteToChar(mac, Module.GetBroadcastAddress());
-    doc[SEND_CMD_JSON_FROM]      = mac;
-    MacByteToChar(mac, P->GetBroadcastAddress());
-    doc[SEND_CMD_JSON_TO]        = mac;
+    doc[SEND_CMD_JSON_FROM]      = MacByteToChar(mac, Module.GetBroadcastAddress());
+    doc[SEND_CMD_JSON_TO]        = MacByteToChar(mac, P->GetBroadcastAddress());
     doc[SEND_CMD_JSON_TS]        = millis();
     doc[SEND_CMD_JSON_TTL]       = SEND_CMD_MSG_TTL;
     

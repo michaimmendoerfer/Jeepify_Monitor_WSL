@@ -13,6 +13,7 @@
     #define SCREEN_RES_VER 466
     #define UI_H_DIR        "Ui_All/ui.h"
     #define UI_EVENTS_H_DIR "Ui_All/ui_events.h" 
+    #define HIDE_BG
 #endif
 
 #ifdef DEV_360_SILVER

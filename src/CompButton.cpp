@@ -737,3 +737,168 @@ void CompMeter::Update()
 
     if (_GraphVisible) ChartUpdate();
 }
+
+
+
+
+
+
+
+
+CompMeter2::CompMeter2() 
+{
+    _PeerVisible = true;
+    _PeriphVisible = true;
+    _ValueVisible = true;
+    _SystemVisible = false;
+    _PeriphValueCombo = false;
+    _GraphVisible = false;
+    _dBmVisible = true;
+}
+CompMeter2::~CompMeter2() 
+{
+	lv_obj_del(ui_ImgMeter2);
+	lv_obj_del(ui_ImgZeiger);
+}
+void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, PeriphClass *Periph, lv_event_cb_t event_cb) 
+{
+	_Periph = Periph;
+    _event_cb = event_cb;
+    _Pos = Pos;
+    _x = x;
+    _y = y;		
+    _Width  = size;
+    _Height = size;
+    _Size = size;	
+
+    uint16_t newSize = 256*SCREEN_RES_HOR/360+5;
+    
+    ui_ImgMeter2 = lv_img_create(comp_parent);
+    lv_img_set_src(ui_ImgMeter2, &ui_img_voltmeter_360_png);
+    lv_img_set_zoom(ui_ImgMeter2,     newSize);
+    lv_obj_set_width(ui_ImgMeter2, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ImgMeter2, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ImgMeter2, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_ImgMeter2, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_ImgMeter2, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_SCROLL_ELASTIC | LV_OBJ_FLAG_SCROLL_MOMENTUM |
+                      LV_OBJ_FLAG_SCROLL_CHAIN);     /// Flags
+    lv_obj_move_background(ui_ImgMeter2);
+          
+    ui_ImgZeiger = lv_img_create(comp_parent);
+    lv_img_set_src(ui_ImgZeiger, &ui_img_zeiger_png);
+    newSize = 256*SCREEN_RES_HOR/360;
+    lv_img_set_zoom(ui_ImgZeiger,     newSize);
+    lv_obj_set_width(ui_ImgZeiger, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_ImgZeiger, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(ui_ImgZeiger, LV_ALIGN_CENTER);
+    lv_obj_set_x(ui_ImgZeiger, -6);
+    lv_obj_set_y(ui_ImgZeiger, 14);
+    lv_obj_add_flag(ui_ImgZeiger, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_ImgZeiger, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_img_set_pivot(ui_ImgZeiger, 7, 140); // set pivot to bottom center
+    lv_img_set_angle(ui_ImgZeiger, 0);
+	
+	if (_Periph->GetType() == SENS_TYPE_VOLT)
+	{	
+        if (_GraphVisible) ChartInit(SCREEN_RES_HOR/2, SCREEN_RES_VER*0.7, SCREEN_RES_HOR/3, SCREEN_RES_VER/15, RECORDED_VALUES);
+    }
+
+    _LblPeer = lv_label_create(comp_parent);
+    lv_obj_set_width(_LblPeer, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(_LblPeer, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(_LblPeer, LV_ALIGN_CENTER);
+    SetPeerPos(0, lv_pct(35));
+    lv_obj_set_style_text_font(_LblPeer, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_object_set_themeable_style_property(_LblPeer, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxt);
+    ui_object_set_themeable_style_property(_LblPeer, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
+    
+
+    _LblPeriph = lv_label_create(comp_parent);
+    lv_obj_set_width(_LblPeriph, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(_LblPeriph, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(_LblPeriph, LV_ALIGN_CENTER);
+    SetPeriphPos(0, lv_pct(-20));
+    lv_obj_set_style_text_font(_LblPeriph, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_object_set_themeable_style_property(_LblPeriph, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxt);
+    ui_object_set_themeable_style_property(_LblPeriph, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
+    
+
+    _LblValue = lv_label_create(comp_parent);
+    lv_obj_set_width(_LblValue, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(_LblValue, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(_LblValue, LV_ALIGN_CENTER);
+    SetValuePos(0, lv_pct(25));
+    lv_obj_set_style_text_font(_LblValue, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_object_set_themeable_style_property(_LblValue, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxt);
+    ui_object_set_themeable_style_property(_LblValue, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
+}
+void CompMeter2::Update() 
+{    
+    uint16_t newSize = 256*SCREEN_RES_HOR/360+5;
+    
+    lv_obj_set_pos(_LblPeer,   _X_Peer,   _Y_Peer);
+    lv_obj_set_pos(_LblPeriph, _X_Periph, _Y_Periph);
+    lv_obj_set_pos(_LblValue,  _X_Value,  _Y_Value);
+
+	//Serial.printf("Peer:Periph %s:%s", PeerOf(_Periph)->GetName(), _Periph->GetName());
+
+	if ((PeerOf(_Periph)->GetName() == NULL) or (!_PeerVisible))
+	{
+	    lv_obj_add_flag(_LblPeer, LV_OBJ_FLAG_HIDDEN);
+	}
+	else
+	{
+        lv_label_set_text_fmt(_LblPeer, "%.6s (%d dBm)", PeerOf(_Periph)->GetName(), PeerOf(_Periph)->GetdBm());
+        lv_obj_clear_flag(_LblPeer, LV_OBJ_FLAG_HIDDEN);
+	}
+    
+    if ((_Periph->GetName() == NULL) or (!_PeriphVisible)) 
+    {
+		lv_obj_add_flag(_LblPeriph, LV_OBJ_FLAG_HIDDEN);
+    }
+    else 
+    {
+		lv_label_set_text_fmt(_LblPeriph, "%.6s", _Periph->GetName());
+		lv_obj_clear_flag(_LblPeriph, LV_OBJ_FLAG_HIDDEN);
+    
+    }
+
+    char buf[10];
+	int nk = 0;
+	float value = 0;
+    static float testv;
+
+    if (_Periph->GetType() == SENS_TYPE_AMP)  value = _Periph->GetValue(3);
+    if (_Periph->GetType() == SENS_TYPE_VOLT) value = _Periph->GetValue(2);
+	testv = testv+0.1;
+    if (testv > 15) testv = 0;
+    value = testv;
+       
+		Serial.printf("Sensor: %s: %f\n\r", _Periph->GetName(), value);
+		if (abs(value) < SCHWELLE) value = 0;
+
+		if      (value<10)  nk = 2;
+		else if (value<100) nk = 1;
+		else                nk = 0;
+
+		if (value == -99) strcpy(buf, "--"); 
+		else dtostrf(value, 0, nk, buf);
+
+		if (_Periph->GetType() == SENS_TYPE_AMP)  strcat(buf, " A");
+		if (_Periph->GetType() == SENS_TYPE_VOLT) strcat(buf, " V");
+		
+    int Angle = -465+value*64;
+    lv_img_set_angle(ui_ImgZeiger, Angle);
+
+	if (_ValueVisible) 
+	{
+		lv_label_set_text(_LblValue, buf);
+		lv_obj_clear_flag(_LblValue, LV_OBJ_FLAG_HIDDEN);
+	}
+	else 
+	{
+		lv_obj_add_flag(_LblValue, LV_OBJ_FLAG_HIDDEN);
+	}
+
+    if (_GraphVisible) ChartUpdate();
+}

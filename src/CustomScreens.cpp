@@ -14,7 +14,9 @@ void ui_ScrSingle_screen_init(void)
     lv_obj_clear_flag(ui_ScrSingle, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_ScrSingle, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_ScrSingle, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_img_src(ui_ScrSingle, &ui_img_jeepifybackground_png, LV_PART_MAIN | LV_STATE_DEFAULT);
+    #ifndef HIDE_BG
+		lv_obj_set_style_bg_img_src(ui_ScrSingle, &ui_img_jeepifybackground_png, LV_PART_MAIN | LV_STATE_DEFAULT);
+	#endif
     lv_obj_set_style_bg_img_opa(ui_ScrSingle, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_add_event_cb(ui_ScrSingle, ui_event_ui_ScrSingle, LV_EVENT_ALL, NULL);
@@ -33,7 +35,7 @@ void Ui_Single_FillScreen()
 {
 	if (ActivePeriphShown->IsSensor()) 
 		{
-			CompThingArray[0] = new CompMeter;
+			CompThingArray[0] = new CompMeter2;
 			CompThingArray[0]->Setup(ui_ScrSingle, 0, 0, 0, SCREEN_RES_HOR, ActivePeriphShown, Ui_Single_Clicked);
 		}
 		else if (ActivePeriphShown->IsSwitch()) 
@@ -129,6 +131,7 @@ void SingleUpdateTimer(lv_timer_t * timer)
 		}
 	}
 	//Serial.println("SingleTimer");
+	
 	if (CompThingArray[0]) CompThingArray[0]->Update();
 }
 void Ui_Single_Clicked(lv_event_t * e)
@@ -184,7 +187,7 @@ void ui_event_ui_ScrSingle(lv_event_t * e)
 
     if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP) {
         lv_indev_wait_release(lv_indev_get_act());
-        _ui_screen_change(&ui_ScrMenu, LV_SCR_LOAD_ANIM_MOVE_TOP, 500, 0, &ui_ScrMenu_screen_init);
+        _ui_screen_change(&ui_ScrMenu, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMenu_screen_init);
     }
     if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) {
         lv_indev_wait_release(lv_indev_get_act());

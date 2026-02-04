@@ -191,4 +191,21 @@ class CompMeter : public CompThing {
         void Update();	
 };
 
+class CompMeter2 : public CompThing {
+	private:
+		lv_meter_indicator_t * _Indic;
+		lv_meter_indicator_t * _IndicNeedle;
+        lv_meter_scale_t *     _Scale;
+
+        lv_obj_t *ui_ImgMeter2;
+        lv_obj_t *ui_ImgZeiger;
+
+	public:
+		CompMeter2();
+		~CompMeter2();
+
+		void Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, PeriphClass *Periph, lv_event_cb_t event_cb);
+        void Update();	
+};
+
 #endif

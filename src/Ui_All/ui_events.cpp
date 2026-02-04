@@ -26,8 +26,6 @@ lv_timer_t *SettingsTimer;
 lv_timer_t *ChoiceTimer;
 
 #define MAX_SWITCHES 1
-#define MY_ANIM 	 LV_SCR_LOAD_ANIM_FADE_ON
-#define MY_ANIM_TIME 50
 
 CompThing   *CompThingArray[4] = {NULL, NULL, NULL, NULL};
 
@@ -651,15 +649,27 @@ void Ui_Init_Custom(lv_event_t * e)
 	//BG-Size
 	uint16_t newSize = 256*SCREEN_RES_HOR/360;
 	
-	lv_img_set_zoom(ui_ImgBGMenu,     newSize);
-	lv_img_set_zoom(ui_ImgBGPeer,     newSize);
-	lv_img_set_zoom(ui_ImgBGPeers,    newSize);
-	lv_img_set_zoom(ui_ImgBGEichen,   newSize);
-	lv_img_set_zoom(ui_ImgBGJSON,     newSize);
-	lv_img_set_zoom(ui_ImgBGMulti,    newSize);
-	lv_img_set_zoom(ui_ImgBGPeriph,   newSize);
-	lv_img_set_zoom(ui_ImgBGSettings, newSize);
-	lv_img_set_zoom(ui_ImgBGVolt,     newSize);
+	#ifdef HIDE_BG
+		lv_obj_add_flag(ui_ImgBGMenu, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(ui_ImgBGPeer, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(ui_ImgBGPeers, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(ui_ImgBGEichen, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(ui_ImgBGJSON, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(ui_ImgBGMulti, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(ui_ImgBGPeriph, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(ui_ImgBGSettings, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(ui_ImgBGVolt, LV_OBJ_FLAG_HIDDEN);
+	#else
+		lv_img_set_zoom(ui_ImgBGMenu,     newSize);
+		lv_img_set_zoom(ui_ImgBGPeer,     newSize);
+		lv_img_set_zoom(ui_ImgBGPeers,    newSize);
+		lv_img_set_zoom(ui_ImgBGEichen,   newSize);
+		lv_img_set_zoom(ui_ImgBGJSON,     newSize);
+		lv_img_set_zoom(ui_ImgBGMulti,    newSize);
+		lv_img_set_zoom(ui_ImgBGPeriph,   newSize);
+		lv_img_set_zoom(ui_ImgBGSettings, newSize);
+		lv_img_set_zoom(ui_ImgBGVolt,     newSize);
+	#endif
 	
 	newSize = 400*SCREEN_RES_HOR/360;
 	lv_img_set_zoom(ui_ImgRubicon,    newSize);

@@ -64,6 +64,9 @@
 
 #define JEEPIFY_SEND_MAX_TRIES 10
 
+#define MY_ANIM 	 LV_SCR_LOAD_ANIM_FADE_ON
+#define MY_ANIM_TIME 50
+
 // Module-Types
 #define SWITCH_1_WAY        1
 #define SWITCH_2_WAY        2

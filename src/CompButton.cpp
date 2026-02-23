@@ -770,7 +770,8 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     _Width  = size;
     _Height = size;
     _Size = size;	
-
+    _X_Value =  20;
+    _Y_Value =  0;
     uint16_t newSize = 256*SCREEN_RES_HOR/360+5;
     
     ui_ImgMeter2 = lv_img_create(comp_parent);
@@ -779,6 +780,7 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     lv_obj_set_width(ui_ImgMeter2, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_ImgMeter2, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_ImgMeter2, LV_ALIGN_CENTER);
+    lv_obj_set_x(ui_ImgMeter2, lv_pct(1));
     lv_obj_add_flag(ui_ImgMeter2, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_ImgMeter2, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_SCROLL_ELASTIC | LV_OBJ_FLAG_SCROLL_MOMENTUM |
                       LV_OBJ_FLAG_SCROLL_CHAIN);     /// Flags
@@ -791,11 +793,12 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     lv_obj_set_width(ui_ImgZeiger, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_ImgZeiger, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_ImgZeiger, LV_ALIGN_CENTER);
-    lv_obj_set_x(ui_ImgZeiger, -6);
-    lv_obj_set_y(ui_ImgZeiger, 14);
+    lv_obj_set_x(ui_ImgZeiger, 0);
+    lv_obj_set_y(ui_ImgZeiger, 0);
     lv_obj_add_flag(ui_ImgZeiger, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_ImgZeiger, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_img_set_pivot(ui_ImgZeiger, 7, 140); // set pivot to bottom center
+    int pivotY = 136*SCREEN_RES_HOR/360;
+    lv_img_set_pivot(ui_ImgZeiger, 5, pivotY); // set pivot to bottom center
     lv_img_set_angle(ui_ImgZeiger, 0);
 	
 	if (_Periph->GetType() == SENS_TYPE_VOLT)
@@ -817,7 +820,7 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     lv_obj_set_width(_LblPeriph, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(_LblPeriph, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(_LblPeriph, LV_ALIGN_CENTER);
-    SetPeriphPos(0, lv_pct(-20));
+    SetPeriphPos(0, lv_pct(25));
     lv_obj_set_style_text_font(_LblPeriph, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);
     ui_object_set_themeable_style_property(_LblPeriph, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxt);
     ui_object_set_themeable_style_property(_LblPeriph, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
@@ -827,7 +830,7 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     lv_obj_set_width(_LblValue, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(_LblValue, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(_LblValue, LV_ALIGN_CENTER);
-    SetValuePos(0, lv_pct(25));
+    SetValuePos(lv_pct(-10), lv_pct(-5));
     lv_obj_set_style_text_font(_LblValue, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);
     ui_object_set_themeable_style_property(_LblValue, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxt);
     ui_object_set_themeable_style_property(_LblValue, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
@@ -838,7 +841,7 @@ void CompMeter2::Update()
     
     lv_obj_set_pos(_LblPeer,   _X_Peer,   _Y_Peer);
     lv_obj_set_pos(_LblPeriph, _X_Periph, _Y_Periph);
-    lv_obj_set_pos(_LblValue,  _X_Value,  _Y_Value);
+    //lv_obj_set_pos(_LblValue,  _X_Value,  _Y_Value);
 
 	//Serial.printf("Peer:Periph %s:%s", PeerOf(_Periph)->GetName(), _Periph->GetName());
 
@@ -870,9 +873,10 @@ void CompMeter2::Update()
 
     if (_Periph->GetType() == SENS_TYPE_AMP)  value = _Periph->GetValue(3);
     if (_Periph->GetType() == SENS_TYPE_VOLT) value = _Periph->GetValue(2);
-	testv = testv+0.1;
-    if (testv > 15) testv = 0;
-    value = testv;
+	
+    //testv = testv+0.1;
+    //if (testv > 15) testv = 0;
+    //value = testv;
        
 		Serial.printf("Sensor: %s: %f\n\r", _Periph->GetName(), value);
 		if (abs(value) < SCHWELLE) value = 0;
@@ -892,7 +896,17 @@ void CompMeter2::Update()
 
 	if (_ValueVisible) 
 	{
-		lv_label_set_text(_LblValue, buf);
+		if (_Periph->GetType() == SENS_TYPE_AMP)  
+        { 
+            if (value > 20) lv_obj_set_pos(_LblValue,   lv_pct(-_X_Value), lv_pct(_Y_Value));
+            else            lv_obj_set_pos(_LblValue,   lv_pct( _X_Value), lv_pct(_Y_Value));
+        }
+		if (_Periph->GetType() == SENS_TYPE_VOLT)
+        { 
+            if (value > 7.5) lv_obj_set_pos(_LblValue,  lv_pct(-_X_Value), lv_pct(_Y_Value));
+            else             lv_obj_set_pos(_LblValue,   lv_pct(_X_Value), lv_pct(_Y_Value));
+        }
+        lv_label_set_text(_LblValue, buf);
 		lv_obj_clear_flag(_LblValue, LV_OBJ_FLAG_HIDDEN);
 	}
 	else 

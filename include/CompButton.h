@@ -193,10 +193,6 @@ class CompMeter : public CompThing {
 
 class CompMeter2 : public CompThing {
 	private:
-		lv_meter_indicator_t * _Indic;
-		lv_meter_indicator_t * _IndicNeedle;
-        lv_meter_scale_t *     _Scale;
-
         lv_obj_t *ui_ImgMeter2;
         lv_obj_t *ui_ImgZeiger;
 

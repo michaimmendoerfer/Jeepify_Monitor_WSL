@@ -334,7 +334,7 @@ void loop()
 #pragma region Send-Things
 void GarbageMessages(lv_timer_t * timer)
 {
-    //Serial.printf("free Heap: %d\n\r", ESP.getFreeHeap());
+    Serial.printf("free Heap: %d\n\r", ESP.getFreeHeap());
 
     //Serial.println("Garbage-Kollektion");
     if (ReceivedMessagesList.size() > 0)

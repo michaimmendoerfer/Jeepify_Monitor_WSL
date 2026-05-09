@@ -73,6 +73,7 @@ LV_IMG_DECLARE(ui_img_237434643);    // assets/kipp-1-off-45.png
 LV_IMG_DECLARE(ui_img_1640860301);    // assets/kipp-1-off-70.png
 LV_IMG_DECLARE(ui_img_715952573);    // assets/kipp-1-on-120.png
 LV_IMG_DECLARE(ui_img_434995191);    // assets/kipp-1-on-45.png
+LV_IMG_DECLARE(ui_img_ampmeter_360_png);    // assets/Ampmeter_360.png
 
 // UI INIT
 void ui_init(void);

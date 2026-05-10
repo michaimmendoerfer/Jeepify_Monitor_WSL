@@ -11,7 +11,7 @@ const char index_html[] PROGMEM = R"rawliteral(
             h1{ text-transform: uppercase; font-weight: 500;}
             input{ border: 0; background: none; margin: 20px auto; text-align: center; border: 2px solid #4834d4; padding: 10px 5px; width: 40%%; outline: none; border-radius: 12px; color: white; font-size: smaller; transition: 0.3s;}
             input:focus{ width: 40%%; border-color:#22a6b3 ;}
-            input[type='submit']{ border: 0;background: none; margin: 20px auto; text-align: center; border: 2px solid #22a6b3; padding: 10px 5px; width: 55%; outline: none; border-radius: 12px; color: white; transition: 0.3s; cursor: pointer;}
+            input[type='submit']{ border: 0;background: none; margin: 20px auto; text-align: center; border: 2px solid #22a6b3; padding: 10px 5px; width: 55%%; outline: none; border-radius: 12px; color: white; transition: 0.3s; cursor: pointer;}
             input[type='submit']:hover{ background-color: #22a6b3;}
         </style>
     </head>

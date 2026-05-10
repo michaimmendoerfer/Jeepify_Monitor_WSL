@@ -176,6 +176,9 @@ void Ui_Set_Reset(lv_event_t * e)
 void Ui_Set_ToggleDebug(lv_event_t * e)
 {
 	ToggleDebugMode();
+	preferences.begin("JeepifyPeers", false);
+    	preferences.putBool("DebugMode", Module.GetDebugMode());
+	preferences.end();
 }
 
 void Ui_Set_SavePeers(lv_event_t * e)
@@ -645,6 +648,12 @@ void Ui_Init_Custom(lv_event_t * e)
 	lv_obj_set_style_text_font(ui_LblPeriphChoiceOnline, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
 	
 	lv_img_set_zoom(ui_ImgPeerChoice, 256*LV_HOR_RES/240);
+
+	lv_obj_set_pos(ui_LblPeerName,         0, lv_pct(30));
+	lv_obj_set_pos(ui_LblEichenPeer,       0, lv_pct(30));
+	lv_obj_set_pos(ui_LblPeriphChoicePeer, 0, lv_pct(30));
+	
+	
 	
 	//BG-Size
 	uint16_t newSize = 256*SCREEN_RES_HOR/360;
@@ -742,7 +751,7 @@ void Ui_Eichen_Prepare(lv_event_t * e)
 {
 	if (ActivePeer) 
 	{
-		Serial.printf("Setzte neuen Peer: %s\n\r", ActivePeer->GetName());
+		Serial.printf("Setze neuen Peer: %s\n\r", ActivePeer->GetName());
 		lv_label_set_text_static(ui_LblEichenPeer, ActivePeer->GetName());
 	}
 	

@@ -2,7 +2,9 @@
 #include "main.h"
 #include "CompButton.h"
 
-// Version 3.23
+// Version 3.25
+
+extern lv_obj_t *ui_LblMenuBatt;
 
 CompThing::CompThing()
 {
@@ -33,12 +35,6 @@ CompThing::~CompThing()
 	Serial.println("CompThing::~CompThing()");
     if (_Chart)       { Serial.println("Delete _Chart"); lv_obj_del(_Chart);     _Chart      = NULL; }
     if (_Button)      { Serial.println("Delete _Button"); lv_obj_del(_Button);    _Button     = NULL; }
-    /*if (_LblPeer)     { Serial.println("Delete _LblPeer"); lv_obj_del(_LblPeer);    _LblPeer     = NULL; }
-    if (_LblPeriph)   { Serial.println("Delete _LblPeriph"); lv_obj_del(_LblPeriph);    _LblPeriph   = NULL; }
-    if (_LblPeriphId) { Serial.println("Delete _LblPeriphId"); lv_obj_del(_LblPeriphId);    _LblPeriphId = NULL; }
-    if (_LblPos)      { Serial.println("Delete _LblPos"); lv_obj_del(_LblPos);    _LblPos      = NULL; }    
-    if (_LblValue)    { Serial.println("Delete _LblValue"); lv_obj_del(_LblValue);    _LblValue    = NULL; } 
-    */
 }
 void CompThing::Update()
 { 	
@@ -120,9 +116,11 @@ CompButton::~CompButton()
     lv_obj_invalidate(_LblValue);
 	
     if (_Spinner) { lv_obj_del(_Spinner); _Spinner = NULL; }
+    #ifdef BATTERY_PORT
+		lv_obj_clear_flag(ui_LblMenuBatt, LV_OBJ_FLAG_HIDDEN);
+	#endif
     //if (_Button)     { Serial.println("~CompButton: Delete _Button"); lv_obj_del(_Button);    _Button     = NULL; }
 }
-
 void CompButton::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, PeriphClass *Periph, lv_event_cb_t event_cb)
 {
     // Size 1: klein, 2: groß, 
@@ -150,10 +148,15 @@ void CompButton::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, 
             _Height = HEIGHT_BTN2;
             _PeerVisible = true;
             _PeriphVisible = true;
-            _ValueVisible = true;
-            _PeriphValueCombo = false;
+            _ValueVisible = false;
+            _PeriphValueCombo = true;
+
+            #ifdef BATTERY_PORT
+		        lv_obj_add_flag(ui_LblMenuBatt, LV_OBJ_FLAG_HIDDEN);
+	        #endif
             break; 
     }     
+
     _Spinner = lv_spinner_create(comp_parent, 1000, 90);
     
     lv_obj_set_align(_Spinner, LV_ALIGN_CENTER);
@@ -361,6 +364,7 @@ void CompButton::Update()
         lv_obj_add_flag(_LblValue, LV_OBJ_FLAG_HIDDEN);
     }  
 }
+
 CompSensor::CompSensor()
 {
     _ClassType = 2;
@@ -479,7 +483,6 @@ void CompSensor::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, 
         
     lv_obj_add_event_cb(_Button, _event_cb, LV_EVENT_ALL, NULL);  
 }
-
 void CompSensor::Update()
 {
     lv_obj_set_pos(_Button, _x, _y);
@@ -760,7 +763,6 @@ void CompMeter::Update()
     if (_GraphVisible) ChartUpdate();
 }
 
-
 CompMeter2::CompMeter2() 
 {
     _PeerVisible = true;
@@ -826,15 +828,17 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     switch (SCREEN_RES_VER)
     {
         case 240:
-            lv_obj_set_y(ui_ImgZeiger, (85-117)*SCREEN_RES_VER/360);
-            pivotY = 117 + 20* SCREEN_RES_HOR/360;
-            lv_img_set_pivot(ui_ImgZeiger, 5, pivotY); // set pivot to bottom center
+            lv_obj_set_y(ui_ImgZeiger, -39); 
+            break;
+        case 360:
+            lv_obj_set_y(ui_ImgZeiger, lv_pct(-4));    
             break;
         default:
             lv_obj_set_y(ui_ImgZeiger, lv_pct(-4));    
-            lv_img_set_pivot(ui_ImgZeiger, 5, 150); // set pivot to bottom center
+            break;
     }   
 
+    lv_img_set_pivot(ui_ImgZeiger, 5, 150); 
     lv_obj_add_flag(ui_ImgZeiger, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_ImgZeiger, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_img_set_angle(ui_ImgZeiger, 0);
@@ -850,28 +854,31 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     lv_obj_set_align(_LblPeer, LV_ALIGN_CENTER);
     SetPeerPos(0, lv_pct(-35));
     lv_obj_set_style_text_font(_LblPeer, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
-    //ui_object_set_themeable_style_property(_LblPeer, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxt);
+    ui_object_set_themeable_style_property(_LblPeer, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxt);
     ui_object_set_themeable_style_property(_LblPeer, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxtInaktive);
-    ui_object_set_themeable_style_property(_LblPeer, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
+    //ui_object_set_themeable_style_property(_LblPeer, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
 
     _LblPeriph = lv_label_create(comp_parent);
     lv_obj_set_width(_LblPeriph, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(_LblPeriph, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(_LblPeriph, LV_ALIGN_CENTER);
-    SetPeriphPos(lv_pct(-25), lv_pct(15));
+    SetPeriphPos(0, lv_pct(7));
+    SetStyle(_LblPeriph);   
     lv_obj_set_style_text_font(_LblPeriph, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
-    ui_object_set_themeable_style_property(_LblPeriph, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxtInaktive);
-    ui_object_set_themeable_style_property(_LblPeriph, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
+    //ui_object_set_themeable_style_property(_LblPeriph, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxtInaktive);
+    //ui_object_set_themeable_style_property(_LblPeriph, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
     
 
     _LblValue = lv_label_create(comp_parent);
     lv_obj_set_width(_LblValue, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(_LblValue, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(_LblValue, LV_ALIGN_CENTER);
-    SetValuePos(0, 0);
-    lv_obj_set_style_text_font(_LblValue, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
+    SetValuePos(0, lv_pct(5));
+    lv_obj_set_style_text_font(_LblValue, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);
     ui_object_set_themeable_style_property(_LblValue, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxtInaktive);
     ui_object_set_themeable_style_property(_LblValue, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
+
+    lv_obj_move_foreground(ui_ImgZeiger);
 }
 void CompMeter2::Update() 
 {    
@@ -912,11 +919,12 @@ void CompMeter2::Update()
     if (_Periph->GetType() == SENS_TYPE_AMP)  value = _Periph->GetValue(3);
     if (_Periph->GetType() == SENS_TYPE_VOLT) value = _Periph->GetValue(2);
 	
-    int test = 9;
     int Range = 485;	
+    int Angle = 0;
+
     if (_Periph->GetType() == SENS_TYPE_AMP)  
     { 
-        if (test)
+        if (Module.GetDebugMode())
         {
             testv = testv+0.1;
             if (testv > 30) testv = 0;
@@ -924,12 +932,12 @@ void CompMeter2::Update()
         }
 
         int Tick = 2*Range/30;
-        int Angle = -Range+value*Tick;
+        Angle = -Range+value*Tick;
         lv_img_set_angle(ui_ImgZeiger, Angle);
     }
-    if (_Periph->GetType() == SENS_TYPE_VOLT)
+    else if (_Periph->GetType() == SENS_TYPE_VOLT)
     { 
-        if (test)
+        if (Module.GetDebugMode())
         {
             testv = testv+0.1;
             if (testv > 15) testv = 9;
@@ -937,7 +945,7 @@ void CompMeter2::Update()
         }
         
         int Tick = 2*Range/15;
-        int Angle = -Range+value*Tick;
+        Angle = -Range+value*Tick;
         lv_img_set_angle(ui_ImgZeiger, Angle);
     }
     
@@ -966,6 +974,16 @@ void CompMeter2::Update()
             else             lv_obj_set_pos(_LblValue,   lv_pct(_X_Value), lv_pct(_Y_Value));
         }
         lv_label_set_text(_LblValue, buf);
+        
+        if (Angle < 0)  
+        {
+            SetValuePos(lv_pct(25), lv_pct(12));
+        }
+        else            
+        {
+            SetValuePos(lv_pct(-25), lv_pct(12));
+        }   
+
 		lv_obj_clear_flag(_LblValue, LV_OBJ_FLAG_HIDDEN);
 	}
 	else 

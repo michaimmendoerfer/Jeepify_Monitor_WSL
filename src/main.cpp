@@ -660,6 +660,7 @@ bool TogglePairMode() {
 void CalibVolt() {
     JsonDocument doc; String jsondata;
 
+    DEBUG3 ("CalibVolt aufgerufen\n\r");
     char mac[13];
 
     doc[SEND_CMD_JSON_FROM]  = MacByteToChar(mac, Module.GetBroadcastAddress());

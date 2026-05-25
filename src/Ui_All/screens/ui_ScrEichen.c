@@ -4,6 +4,7 @@
 // Project name: SQ-Jeepify-Monitor-All
 
 #include "../ui.h"
+#include <Arduino.h>
 
 lv_obj_t * ui_ScrEichen = NULL;
 lv_obj_t * ui_ImgBGEichen = NULL;
@@ -22,6 +23,15 @@ void ui_event_ScrEichen(lv_event_t * e)
     }
     if(event_code == LV_EVENT_SCREEN_LOAD_START) {
         Ui_Eichen_Prepare(e);
+    }
+}
+
+void ui_event_BtnEichenStart(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        Ui_Eichen_Start(e);
     }
 }
 
@@ -91,13 +101,14 @@ void ui_ScrEichen_screen_init(void)
     lv_obj_set_width(ui_LblEichenPeer, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_LblEichenPeer, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_LblEichenPeer, lv_pct(0));
-    lv_obj_set_y(ui_LblEichenPeer, lv_pct(35));
+    lv_obj_set_y(ui_LblEichenPeer, lv_pct(30));
     lv_obj_set_align(ui_LblEichenPeer, LV_ALIGN_CENTER);
     lv_label_set_text(ui_LblEichenPeer, "Peer");
     lv_obj_set_style_text_color(ui_LblEichenPeer, lv_color_hex(0xAD0808), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_LblEichenPeer, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_add_event_cb(ui_LblBtnEichen, ui_event_LblBtnEichen, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_BtnEichenStart, ui_event_BtnEichenStart, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_ScrEichen, ui_event_ScrEichen, LV_EVENT_ALL, NULL);
 
 }

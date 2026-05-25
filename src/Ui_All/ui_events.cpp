@@ -43,6 +43,7 @@ void Ui_Multi_Clicked(lv_event_t * e);
 void Ui_Peer_Prepare()
 {
 	if (ActivePeer) {
+		DEBUG3("ActivePeer %s prepared\n\r", ActivePeer->GetName());
 		lv_label_set_text_static(ui_LblPeerName, ActivePeer->GetName());
 		/*
 		switch (ActivePeer->GetType())
@@ -256,6 +257,7 @@ void Ui_Peers_Selected(lv_event_t * e)
 	
 	if ((TempPeer) and (strcmp(SelectedName, "") != 0)) {
 		ActivePeer = TempPeer;
+		DEBUG3("ActivePeer set to %s\n\r", ActivePeer->GetName());
 		_ui_screen_change(&ui_ScrPeer, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrPeer_screen_init);
 	}
 }

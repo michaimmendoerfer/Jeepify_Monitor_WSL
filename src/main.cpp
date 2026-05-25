@@ -1,4 +1,5 @@
 //#define KILL_NVS 
+//Version 3.50
 
 #include "main.h"
 
@@ -679,7 +680,7 @@ void CalibVolt() {
 void CalibAmp() 
 {
     JsonDocument doc; String jsondata;
-
+    Serial.println ("CalibAmp aufgerufen\n\r");
     char mac[13];
 
     doc[SEND_CMD_JSON_FROM]  = MacByteToChar(mac, Module.GetBroadcastAddress());
@@ -691,7 +692,7 @@ void CalibAmp()
     serializeJson(doc, jsondata);  
     JeepifySend(broadcastAddressAll, (uint8_t *) jsondata.c_str(), 250, true);  
 
-    DEBUG3 ("%s", jsondata.c_str());
+    DEBUG1 ("%s", jsondata.c_str());
 }
 void PrintMAC(const uint8_t * mac_addr){
   char macStr[18];

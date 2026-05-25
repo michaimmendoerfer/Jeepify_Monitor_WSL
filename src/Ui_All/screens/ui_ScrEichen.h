@@ -17,6 +17,7 @@ extern void ui_event_ScrEichen(lv_event_t * e);
 extern lv_obj_t * ui_ScrEichen;
 extern lv_obj_t * ui_ImgBGEichen;
 extern lv_obj_t * ui_LblEichenText;
+extern void ui_event_BtnEichenStart(lv_event_t * e);
 extern lv_obj_t * ui_BtnEichenStart;
 extern void ui_event_LblBtnEichen(lv_event_t * e);
 extern lv_obj_t * ui_LblBtnEichen;

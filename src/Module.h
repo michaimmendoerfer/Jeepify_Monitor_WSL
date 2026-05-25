@@ -3,7 +3,7 @@
 
 #include <Jeepify.h>
 
-#define MODULE_VERSION          "4.50"  
+#define MODULE_VERSION          "4.51"  
 #define PROTOKOLL_VERSION       "3.10"
 
 #ifdef DEV_466_RED
@@ -21,8 +21,10 @@
     #define NODE_TYPE MONITOR_ROUND
     #define SCREEN_RES_HOR 360
     #define SCREEN_RES_VER 360
-    #define UI_H_DIR        "Ui_360/ui.h"
-    #define UI_EVENTS_H_DIR "Ui_360/ui_events.h" 
+    #define UI_H_DIR        "Ui_All/ui.h"
+    #define UI_EVENTS_H_DIR "Ui_All/ui_events.h" 
+    #define ESP_PANEL_LCD_WIDTH 360
+    #define ESP_PANEL_LCD_HEIGHT 360 
 #endif
 
 #ifdef DEV_360_KNOB

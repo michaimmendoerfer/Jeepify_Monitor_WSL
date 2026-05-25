@@ -924,7 +924,7 @@ void CompMeter2::Update()
 
     if (_Periph->GetType() == SENS_TYPE_AMP)  
     { 
-        if (Module.GetDebugMode())
+        if(0)//if (Module.GetDebugMode())
         {
             testv = testv+0.1;
             if (testv > 30) testv = 0;
@@ -937,7 +937,7 @@ void CompMeter2::Update()
     }
     else if (_Periph->GetType() == SENS_TYPE_VOLT)
     { 
-        if (Module.GetDebugMode())
+        if(0)//if (Module.GetDebugMode())
         {
             testv = testv+0.1;
             if (testv > 15) testv = 9;

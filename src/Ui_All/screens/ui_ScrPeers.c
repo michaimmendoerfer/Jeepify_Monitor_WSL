@@ -22,6 +22,9 @@ void ui_event_ScrPeers(lv_event_t * e)
         lv_indev_wait_release(lv_indev_get_act());
         _ui_screen_change(&ui_ScrMenu, LV_SCR_LOAD_ANIM_FADE_ON, 50, 0, &ui_ScrMenu_screen_init);
     }
+    if(event_code == LV_EVENT_SCREEN_UNLOADED) {
+        Ui_Peers_Unload(e);
+    }
 }
 
 void ui_event_BtnPeer9(lv_event_t * e)

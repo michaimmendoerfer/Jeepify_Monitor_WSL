@@ -21,9 +21,12 @@ lv_obj_t *ui_LblMenuBatt;
 
 lv_timer_t *MultiTimer;
 lv_timer_t *PeerTimer;
+lv_timer_t *PeersTimer;
 lv_timer_t *SwitchTimer;
 lv_timer_t *SettingsTimer;
 lv_timer_t *ChoiceTimer;
+
+int ActiveRollerId;
 
 #define MAX_SWITCHES 1
 
@@ -45,17 +48,7 @@ void Ui_Peer_Prepare()
 	if (ActivePeer) {
 		DEBUG3("ActivePeer %s prepared\n\r", ActivePeer->GetName());
 		lv_label_set_text_static(ui_LblPeerName, ActivePeer->GetName());
-		/*
-		switch (ActivePeer->GetType())
-		{
-			case SWITCH_1_WAY:	 lv_img_set_src(ui_ImgPeerType, &ui_img_horstrelais2_png); break;
-			case SWITCH_2_WAY:	 lv_img_set_src(ui_ImgPeerType, &ui_img_horstrelais2_png); break;
-			case SWITCH_4_WAY:	 lv_img_set_src(ui_ImgPeerType, &ui_img_ansgarmodule_4_png); break;
-			case MONITOR_ROUND:	 lv_img_set_src(ui_ImgPeerType, &ui_img_rolfmodule_round_png); break;
-			case MONITOR_BIG:	 lv_img_set_src(ui_ImgPeerType, &ui_img_friedermodule_disp_png); break;
-			case BATTERY_SENSOR: lv_img_set_src(ui_ImgPeerType, &ui_img_friedermodule_disp_png); break;
-		}	
-		*/
+		
 		if (ActivePeer->GetSleepMode()) {
 			lv_obj_add_state(ui_BtnPeer3, LV_STATE_CHECKED);
 		}
@@ -138,6 +131,11 @@ void Ui_Peer_Delete(lv_event_t * e)
 {
 	if (ActivePeer) DeletePeer(ActivePeer);
 }
+void Ui_Peer_Unload(lv_event_t * e)
+{
+	if (PeerTimer) lv_timer_del(PeerTimer);
+	PeerTimer = NULL;
+}
 
 #pragma endregion Screen_Peer
 #pragma region Screen_Settings
@@ -210,6 +208,28 @@ void Ui_Set_Leave(lv_event_t * e)
 
 #pragma endregion Screen_Settings
 #pragma region Screen_Peers
+void PeersUpdateTimer(lv_timer_t * timer)
+{
+	static int activeId;
+	if (Knob.Clicked)
+	{
+		Knob.LastClicked = Knob.Clicked;
+		Knob.Clicked     = 0;
+		
+		if (Knob.Diff < 0) 
+		{
+			ActiveRollerId--;
+			if (ActiveRollerId < 0) ActiveRollerId = PeerList.size()-1;
+			lv_roller_set_selected(ui_RollerPeers1, ActiveRollerId, LV_ANIM_ON);
+		}
+		else
+		{
+			ActiveRollerId++;
+			if (ActiveRollerId > PeerList.size()-1) ActiveRollerId = 0;
+			lv_roller_set_selected(ui_RollerPeers1, ActiveRollerId, LV_ANIM_ON);
+		}
+	}
+}
 void Ui_Peers_Prepare(lv_event_t * e)
 {
 	String Options = "";
@@ -222,7 +242,7 @@ void Ui_Peers_Prepare(lv_event_t * e)
 		if (Options != "") Options += "\n";
 		
 		if ((P->GetTSLastSeen() == 0) or (millis()- P->GetTSLastSeen() > OFFLINE_INTERVAL)) Options += "off: <";
-		else Options += "on:  <"; 
+		else Options += "on: <"; 
 			
 		Options += P->GetName();
 
@@ -238,6 +258,19 @@ void Ui_Peers_Prepare(lv_event_t * e)
 	}
 	
 	lv_roller_set_options(ui_RollerPeers1, Options.c_str(), LV_ROLLER_MODE_NORMAL);
+
+	static uint32_t user_data = 10;
+	
+	if (PeersTimer) 
+	{
+		lv_timer_resume(PeersTimer);
+	}
+	else 
+	{
+		PeersTimer = lv_timer_create(PeersUpdateTimer, 100,  &user_data);
+	}
+
+	if (!ActivePeer) ActivePeer = FindNextPeer(NULL, MODULE_ALL, CIRCULAR);
 }
 void Ui_Peers_Selected(lv_event_t * e)
 {
@@ -260,6 +293,11 @@ void Ui_Peers_Selected(lv_event_t * e)
 		DEBUG3("ActivePeer set to %s\n\r", ActivePeer->GetName());
 		_ui_screen_change(&ui_ScrPeer, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrPeer_screen_init);
 	}
+}
+void Ui_Peers_Unload(lv_event_t * e)
+{
+	if (PeersTimer) lv_timer_del(PeersTimer);
+	PeersTimer = NULL;
 }
 #pragma endregion Screen_Peers
 #pragma region Screen_JSON
@@ -642,7 +680,7 @@ void Ui_Init_Custom(lv_event_t * e)
 	lv_obj_set_style_text_font(ui_TxtVolt,               MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
 	
 	lv_obj_set_style_text_font(ui_Container3,            MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);			//Peer
-	lv_obj_set_style_text_font(ui_LblPeerName,           MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
+	lv_obj_set_style_text_font(ui_LblPeerName,           MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);			
 	
 	lv_obj_set_style_text_font(ui_LblPeriphChoicePeer,   MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			//PeriphChoice
 	lv_obj_set_style_text_font(ui_LblPeriphChoicePeriph, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
@@ -651,7 +689,7 @@ void Ui_Init_Custom(lv_event_t * e)
 	
 	lv_img_set_zoom(ui_ImgPeerChoice, 256*LV_HOR_RES/240);
 
-	lv_obj_set_pos(ui_LblPeerName,         0, lv_pct(30));
+	//lv_obj_set_pos(ui_LblPeerName,         0, lv_pct(30));
 	lv_obj_set_pos(ui_LblEichenPeer,       0, lv_pct(30));
 	lv_obj_set_pos(ui_LblPeriphChoicePeer, 0, lv_pct(30));
 	

@@ -139,6 +139,17 @@ void Ui_Peer_Unload(lv_event_t * e)
 
 #pragma endregion Screen_Peer
 #pragma region Screen_Settings
+void Ui_Set_Peers_clicked(lv_event_t * e)
+{
+	if (!HAS_ROTARY) 
+	{
+		_ui_screen_change(&ui_ScrPeers, LV_SCR_LOAD_ANIM_FADE_ON, 50, 0, &ui_ScrPeers_screen_init);
+	}
+	else
+	{
+		_ui_screen_change(&ui_ScrPeer, LV_SCR_LOAD_ANIM_FADE_ON, 50, 0, &ui_ScrPeers_screen_init);
+	}
+}
 void Ui_Set_WebSvr(lv_event_t * e)
 {
 	ToggleWebServer();
@@ -257,7 +268,7 @@ void Ui_Peers_Prepare(lv_event_t * e)
 		}
 	}
 	
-	lv_roller_set_options(ui_RollerPeers1, Options.c_str(), LV_ROLLER_MODE_NORMAL);
+	lv_roller_set_options(ui_RollerPeers1, Options.c_str(), LV_ROLLER_MODE_INFINITE);
 
 	static uint32_t user_data = 10;
 	

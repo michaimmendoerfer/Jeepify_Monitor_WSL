@@ -21,6 +21,7 @@ void Ui_Set_Restart(lv_event_t * e);
 void Ui_Set_Reset(lv_event_t * e);
 void Ui_Set_ToggleDebug(lv_event_t * e);
 void Ui_Set_SavePeers(lv_event_t * e);
+void Ui_Set_Peers_clicked(lv_event_t * e);
 void Ui_Peers_Prepare(lv_event_t * e);
 void Ui_Peers_Selected(lv_event_t * e);
 void Ui_Peers_Unload(lv_event_t * e);

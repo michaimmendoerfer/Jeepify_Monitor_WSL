@@ -828,7 +828,7 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     switch (SCREEN_RES_VER)
     {
         case 240:
-            lv_obj_set_y(ui_ImgZeiger, -39); 
+            lv_obj_set_y(ui_ImgZeiger, lv_pct(-17)); 
             break;
         case 360:
             lv_obj_set_y(ui_ImgZeiger, lv_pct(-4));    

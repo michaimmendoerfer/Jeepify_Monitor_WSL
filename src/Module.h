@@ -23,8 +23,6 @@
     #define SCREEN_RES_VER 360
     #define UI_H_DIR        "Ui_All/ui.h"
     #define UI_EVENTS_H_DIR "Ui_All/ui_events.h" 
-    #define ESP_PANEL_LCD_WIDTH 360
-    #define ESP_PANEL_LCD_HEIGHT 360 
 #endif
 
 #ifdef DEV_360_KNOB

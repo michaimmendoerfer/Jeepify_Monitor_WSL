@@ -833,6 +833,9 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
         case 360:
             lv_obj_set_y(ui_ImgZeiger, lv_pct(-4));    
             break;
+        case 466:
+            lv_obj_set_y(ui_ImgZeiger, lv_pct(2));    
+            break;
         default:
             lv_obj_set_y(ui_ImgZeiger, lv_pct(-4));    
             break;

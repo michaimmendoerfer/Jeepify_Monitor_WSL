@@ -295,13 +295,15 @@ void setup()
     esp_now_register_send_cb((esp_now_send_cb_t) OnDataSent);
     esp_now_register_recv_cb(OnDataRecv);   
     
+    char buf[50];
     //Get saved Peers  
     preferences.begin("JeepifyInit", true);
         Module.SetDebugMode(preferences.getBool("DebugMode", true));
         Module.SetSleepMode(preferences.getBool("SleepMode", false));
         Module.SetName(preferences.getString("ModuleName", NODE_NAME).c_str());
+        strcpy(buf, preferences.getString("StartScreen", "Menu").c_str());
     preferences.end();
-    
+
     GetPeers();
     RegisterPeers();
     ReportAll();
@@ -316,6 +318,62 @@ void setup()
     #endif
 
     ui_init();
+
+    DEBUG3("buf=%s\n\r", buf);
+    if (strcmp(buf, "Menu") == 0) 
+			{
+				_ui_screen_change(&ui_ScrMenu, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMenu_screen_init);
+			}
+			else if (strcmp(buf, "JSON") == 0) 
+			{
+				_ui_screen_change(&ui_ScrJSON, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrJSON_screen_init);
+			}
+			else if (strncmp(buf, "Multi: ", 7) == 0)
+			{
+				char ScreenName[50];
+				memcpy(ScreenName, buf+7, strlen(buf)-7);
+				ScreenName[strlen(buf)-7] = 0;
+				DEBUG3("MultiScreenName=%s\n\r", ScreenName);
+
+				for (int i=0; i<MULTI_SCREENS; i++) 
+				{
+					if (strcmp(ScreenName, Screen[i].GetName()) == 0)
+					{
+						ActiveMultiScreen = i;
+						_ui_screen_change(&ui_ScrMulti, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMulti_screen_init);
+						break;
+					}
+				}
+			}
+			else if (strncmp(buf, "<", 1) == 0)
+			{
+				
+			    char *Start = strchr(buf,'<'); 
+                char *End = strchr(buf,'>'); 
+                char PeerName[20];
+                char PeriphName[20];
+
+                memcpy(PeerName, Start+1, End-Start-1);
+                memcpy(PeriphName, End+2, strlen(buf)-strlen(End)-1);
+                
+                DEBUG3("PeerName=%s\n\r", PeerName);
+				DEBUG3("PeriphName=%s\n\r", PeriphName);
+
+				for (int i=0; i<PeriphList.size(); i++) 
+				{
+					PeriphClass *Periph = PeriphList.get(i);
+					
+					if (strcmp(PeriphName, Periph->GetName()) == 0)
+                        if (strcmp(PeerName, FindPeerById(Periph->GetPeerId())->GetName()) == 0)
+                        {
+                            ActivePeriphSensor = Periph;
+                            ActivePeriphShown  = ActivePeriphSensor;
+                            ActivePeer   = PeerOf(Periph);
+                            _ui_screen_change(&ui_ScrSingle, MY_ANIM, 500, 0, &ui_ScrSingle_screen_init);
+                            break;
+                        }
+				}
+			}
 }
 void loop() 
 {

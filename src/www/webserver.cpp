@@ -88,6 +88,20 @@ String processor(const String& var)
         return ReturnString;
     }
     
+    if (var == "Screens")
+    {
+        if (ActiveWebPeer == &Module)
+        for (int i=0; i<MULTI_SCREENS; i++)
+        {
+                ReturnString += "<form action='/submit' method='POST'>";
+                ReturnString += "<input type='text' name='Screen-" + String(i+1) + "' placeholder='";
+                ReturnString += Screen[i].GetName();
+                ReturnString += "'/>";
+                ReturnString += "<input type='submit' value='Update Screen-'" + String(i + 1) + "'/></form>";
+        }
+        return ReturnString;
+    }
+    
     if (var == "PeerName")    return ActiveWebPeer->GetName();
     if (var == "PeriphName")  if (ActiveWebPeriph) return ActiveWebPeriph->GetName();
     if (var == "Nullwert")    if (ActiveWebPeriph) { dtostrf(ActiveWebPeriph->GetNullwert(), 0, 3, Buf); return String(Buf); }
@@ -342,6 +356,20 @@ void InitWebServer()
                 else
                 {
                     request->redirect("/peer");
+                }
+            }
+            if (message == "Update Screen-1") 
+            {    
+                if (request->hasParam("Screen-1") and !request->getParam("Screen-1")->value().isEmpty())
+                {
+                    WebBuffer = request->getParam("Screen-1")->value();
+                    DEBUG3 ("Received from web: NewScreen-1-Name = %s\n\r", WebBuffer.c_str());  
+                    if (ActiveWebPeer == &Module)    
+                    {
+                        SaveNeeded = true;
+                        Screen[0].SetName((char*) WebBuffer.c_str());
+                        request->redirect("/peer");
+                    }
                 }
             }
             if (message == "back") 

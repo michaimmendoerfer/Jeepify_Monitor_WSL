@@ -27,6 +27,8 @@ lv_timer_t *SettingsTimer;
 lv_timer_t *ChoiceTimer;
 
 int ActiveRollerId;
+int MaxRollerItems;
+int Scr_Peers_Mode;
 
 #define MAX_SWITCHES 1
 
@@ -141,6 +143,8 @@ void Ui_Peer_Unload(lv_event_t * e)
 #pragma region Screen_Settings
 void Ui_Set_Peers_clicked(lv_event_t * e)
 {
+	Scr_Peers_Mode = 0;
+	
 	if (!HAS_ROTARY) 
 	{
 		_ui_screen_change(&ui_ScrPeers, LV_SCR_LOAD_ANIM_FADE_ON, 50, 0, &ui_ScrPeers_screen_init);
@@ -183,12 +187,10 @@ void Ui_Set_Reset(lv_event_t * e)
 	ESP.restart();
 }
 
-void Ui_Set_ToggleDebug(lv_event_t * e)
+void Ui_Set_StartScreen(lv_event_t * e) // Jetzt StartScreen
 {
-	ToggleDebugMode();
-	preferences.begin("JeepifyPeers", false);
-    	preferences.putBool("DebugMode", Module.GetDebugMode());
-	preferences.end();
+	Scr_Peers_Mode = 1;
+	_ui_screen_change(&ui_ScrPeers, LV_SCR_LOAD_ANIM_FADE_ON, 50, 0, &ui_ScrPeers_screen_init);
 }
 
 void Ui_Set_SavePeers(lv_event_t * e)
@@ -230,14 +232,14 @@ void PeersUpdateTimer(lv_timer_t * timer)
 		if (Knob.Diff < 0) 
 		{
 			ActiveRollerId--;
-			if (ActiveRollerId < 0) ActiveRollerId = PeerList.size()-1;
-			lv_roller_set_selected(ui_RollerPeers1, ActiveRollerId, LV_ANIM_ON);
+			if (ActiveRollerId < 0) ActiveRollerId = MaxRollerItems-1;
+			lv_roller_set_selected(ui_RollerPeers1, ActiveRollerId, LV_ANIM_ON);		
 		}
 		else
 		{
 			ActiveRollerId++;
-			if (ActiveRollerId > PeerList.size()-1) ActiveRollerId = 0;
-			lv_roller_set_selected(ui_RollerPeers1, ActiveRollerId, LV_ANIM_ON);
+			if (ActiveRollerId == MaxRollerItems) ActiveRollerId = 0;
+			lv_roller_set_selected(ui_RollerPeers1, ActiveRollerId, LV_ANIM_ON);	
 		}
 	}
 }
@@ -246,29 +248,55 @@ void Ui_Peers_Prepare(lv_event_t * e)
 	String Options = "";
 	PeerClass *P;
 
-    for(int i = 0; i < PeerList.size(); i++){
+	switch (Scr_Peers_Mode) 
+			{
+				case 0: // Peers
+					for(int i = 0; i < PeerList.size(); i++)
+					{
+						P = PeerList.get(i);
 
-		P = PeerList.get(i);
+						if (Options != "") Options += "\n";
+						
+						if ((P->GetTSLastSeen() == 0) or (millis()- P->GetTSLastSeen() > OFFLINE_INTERVAL)) Options += "off: <";
+						else Options += "on: <"; 
+							
+						Options += P->GetName();
 
-		if (Options != "") Options += "\n";
-		
-		if ((P->GetTSLastSeen() == 0) or (millis()- P->GetTSLastSeen() > OFFLINE_INTERVAL)) Options += "off: <";
-		else Options += "on: <"; 
-			
-		Options += P->GetName();
-
-		switch (P->GetType()) {
-			case SWITCH_1_WAY:   Options += "> PDC-1"; break;
-			case SWITCH_2_WAY:   Options += "> PDC-2"; break;
-			case SWITCH_4_WAY:   Options += "> PDC-4"; break;
-			case SWITCH_8_WAY:   Options += "> PDC-8"; break;
-			case PDC_SENSOR_MIX: Options += "> MIX";   break;
-			case BATTERY_SENSOR: Options += "> Sens";  break;
-			default:		     Options += "> ???";   break;
-		}
-	}
+						switch (P->GetType()) 
+						{
+							case SWITCH_1_WAY:   Options += "> PDC-1"; break;
+							case SWITCH_2_WAY:   Options += "> PDC-2"; break;
+							case SWITCH_4_WAY:   Options += "> PDC-4"; break;
+							case SWITCH_8_WAY:   Options += "> PDC-8"; break;
+							case PDC_SENSOR_MIX: Options += "> MIX";   break;
+							case BATTERY_SENSOR: Options += "> Sens";  break;
+							default:		     Options += "> ???";   break;
+						}
+					}
+					MaxRollerItems = PeerList.size();
+					break;
+				case 1: // StartScreen
+					Options = "Menu\nJSON\n";
+					for (int i=0; i<MULTI_SCREENS; i++) 
+					{
+						Options += "Multi: ";
+						Options += Screen[i].GetName();
+						Options += "\n";
+					}
+					for (int i=0; i<PeriphList.size(); i++) 
+					{
+						PeriphClass *Periph = PeriphList.get(i);
+						Options += "<";
+						Options +=FindPeerById(Periph->GetPeerId())->GetName();
+						Options += "> ";
+						Options += Periph->GetName();
+						Options += "\n";
+					}
+					MaxRollerItems = MULTI_SCREENS + PeriphList.size() + 2;
+					break;
+			}
 	
-	lv_roller_set_options(ui_RollerPeers1, Options.c_str(), LV_ROLLER_MODE_INFINITE);
+	lv_roller_set_options(ui_RollerPeers1, Options.c_str(), LV_ROLLER_MODE_NORMAL);
 
 	static uint32_t user_data = 10;
 	
@@ -281,7 +309,7 @@ void Ui_Peers_Prepare(lv_event_t * e)
 		PeersTimer = lv_timer_create(PeersUpdateTimer, 100,  &user_data);
 	}
 
-	if (!ActivePeer) ActivePeer = FindNextPeer(NULL, MODULE_ALL, CIRCULAR);
+	//if (!ActivePeer) ActivePeer = FindNextPeer(NULL, MODULE_ALL, CIRCULAR);
 }
 void Ui_Peers_Selected(lv_event_t * e)
 {
@@ -290,19 +318,36 @@ void Ui_Peers_Selected(lv_event_t * e)
 	
 	lv_roller_get_selected_str(ui_RollerPeers1, buf, 100);
 	
-  	char *Start = strchr(buf,'<'); 
-	char *End = strchr(buf,'>'); 
-	
-  	memcpy(SelectedName, Start+1, End-Start-1);
-	SelectedName[End-Start-1] = 0;
-	
-	PeerClass *TempPeer = FindPeerByName(SelectedName);
-	DEBUG3("Selected Peer: %s, GetPeerName()=%s", SelectedName, TempPeer->GetName());
-	
-	if ((TempPeer) and (strcmp(SelectedName, "") != 0)) {
-		ActivePeer = TempPeer;
-		DEBUG3("ActivePeer set to %s\n\r", ActivePeer->GetName());
-		_ui_screen_change(&ui_ScrPeer, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrPeer_screen_init);
+	switch (Scr_Peers_Mode) 
+	{
+		case 0: //Peers
+		{
+			char *Start = strchr(buf,'<'); 
+			char *End = strchr(buf,'>'); 
+			
+			memcpy(SelectedName, Start+1, End-Start-1);
+			SelectedName[End-Start-1] = 0;
+			
+			PeerClass *TempPeer = FindPeerByName(SelectedName);
+			DEBUG3("Selected Peer: %s, GetPeerName()=%s", SelectedName, TempPeer->GetName());
+			
+			if ((TempPeer) and (strcmp(SelectedName, "") != 0)) {
+				ActivePeer = TempPeer;
+				DEBUG3("ActivePeer set to %s\n\r", ActivePeer->GetName());
+				_ui_screen_change(&ui_ScrPeer, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrPeer_screen_init);
+			}
+			break;
+		}
+		case 1: 
+		{
+			preferences.begin("JeepifyInit", false);
+			preferences.putString("StartScreen", buf);
+    		preferences.end();
+			DEBUG3("StartScreen set to %s\n\r", buf);
+			ShowMessageBox("StartScreen set to", buf, 2000, 200);
+			_ui_screen_change(&ui_ScrMenu, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMenu_screen_init);
+			break;
+		}
 	}
 }
 void Ui_Peers_Unload(lv_event_t * e)

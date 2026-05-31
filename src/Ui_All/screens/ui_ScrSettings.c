@@ -100,7 +100,7 @@ void ui_event_BtnSet7(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        Ui_Set_ToggleDebug(e);
+        Ui_Set_StartScreen(e);
     }
 }
 
@@ -310,7 +310,7 @@ void ui_ScrSettings_screen_init(void)
     lv_obj_set_width(ui_BtnSet7Lbl, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_BtnSet7Lbl, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_BtnSet7Lbl, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_BtnSet7Lbl, "Debug");
+    lv_label_set_text(ui_BtnSet7Lbl, "StartScr");
     lv_obj_set_style_text_color(ui_BtnSet7Lbl, lv_color_hex(0xDDDDDD), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_BtnSet7Lbl, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 

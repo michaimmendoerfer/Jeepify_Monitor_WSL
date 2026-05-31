@@ -11,6 +11,7 @@
 #define DEBUG3(...) if ((Module.GetDebugMode()) and (DEBUG_LEVEL > 2)) Serial.printf(__VA_ARGS__)
 
 extern bool WebServerActive;
+extern MultiMonitorClass Screen[MULTI_SCREENS];
 
 void InitWebServer();
 void ToggleWebServer();

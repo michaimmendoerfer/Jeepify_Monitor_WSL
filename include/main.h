@@ -17,6 +17,8 @@
 #include <Preferences.h>
 #include "webserver.h"
 #include "MyFonts.h"
+#include "CustomScreens.h"
+
 
 #define DEBUG_LEVEL 3
 
@@ -97,6 +99,8 @@ extern lv_obj_t *Ui_LedPair;
 extern PeerClass Module;
 
 extern int ActiveMultiScreen;
+extern PeriphClass *ActivePeriphShown;
+extern PeriphClass *ActivePeriphSensor;
 extern const char *_Version;
 extern bool WebServerActive;
 extern Preferences preferences;

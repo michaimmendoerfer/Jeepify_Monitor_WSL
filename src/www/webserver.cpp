@@ -97,7 +97,7 @@ String processor(const String& var)
                 ReturnString += "<input type='text' name='Screen-" + String(i+1) + "' placeholder='";
                 ReturnString += Screen[i].GetName();
                 ReturnString += "'/>";
-                ReturnString += "<input type='submit' value='Update Screen-'" + String(i + 1) + "'/></form>";
+                ReturnString += "<input type='submit' value='Update Screen-" + String(i + 1) + "'/></form>";
         }
         return ReturnString;
     }

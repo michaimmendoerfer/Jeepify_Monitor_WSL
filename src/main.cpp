@@ -1,12 +1,11 @@
 //#define KILL_NVS 
-//Version 3.50
-
+//Version 4.52
 #include "main.h"
 
+#pragma region Board-specifics
 #ifdef DEV_240_KLEIN
     #include "Dev_240_klein_scr_tft.h"
 #endif
-
 #ifdef DEV_360_SILVER
     #include "Dev_360_silver_scr_tft.h"
 #endif
@@ -16,7 +15,7 @@
 #ifdef DEV_466_RED
     #include "Dev_466_red_scr_tft.h" 
 #endif
-
+#pragma endregion Board-specifics
 #pragma region Globals
 
 const char *ArrNullwert[MAX_PERIPHERALS] = {"NW0",  "NW1",  "NW2",  "NW3",  "NW4",  "NW5",  "NW6",  "NW7",  "NW8" };

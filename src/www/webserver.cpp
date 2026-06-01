@@ -17,7 +17,8 @@ const char* MESSAGE_PERIPH = "periph";
 
 PeerClass   *ActiveWebPeer = NULL;
 PeriphClass *ActiveWebPeriph = NULL;
-bool SaveNeeded = false;
+bool SaveModuleNeeded = false;
+bool SavePeersNeeded = false;
 
 String processor(const String& var)
 {
@@ -93,11 +94,11 @@ String processor(const String& var)
         if (ActiveWebPeer == &Module)
         for (int i=0; i<MULTI_SCREENS; i++)
         {
-                ReturnString += "<form action='/submit' method='POST'>";
+                ReturnString += "<form id='peer' action='/get'>";
                 ReturnString += "<input type='text' name='Screen-" + String(i+1) + "' placeholder='";
                 ReturnString += Screen[i].GetName();
                 ReturnString += "'/>";
-                ReturnString += "<input type='submit' value='Update Screen-" + String(i + 1) + "'/></form>";
+                ReturnString += "<input name='peer' type='submit' value='Update'></form>";
         }
         return ReturnString;
     }
@@ -305,6 +306,9 @@ void InitWebServer()
     server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
         String message = "dumm";
         String WebBuffer;
+        SaveModuleNeeded = false;
+        SavePeersNeeded = false;
+
         Serial.println("in get");
         
         if      (request->hasParam(MESSAGE_ROOT)   and !request->getParam(MESSAGE_ROOT)->value().isEmpty())
@@ -347,30 +351,31 @@ void InitWebServer()
                     
                     if (ActiveWebPeer) 
                     {
-                        SaveNeeded = true;
                         ActiveWebPeer->SetName(WebBuffer.c_str());
-                        if (ActiveWebPeer != &Module) SendWebPeerNameChange();
-                        request->redirect("/peer");
+                        if (ActiveWebPeer != &Module) 
+                        {
+                            SendWebPeerNameChange();
+                        }
+                        else
+                        {
+                            SaveModuleNeeded = true;
+                        }
                     }
                 }
-                else
+                for (int i=0; i<MULTI_SCREENS; i++)
                 {
-                    request->redirect("/peer");
-                }
-            }
-            if (message == "Update Screen-1") 
-            {    
-                if (request->hasParam("Screen-1") and !request->getParam("Screen-1")->value().isEmpty())
-                {
-                    WebBuffer = request->getParam("Screen-1")->value();
-                    DEBUG3 ("Received from web: NewScreen-1-Name = %s\n\r", WebBuffer.c_str());  
-                    if (ActiveWebPeer == &Module)    
+                    if (request->hasParam("Screen-" + String(i+1)) and !request->getParam("Screen-" + String(i+1))->value().isEmpty())
                     {
-                        SaveNeeded = true;
-                        Screen[0].SetName((char*) WebBuffer.c_str());
-                        request->redirect("/peer");
+                        WebBuffer = request->getParam("Screen-" + String(i+1))->value();
+                        DEBUG3 ("Received from web: NewScreen-%d-Name = %s\n\r", i+1, WebBuffer.c_str());  
+                        if (ActiveWebPeer == &Module)    
+                        {
+                            SavePeersNeeded = true;
+                            Screen[i].SetName((char*) WebBuffer.c_str());
+                        }
                     }
                 }
+                request->redirect("/peer");
             }
             if (message == "back") 
             {   
@@ -392,7 +397,7 @@ void InitWebServer()
                     DEBUG3 ("Received from web: NewPeriphName = %s\n\r", WebBuffer.c_str());  
                     if (ActiveWebPeriph) 
                     {
-                        SaveNeeded = true;
+                        SavePeersNeeded = true;
                         ActiveWebPeriph->SetName(WebBuffer.c_str());
                         if (ActiveWebPeer != &Module) SendWebPeriphNameChange();
                         request->redirect("/peer");
@@ -407,7 +412,7 @@ void InitWebServer()
                     DEBUG3 ("Received from web: NewNullwert = %s\n\r", WebBuffer.c_str());  
                     if (ActiveWebPeriph) 
                     {
-                        SaveNeeded = true;
+                        SavePeersNeeded = true;
                         ActiveWebPeriph->SetNullwert(atof(WebBuffer.c_str()));
                         SendWebNullwertChange();
                         request->redirect("/periph");
@@ -422,7 +427,7 @@ void InitWebServer()
                     DEBUG3 ("Received from web: NewVperAmp = %s\n\r", WebBuffer.c_str());  
                     if (ActiveWebPeriph) 
                     {
-                        SaveNeeded = true;
+                        SavePeersNeeded = true;
                         ActiveWebPeriph->SetVperAmp(atof(WebBuffer.c_str()));
                         if (ActiveWebPeer != &Module) SendWebVperAmpChange();
                         request->redirect("/periph");
@@ -438,18 +443,19 @@ void InitWebServer()
             request->redirect("/");
         }
         
-        if (SaveNeeded)
-        {   
-            if (ActiveWebPeer != &Module) SavePeers();
-            else 
-            {
-                preferences.begin("JeepifyInit", false);
-                preferences.putString("ModuleName", Module.GetName());
-                preferences.end();
-                DEBUG2 ("Neuer Module Name:%s gespeichert\n\r", Module.GetName());
-            }
-            SaveNeeded = false;
+        if (SavePeersNeeded) 
+            SavePeers();
+
+        if (SaveModuleNeeded)
+        {
+            preferences.begin("JeepifyInit", false);
+            preferences.putString("ModuleName", Module.GetName());
+            preferences.end();
+            DEBUG2 ("Neuer Module Name:%s gespeichert\n\r", Module.GetName());
         }
+        SavePeersNeeded = false;
+        SaveModuleNeeded = false;
+        
     });
     
   server.onNotFound(notFound);

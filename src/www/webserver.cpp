@@ -53,7 +53,7 @@ String processor(const String& var)
         {
             if (!ActiveWebPeer->isPeriphEmpty(Si))
             {
-                ReturnString += "<tr><td><input name='peer' type='submit' value='";
+                ReturnString += "<input style='width: 60%%;' name='peer' type='submit' value='";
                 ReturnString += ActiveWebPeer->GetPeriphName(Si);
                 ReturnString += ": ";
                 if (ActiveWebPeer->isPeriphSwitch(Si)) 
@@ -83,7 +83,7 @@ String processor(const String& var)
                     ReturnString += " V";
                 }
 
-                ReturnString += "'/</td></tr>";
+                ReturnString += "'/>";
             }
         }
         return ReturnString;
@@ -94,11 +94,9 @@ String processor(const String& var)
         if (ActiveWebPeer == &Module)
         for (int i=0; i<MULTI_SCREENS; i++)
         {
-                ReturnString += "<form id='peer' action='/get'>";
                 ReturnString += "<input type='text' name='Screen-" + String(i+1) + "' placeholder='";
                 ReturnString += Screen[i].GetName();
                 ReturnString += "'/>";
-                ReturnString += "<input name='peer' type='submit' value='Update'></form>";
         }
         return ReturnString;
     }
@@ -389,23 +387,21 @@ void InitWebServer()
         else if (request->hasParam(MESSAGE_PERIPH) and !request->getParam(MESSAGE_PERIPH)->value().isEmpty()) 
         {
             message = request->getParam(MESSAGE_PERIPH)->value();
-            if (message == "Update Name") 
-            {    
+            if (message == "Update")
+            {
                 if (request->hasParam("PeriphName") and !request->getParam("PeriphName")->value().isEmpty())
                 {
                     WebBuffer = request->getParam("PeriphName")->value();
                     DEBUG3 ("Received from web: NewPeriphName = %s\n\r", WebBuffer.c_str());  
+                    
                     if (ActiveWebPeriph) 
                     {
                         SavePeersNeeded = true;
                         ActiveWebPeriph->SetName(WebBuffer.c_str());
                         if (ActiveWebPeer != &Module) SendWebPeriphNameChange();
-                        request->redirect("/peer");
+
                     }
                 }
-            }
-            if (message == "Update Null") 
-            {
                 if (request->hasParam("Nullwert") and !request->getParam("Nullwert")->value().isEmpty())
                 {
                     WebBuffer = request->getParam("Nullwert")->value();
@@ -415,12 +411,8 @@ void InitWebServer()
                         SavePeersNeeded = true;
                         ActiveWebPeriph->SetNullwert(atof(WebBuffer.c_str()));
                         SendWebNullwertChange();
-                        request->redirect("/periph");
                     }
                 }
-            }
-            if (message == "Update VpA") 
-            {   
                 if (request->hasParam("VperAmp")  and !request->getParam("VperAmp")->value().isEmpty())
                 {
                     WebBuffer = request->getParam("VperAmp")->value();
@@ -430,16 +422,22 @@ void InitWebServer()
                         SavePeersNeeded = true;
                         ActiveWebPeriph->SetVperAmp(atof(WebBuffer.c_str()));
                         if (ActiveWebPeer != &Module) SendWebVperAmpChange();
-                        request->redirect("/periph");
                     }
                 }
-            }   
+                request->redirect("/peer");
+            }
+            
             if (message == "back") 
             {   
-                request->redirect("/peer");
+                request->redirect("/");
+            } 
+            if (message == "status") 
+            {   
+                request->redirect("/status");
             } 
         }
-        else {
+        else 
+        {
             request->redirect("/");
         }
         

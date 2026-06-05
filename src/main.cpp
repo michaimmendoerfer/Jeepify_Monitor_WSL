@@ -361,7 +361,7 @@ void setup()
 				for (int i=0; i<PeriphList.size(); i++) 
 				{
 					PeriphClass *Periph = PeriphList.get(i);
-					
+					if (Periph)
 					if (strcmp(PeriphName, Periph->GetName()) == 0)
                         if (strcmp(PeerName, FindPeerById(Periph->GetPeerId())->GetName()) == 0)
                         {
@@ -394,7 +394,6 @@ void GarbageMessages(lv_timer_t * timer)
 {
     Serial.printf("free Heap: %d\n\r", ESP.getFreeHeap());
 
-    //Serial.println("Garbage-Kollektion");
     if (ReceivedMessagesList.size() > 0)
     {  
         for (int i=ReceivedMessagesList.size()-1; i>=0; i--)

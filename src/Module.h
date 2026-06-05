@@ -19,6 +19,7 @@
 #ifdef DEV_360_SILVER
     #define NODE_NAME "360_Slv"
     #define NODE_TYPE MONITOR_ROUND
+    #define HAS_ROTARY     0
     #define SCREEN_RES_HOR 360
     #define SCREEN_RES_VER 360
     #define UI_H_DIR        "Ui_All/ui.h"

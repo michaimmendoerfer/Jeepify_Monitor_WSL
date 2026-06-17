@@ -13,6 +13,7 @@ extern "C" {
 // SCREEN: ui_ScrMenu
 extern void ui_ScrMenu_screen_init(void);
 extern void ui_ScrMenu_screen_destroy(void);
+extern void ui_event_ScrMenu(lv_event_t * e);
 extern lv_obj_t * ui_ScrMenu;
 extern lv_obj_t * ui_ImgBGMenu;
 extern lv_obj_t * ui_ImgRubicon;

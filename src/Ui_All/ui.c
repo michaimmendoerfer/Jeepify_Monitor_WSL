@@ -53,7 +53,7 @@ void ui_init(void)
     ui_ScrVolt_screen_init();
     ui_ScrPeriph_screen_init();
     ui_ScrMulti_screen_init();
-    ui_ScrSystem_screen_init();
+    ui_ScrMultiGauge_screen_init();
     ui____initial_actions0 = lv_obj_create(NULL);
     lv_obj_add_event_cb(ui____initial_actions0, ui_event____initial_actions0, LV_EVENT_ALL, NULL);
 
@@ -72,5 +72,5 @@ void ui_destroy(void)
     ui_ScrVolt_screen_destroy();
     ui_ScrPeriph_screen_destroy();
     ui_ScrMulti_screen_destroy();
-    ui_ScrSystem_screen_destroy();
+    ui_ScrMultiGauge_screen_destroy();
 }

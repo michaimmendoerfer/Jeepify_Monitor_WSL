@@ -40,7 +40,7 @@ extern "C" {
 #include "screens/ui_ScrVolt.h"
 #include "screens/ui_ScrPeriph.h"
 #include "screens/ui_ScrMulti.h"
-#include "screens/ui_ScrSystem.h"
+#include "screens/ui_ScrMultiGauge.h"
 
 ///////////////////// VARIABLES ////////////////////
 
@@ -57,14 +57,11 @@ LV_IMG_DECLARE(ui_img_menubtn1_png);    // assets/MenuBtn1.png
 LV_IMG_DECLARE(ui_img_menubtn2_png);    // assets/MenuBtn2.png
 LV_IMG_DECLARE(ui_img_menubtn3_png);    // assets/MenuBtn3.png
 LV_IMG_DECLARE(ui_img_menubtn4_png);    // assets/MenuBtn4.png
-LV_IMG_DECLARE(ui_img_ansgarmodule_4_png);    // assets/AnsgarModule_4.png
-LV_IMG_DECLARE(ui_img_friedermodule_disp_png);    // assets/FriederModule_Disp.png
-LV_IMG_DECLARE(ui_img_horstrelais2_png);    // assets/HorstRelais2.png
-LV_IMG_DECLARE(ui_img_1769637049);    // assets/PeterRelais-1.png
-LV_IMG_DECLARE(ui_img_rolfmodule_round_png);    // assets/RolfModule_round.png
 LV_IMG_DECLARE(ui_img_888658411);    // assets/kipp-1-on-70.png
-LV_IMG_DECLARE(ui_img_voltmeter_360_png);    // assets/Voltmeter_360.png
-LV_IMG_DECLARE(ui_img_zeiger_png);    // assets/zeiger.png
+LV_IMG_DECLARE(ui_img_icon_fridge_50_png);    // assets/icon_fridge_50.png
+LV_IMG_DECLARE(ui_img_icon_solar_50_png);    // assets/icon_solar_50.png
+LV_IMG_DECLARE(ui_img_icon_piston_50_png);    // assets/icon_piston_50.png
+LV_IMG_DECLARE(ui_img_ampmeter_360_png);    // assets/Ampmeter_360.png
 LV_IMG_DECLARE(ui_img_1528892059);    // assets/kipp-1-neutral-120.png
 LV_IMG_DECLARE(ui_img_1471590615);    // assets/kipp-1-neutral-45.png
 LV_IMG_DECLARE(ui_img_743505413);    // assets/kipp-1-neutral-70.png
@@ -73,7 +70,8 @@ LV_IMG_DECLARE(ui_img_237434643);    // assets/kipp-1-off-45.png
 LV_IMG_DECLARE(ui_img_1640860301);    // assets/kipp-1-off-70.png
 LV_IMG_DECLARE(ui_img_715952573);    // assets/kipp-1-on-120.png
 LV_IMG_DECLARE(ui_img_434995191);    // assets/kipp-1-on-45.png
-LV_IMG_DECLARE(ui_img_ampmeter_360_png);    // assets/Ampmeter_360.png
+LV_IMG_DECLARE(ui_img_voltmeter_360_png);    // assets/Voltmeter_360.png
+LV_IMG_DECLARE(ui_img_zeiger_png);    // assets/zeiger.png
 
 // UI INIT
 void ui_init(void);

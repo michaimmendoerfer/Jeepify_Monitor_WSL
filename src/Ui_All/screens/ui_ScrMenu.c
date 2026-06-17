@@ -15,6 +15,16 @@ lv_obj_t * ui_BtnMenu2 = NULL;
 lv_obj_t * ui_BtnMenu3 = NULL;
 lv_obj_t * ui_BtnMenu4 = NULL;
 // event funtions
+void ui_event_ScrMenu(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP) {
+        lv_indev_wait_release(lv_indev_get_act());
+        _ui_screen_change(&ui_ScrMultiGauge, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_ScrMultiGauge_screen_init);
+    }
+}
+
 void ui_event_BtnMenu1(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
@@ -193,6 +203,7 @@ void ui_ScrMenu_screen_init(void)
     lv_obj_add_event_cb(ui_BtnMenu2, ui_event_BtnMenu2, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_BtnMenu3, ui_event_BtnMenu3, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_BtnMenu4, ui_event_BtnMenu4, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_ScrMenu, ui_event_ScrMenu, LV_EVENT_ALL, NULL);
 
 }
 

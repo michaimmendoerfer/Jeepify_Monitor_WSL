@@ -1,4 +1,4 @@
-// Ui_All 3.31
+// Ui_All 3.32
 
 #include <Arduino.h>
 #include "main.h"
@@ -25,6 +25,7 @@ lv_timer_t *PeersTimer;
 lv_timer_t *SwitchTimer;
 lv_timer_t *SettingsTimer;
 lv_timer_t *ChoiceTimer;
+lv_timer_t *MultiGaugeTimer;
 
 int ActiveRollerId;
 int MaxRollerItems;
@@ -869,6 +870,126 @@ void Ui_Volt_Start(lv_event_t * e)
 	_ui_screen_change(&ui_ScrMenu, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMenu_screen_init);
 }
 #pragma endregion System_Eichen
+#pragma region Screen_MultiGauge
+void MultiGaugeUpdateTimer(lv_timer_t * timer)
+{
+	char buf[20];
+	int nk = 0;
+	float value = 0;
+    float GesamtVerbrauch = 0;
+
+	PeerClass*_Peer;
+	
+	_Peer = ActivePeer;
+	if (!_Peer)
+	{
+		lv_label_set_text(ui_LblMGArcLoad, "-- A");
+		lv_label_set_text(ui_LbLMGArcSolar, "-- A");
+		lv_label_set_text(ui_LblMGArcVerbrauch, "-- A");
+		lv_label_set_text(ui_LblMGVolt, "-- V");
+		lv_label_set_text(ui_LblMGAmp, "-- A");
+		
+		lv_arc_set_value(ui_ArcAlternator, 0);
+		lv_arc_set_value(ui_ArcSolar, 0);
+		lv_arc_set_value(ui_ArcVerbrauch, 0);
+		
+		return;
+	}
+	value = _Peer->GetPeriphValue(0,3); //Load
+	GesamtVerbrauch += value;
+
+	if      (value<10)  nk = 2;
+	else if (value<100) nk = 1;
+	else                nk = 0;
+
+	if (value == -99) strcpy(buf, "--"); 
+	else dtostrf(value, 0, nk, buf);
+
+	strcat(buf, " A");
+	lv_label_set_text(ui_LblMGArcLoad, buf);
+	lv_arc_set_value(ui_ArcAlternator, value);
+	
+
+	value = _Peer->GetPeriphValue(1,3); //Solar
+	GesamtVerbrauch += value;
+	
+	if      (value<10)  nk = 2;
+	else if (value<100) nk = 1;
+	else                nk = 0;
+
+	if (value == -99) strcpy(buf, "--"); 
+	else dtostrf(value, 0, nk, buf);
+
+	strcat(buf, " A");
+	lv_label_set_text(ui_LbLMGArcSolar, buf);
+	lv_arc_set_value(ui_ArcSolar, value);
+	
+
+	value = _Peer->GetPeriphValue(2,3); //Fridge
+	GesamtVerbrauch -= value;
+	
+	if      (value<10)  nk = 2;
+	else if (value<100) nk = 1;
+	else                nk = 0;
+
+	if (value == -99) strcpy(buf, "--"); 
+	else dtostrf(value, 0, nk, buf);
+
+	strcat(buf, " A");
+	lv_label_set_text(ui_LblMGArcVerbrauch, buf);
+	lv_arc_set_value(ui_ArcVerbrauch, value);
+
+
+	value = _Peer->GetPeriphValue(3,2); //VMon
+	
+	if      (value<10)  nk = 2;
+	else if (value<100) nk = 1;
+	else                nk = 0;
+
+	if (value == -99) strcpy(buf, "--"); 
+	else dtostrf(value, 0, nk, buf);
+
+	strcat(buf, " V");
+			lv_label_set_text(ui_LblMGVolt, buf);
+
+		value = GesamtVerbrauch;
+			
+		if      (value<10)  nk = 2;
+		else if (value<100) nk = 1;
+		else                nk = 0;
+
+		if (value == -99) strcpy(buf, "--"); 
+		else dtostrf(value, 0, nk, buf);
+
+		strcat(buf, " A");
+		lv_label_set_text(ui_LblMGAmp, buf);
+}
+void Ui_MultiGauge_Prepare(lv_event_t * e)
+{
+	static uint32_t user_data = 10;
+
+	ActivePeer = NULL;
+	
+	ActivePeer = FindPeerByName("JL_BAT");
+	if (!ActivePeer) _ui_screen_change(&ui_ScrMenu, MY_ANIM, 500, 0, &ui_ScrMenu_screen_init);
+	else
+	{
+		if (MultiGaugeTimer) 
+		{
+			lv_timer_resume(MultiGaugeTimer);
+		}
+		else 
+		{
+			MultiGaugeTimer = lv_timer_create(MultiGaugeUpdateTimer, 1000,  &user_data);
+		}
+	}
+}
+void Ui_MultiGauge_Unload(lv_event_t * e)
+{
+	if (MultiGaugeTimer) lv_timer_del(MultiGaugeTimer);
+	MultiGaugeTimer = NULL;
+}
+#pragma endregion Screen_MultiGauge
 #pragma region Menu
 void Ui_Menu_Loaded(lv_event_t * e)
 {

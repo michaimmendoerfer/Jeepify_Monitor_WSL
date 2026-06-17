@@ -52,6 +52,8 @@ void Ui_Multi_Set_Panel1(lv_event_t * e);
 void Ui_Multi_Set_Panel2(lv_event_t * e);
 void Ui_Multi_Set_Panel3(lv_event_t * e);
 void Ui_Multi_Set_Panel4(lv_event_t * e);
+void Ui_MultiGauge_Prepare(lv_event_t * e);
+void Ui_MultiGauge_Unload(lv_event_t * e);
 
 #ifdef __cplusplus
 } /*extern "C"*/

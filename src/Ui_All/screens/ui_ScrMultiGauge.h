@@ -15,6 +15,21 @@ extern void ui_ScrMultiGauge_screen_init(void);
 extern void ui_ScrMultiGauge_screen_destroy(void);
 extern void ui_event_ScrMultiGauge(lv_event_t * e);
 extern lv_obj_t * ui_ScrMultiGauge;
+extern lv_obj_t * ui_ImgBGMulti2;
+extern lv_obj_t * ui_LblName;
+extern lv_obj_t * ui_Container6;
+extern void ui_event_ButtonMG1(lv_event_t * e);
+extern lv_obj_t * ui_ButtonMG1;
+extern lv_obj_t * ui_LblMG1;
+extern void ui_event_ButtonMG2(lv_event_t * e);
+extern lv_obj_t * ui_ButtonMG2;
+extern lv_obj_t * ui_LblMG2;
+extern void ui_event_ButtonMG3(lv_event_t * e);
+extern lv_obj_t * ui_ButtonMG3;
+extern lv_obj_t * ui_LblMG3;
+extern void ui_event_ButtonMG4(lv_event_t * e);
+extern lv_obj_t * ui_ButtonMG4;
+extern lv_obj_t * ui_LblMG4;
 extern lv_obj_t * ui_ConMutiGauge;
 extern lv_obj_t * ui_ArcAlternator;
 extern lv_obj_t * ui_ArcSolar;
@@ -28,7 +43,6 @@ extern lv_obj_t * ui_LblMGArcVerbrauch;
 extern lv_obj_t * ui_ImgVerbrauch;
 extern lv_obj_t * ui_ImgSolar;
 extern lv_obj_t * ui_ImgLoad;
-extern lv_obj_t * ui_LblName;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

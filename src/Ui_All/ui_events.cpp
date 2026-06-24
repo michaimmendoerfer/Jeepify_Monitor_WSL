@@ -989,6 +989,22 @@ void Ui_MultiGauge_Unload(lv_event_t * e)
 	if (MultiGaugeTimer) lv_timer_del(MultiGaugeTimer);
 	MultiGaugeTimer = NULL;
 }
+void Ui_MultiGauge_Set_Panel1(lv_event_t * e)
+{
+	// Your code here
+}
+void Ui_MultiGauge_Set_Panel2(lv_event_t * e)
+{
+	// Your code here
+}
+void Ui_MultiGauge_Set_Panel3(lv_event_t * e)
+{
+	// Your code here
+}
+void Ui_MultiGauge_Set_Panel4(lv_event_t * e)
+{
+	// Your code here
+}
 #pragma endregion Screen_MultiGauge
 #pragma region Menu
 void Ui_Menu_Loaded(lv_event_t * e)

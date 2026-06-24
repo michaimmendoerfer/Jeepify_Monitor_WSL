@@ -4,6 +4,7 @@
 // Project name: SQ-Jeepify-Monitor-All
 
 #include "../ui.h"
+#include "Jeepify.h"
 
 lv_obj_t * ui_ScrMenu = NULL;
 lv_obj_t * ui_ImgBGMenu = NULL;

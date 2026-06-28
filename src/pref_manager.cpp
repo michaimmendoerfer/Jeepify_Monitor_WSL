@@ -16,6 +16,7 @@ extern Preferences preferences;
 void   PrintMAC(const uint8_t * mac_addr);
 
 MultiMonitorClass Screen[MULTI_SCREENS];
+MultiMonitorClass MultiGaugeScreen;
 
 char ScreenExportImportBuffer[300];
 
@@ -166,12 +167,24 @@ int  GetPeers()
             Serial.printf("%s - %d Bytes gelesen: %s\n\r", Buf, sizeof(ImportStringMulti), ImportStringMulti.c_str());
             strcpy(ScreenExportImportBuffer, ImportStringMulti.c_str());
             
-            //ReportAll();
-            
             Serial.println("jetzt kommt import");
             Screen[s].Import(ScreenExportImportBuffer);
         }
     }
+
+    Serial.println("importing MultiGaugeScreen:\n\r");
+    snprintf(Buf, sizeof(Buf), "MultiGaugeScreen");
+
+    ImportStringMulti = preferences.getString(Buf, "");
+    if (ImportStringMulti != "") 
+    {   
+        Serial.printf("%s - %d Bytes gelesen: %s\n\r", Buf, sizeof(ImportStringMulti), ImportStringMulti.c_str());
+        strcpy(ScreenExportImportBuffer, ImportStringMulti.c_str());
+        
+        Serial.println("jetzt kommt import");
+        MultiGaugeScreen.Import(ScreenExportImportBuffer);
+    }
+
     ReportAll();
     preferences.end();
 
@@ -192,6 +205,8 @@ void ClearPeers()
         snprintf(Buf, sizeof(Buf), "Screen-%d", s);
         preferences.remove(Buf);
     }
+    snprintf(Buf, sizeof(Buf), "MultiGaugeScreen");
+    preferences.remove(Buf);
 
     preferences.clear();
     Serial.println("JeepifyPeers cleared...");
@@ -224,7 +239,18 @@ void DeletePeer(PeerClass *P)
           }
       }
     }
-
+    
+    for (int Si=0; Si<PERIPH_PER_SCREEN; Si++)
+      {
+          if (MultiGaugeScreen.GetPeerId(Si) == P->GetId())
+          {
+              MultiGaugeScreen.SetPeerId(Si, -1);
+              MultiGaugeScreen.SetPeer(Si, NULL);
+              MultiGaugeScreen.SetPeriphId(Si, -1);
+              MultiGaugeScreen.SetPeer(Si, NULL);
+              MultiGaugeScreen.SetChanged(true);
+          }
+      }
     int PSize = PeriphList.size();
     for (int Si=PSize-1; Si>=0; Si--)
     {
@@ -333,5 +359,13 @@ void ReportAll()
               }
           }
       }
+
+      for (int Si=0; Si<PERIPH_PER_SCREEN; Si++)
+          {
+              if (MultiGaugeScreen.GetPeriphId(Si) > -1)
+              {
+                Serial.printf("    %d: %s(%d) at position %d\n\r", MultiGaugeScreen.GetPeriphId(Si), MultiGaugeScreen.GetPeriph(Si)->GetName(), MultiGaugeScreen.GetPeriph(Si)->GetType(), Si);
+              }
+          }
     }
 }

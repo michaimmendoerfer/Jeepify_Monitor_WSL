@@ -9,6 +9,7 @@
 
 #pragma region Global_Definitions
 uint8_t MultiPosToChange;
+MultiMonitorClass *ActiveScreen;
 
 PeriphClass *ActivePeriphSensor;
 PeriphClass *ActivePeriphSwitch;
@@ -504,7 +505,20 @@ void Ui_Multi_Clicked(lv_event_t * e)
     }	
 	else if (event_code == LV_EVENT_LONG_PRESSED) {
         MultiPosToChange = atoi(lv_label_get_text(lv_obj_get_child(target, 4)));
-		_ui_screen_change(&ui_ScrPeriph, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_ScrPeriph_screen_init);
+		switch (MultiPosToChange) {
+			case 0:
+				Ui_Multi_Set_Panel1(e);
+				break;
+			case 1:
+				Ui_Multi_Set_Panel2(e);
+				break;
+			case 2:
+				Ui_Multi_Set_Panel3(e);
+				break;
+			case 3:
+				Ui_Multi_Set_Panel4(e);
+				break;
+		}
     }
 }
 void Ui_Multi_Set_Panel1(lv_event_t * e)
@@ -513,6 +527,7 @@ void Ui_Multi_Set_Panel1(lv_event_t * e)
 	{
 		MultiPosToChange = 0;
 		Ui_Multi_Unload(e);
+		ActiveScreen = &Screen[ActiveMultiScreen];
 		_ui_screen_change(&ui_ScrPeriph, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_ScrPeriph_screen_init);
 	}
 }
@@ -522,6 +537,7 @@ void Ui_Multi_Set_Panel2(lv_event_t * e)
 	{
 		MultiPosToChange = 1;
 		Ui_Multi_Unload(e);
+		ActiveScreen = &Screen[ActiveMultiScreen];
 		_ui_screen_change(&ui_ScrPeriph, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_ScrPeriph_screen_init);
 	}
 }
@@ -531,6 +547,7 @@ void Ui_Multi_Set_Panel3(lv_event_t * e)
 	{
 		MultiPosToChange = 2;
 		Ui_Multi_Unload(e);
+		ActiveScreen = &Screen[ActiveMultiScreen];
 		_ui_screen_change(&ui_ScrPeriph, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_ScrPeriph_screen_init);
 	}
 }
@@ -540,6 +557,7 @@ void Ui_Multi_Set_Panel4(lv_event_t * e)
 	{
 		MultiPosToChange = 3;
 		Ui_Multi_Unload(e);
+		ActiveScreen = &Screen[ActiveMultiScreen];
 		_ui_screen_change(&ui_ScrPeriph, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_ScrPeriph_screen_init);
 	}
 }
@@ -613,9 +631,19 @@ void Ui_PeriphChoice_Last(lv_event_t * e)
 }
 void Ui_PeriphChoice_Click(lv_event_t * e)
 {
-	Screen[ActiveMultiScreen].AddPeriph(MultiPosToChange, ActivePeriph);
+	Serial.println(ActiveScreen->GetName());
 	Module.SetChanged(true);
-	_ui_screen_change(&ui_ScrMulti, MY_ANIM, 500, 0, &ui_ScrMulti_screen_init);
+	
+	if (ActiveScreen == &MultiGaugeScreen)
+	{
+		ActiveScreen->AddPeriph(MultiPosToChange, ActivePeriph);
+		_ui_screen_change(&ui_ScrMultiGauge, MY_ANIM, 500, 0, &ui_ScrMultiGauge_screen_init);
+	}
+	else
+	{
+		Screen[ActiveMultiScreen].AddPeriph(MultiPosToChange, ActivePeriph);
+		_ui_screen_change(&ui_ScrMulti, MY_ANIM, 500, 0, &ui_ScrMulti_screen_init);
+	}
 }
 void Ui_Periph_Choice_Loaded(lv_event_t * e)
 {
@@ -744,6 +772,16 @@ void Ui_Init_Custom(lv_event_t * e)
 	lv_obj_set_style_text_font(ui_LblPeriphChoiceType,   MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
 	lv_obj_set_style_text_font(ui_LblPeriphChoiceOnline, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
 	
+	lv_obj_set_style_text_font(ui_LblMGArcLoad,      MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);				//NiceDisplay
+	lv_obj_set_style_text_font(ui_LbLMGArcSolar,     MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);			
+	lv_obj_set_style_text_font(ui_LblMGArcVerbrauch, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);			
+	lv_obj_set_style_text_font(ui_LblMGAmp,          MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
+	lv_obj_set_style_text_font(ui_LblMGVolt,         MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
+	lv_obj_set_style_text_font(ui_LblName,           MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);			
+	lv_img_set_zoom(ui_ImgLoad,      256*LV_HOR_RES/360);
+	lv_img_set_zoom(ui_ImgSolar,     256*LV_HOR_RES/360);
+	lv_img_set_zoom(ui_ImgVerbrauch, 256*LV_HOR_RES/360);
+
 	lv_img_set_zoom(ui_ImgPeerChoice, 256*LV_HOR_RES/240);
 
 	//lv_obj_set_pos(ui_LblPeerName,         0, lv_pct(30));
@@ -876,84 +914,16 @@ void MultiGaugeUpdateTimer(lv_timer_t * timer)
 	char buf[20];
 	int nk = 0;
 	float value = 0;
-    float GesamtVerbrauch = 0;
+    float GesamtBilanz = 0;
+	PeriphClass *_Periph = NULL;
 
-	PeerClass*_Peer;
-	
-	_Peer = ActivePeer;
-	if (!_Peer)
+	if (MultiGaugeScreen.GetPeriphId(0) >= 0) _Periph = FindPeriphById(MultiGaugeScreen.GetPeriphId(0));
+	else _Periph = NULL;
+	if (_Periph)
 	{
-		lv_label_set_text(ui_LblMGArcLoad, "-- A");
-		lv_label_set_text(ui_LbLMGArcSolar, "-- A");
-		lv_label_set_text(ui_LblMGArcVerbrauch, "-- A");
-		lv_label_set_text(ui_LblMGVolt, "-- V");
-		lv_label_set_text(ui_LblMGAmp, "-- A");
-		
-		lv_arc_set_value(ui_ArcAlternator, 0);
-		lv_arc_set_value(ui_ArcSolar, 0);
-		lv_arc_set_value(ui_ArcVerbrauch, 0);
-		
-		return;
-	}
-	value = _Peer->GetPeriphValue(0,3); //Load
-	GesamtVerbrauch += value;
+		value = _Periph->GetValue(3); //Load
+		GesamtBilanz += value;
 
-	if      (value<10)  nk = 2;
-	else if (value<100) nk = 1;
-	else                nk = 0;
-
-	if (value == -99) strcpy(buf, "--"); 
-	else dtostrf(value, 0, nk, buf);
-
-	strcat(buf, " A");
-	lv_label_set_text(ui_LblMGArcLoad, buf);
-	lv_arc_set_value(ui_ArcAlternator, value);
-	
-
-	value = _Peer->GetPeriphValue(1,3); //Solar
-	GesamtVerbrauch += value;
-	
-	if      (value<10)  nk = 2;
-	else if (value<100) nk = 1;
-	else                nk = 0;
-
-	if (value == -99) strcpy(buf, "--"); 
-	else dtostrf(value, 0, nk, buf);
-
-	strcat(buf, " A");
-	lv_label_set_text(ui_LbLMGArcSolar, buf);
-	lv_arc_set_value(ui_ArcSolar, value);
-	
-
-	value = _Peer->GetPeriphValue(2,3); //Fridge
-	GesamtVerbrauch -= value;
-	
-	if      (value<10)  nk = 2;
-	else if (value<100) nk = 1;
-	else                nk = 0;
-
-	if (value == -99) strcpy(buf, "--"); 
-	else dtostrf(value, 0, nk, buf);
-
-	strcat(buf, " A");
-	lv_label_set_text(ui_LblMGArcVerbrauch, buf);
-	lv_arc_set_value(ui_ArcVerbrauch, value);
-
-
-	value = _Peer->GetPeriphValue(3,2); //VMon
-	
-	if      (value<10)  nk = 2;
-	else if (value<100) nk = 1;
-	else                nk = 0;
-
-	if (value == -99) strcpy(buf, "--"); 
-	else dtostrf(value, 0, nk, buf);
-
-	strcat(buf, " V");
-			lv_label_set_text(ui_LblMGVolt, buf);
-
-		value = GesamtVerbrauch;
-			
 		if      (value<10)  nk = 2;
 		else if (value<100) nk = 1;
 		else                nk = 0;
@@ -962,48 +932,153 @@ void MultiGaugeUpdateTimer(lv_timer_t * timer)
 		else dtostrf(value, 0, nk, buf);
 
 		strcat(buf, " A");
-		lv_label_set_text(ui_LblMGAmp, buf);
+		lv_label_set_text(ui_LblMGArcLoad, buf);
+		lv_arc_set_value(ui_ArcAlternator, value);
+	}
+	else
+	{
+		lv_label_set_text(ui_LblMGArcLoad, "-- A");
+		lv_arc_set_value(ui_ArcAlternator, 0);
+	}
+
+	if (MultiGaugeScreen.GetPeriphId(1) >= 0) _Periph = FindPeriphById(MultiGaugeScreen.GetPeriphId(1));
+	else _Periph = NULL;
+	if (_Periph)
+	{
+		value = _Periph->GetValue(3); //extern
+		GesamtBilanz -= value;
+
+		if      (value<10)  nk = 2;
+		else if (value<100) nk = 1;
+		else                nk = 0;
+
+		if (value == -99) strcpy(buf, "--"); 
+		else dtostrf(value, 0, nk, buf);
+
+		strcat(buf, " A");
+		lv_label_set_text(ui_LblMGArcVerbrauch, buf);
+		lv_arc_set_value(ui_ArcVerbrauch, value);
+	}
+	else
+	{
+		lv_label_set_text(ui_LblMGArcVerbrauch, "-- A");
+		lv_arc_set_value(ui_ArcVerbrauch, 0);
+	}
+
+	if (MultiGaugeScreen.GetPeriphId(2) >= 0) _Periph = FindPeriphById(MultiGaugeScreen.GetPeriphId(2));
+	else _Periph = NULL;
+	if (_Periph)
+	{
+		value = _Periph->GetValue(3); //Solar
+		GesamtBilanz += value;
+
+		if      (value<10)  nk = 2;
+		else if (value<100) nk = 1;
+		else                nk = 0;
+
+		if (value == -99) strcpy(buf, "--"); 
+		else dtostrf(value, 0, nk, buf);
+
+		strcat(buf, " A");
+		lv_label_set_text(ui_LbLMGArcSolar, buf);
+		lv_arc_set_value(ui_ArcSolar, value);
+	}
+	else
+	{
+		lv_label_set_text(ui_LbLMGArcSolar, "-- A");
+		lv_arc_set_value(ui_ArcSolar, 0);
+	}
+
+	if (MultiGaugeScreen.GetPeriphId(3) >= 0) _Periph = FindPeriphById(MultiGaugeScreen.GetPeriphId(3));
+	else _Periph = NULL;
+	if (_Periph)
+	{
+		value = _Periph->GetValue(2); //VMon
+		
+		if      (value<10)  nk = 2;
+		else if (value<100) nk = 1;
+		else                nk = 0;
+
+		if (value == -99) strcpy(buf, "--"); 
+		else dtostrf(value, 0, nk, buf);
+
+		strcat(buf, " V");
+		lv_label_set_text(ui_LblMGVolt, buf);
+	}
+	else
+	{
+		lv_label_set_text(ui_LblMGVolt, "-- V");
+	}
+	
+	value = GesamtBilanz;
+			
+	if      (value<10)  nk = 2;
+	else if (value<100) nk = 1;
+	else                nk = 0;
+
+	if (value == -99) strcpy(buf, "--"); 
+	else dtostrf(value, 0, nk, buf);
+
+	strcat(buf, " A");
+	lv_label_set_text(ui_LblMGAmp, buf);
 }
 void Ui_MultiGauge_Prepare(lv_event_t * e)
 {
 	static uint32_t user_data = 10;
-
-	ActivePeer = NULL;
-	
-	ActivePeer = FindPeerByName("JL_BAT");
-	if (!ActivePeer) _ui_screen_change(&ui_ScrMenu, MY_ANIM, 500, 0, &ui_ScrMenu_screen_init);
-	else
+	if (MultiGaugeTimer) 
 	{
-		if (MultiGaugeTimer) 
-		{
-			lv_timer_resume(MultiGaugeTimer);
-		}
-		else 
-		{
-			MultiGaugeTimer = lv_timer_create(MultiGaugeUpdateTimer, 1000,  &user_data);
-		}
+		lv_timer_resume(MultiGaugeTimer);
+	}
+	else 
+	{
+		MultiGaugeTimer = lv_timer_create(MultiGaugeUpdateTimer, 1000,  &user_data);
 	}
 }
 void Ui_MultiGauge_Unload(lv_event_t * e)
 {
 	if (MultiGaugeTimer) lv_timer_del(MultiGaugeTimer);
 	MultiGaugeTimer = NULL;
+	ActiveScreen = NULL;
 }
 void Ui_MultiGauge_Set_Panel1(lv_event_t * e)
 {
-	// Your code here
+	if (PeriphList.size() > 0) 
+	{
+		MultiPosToChange = 0;
+		Ui_MultiGauge_Unload(e);
+		ActiveScreen = &MultiGaugeScreen;
+		_ui_screen_change(&ui_ScrPeriph, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_ScrPeriph_screen_init);
+	}
 }
 void Ui_MultiGauge_Set_Panel2(lv_event_t * e)
 {
-	// Your code here
+	if (PeriphList.size() > 0) 
+	{
+		MultiPosToChange = 1;
+		Ui_MultiGauge_Unload(e);
+		ActiveScreen = &MultiGaugeScreen;
+		_ui_screen_change(&ui_ScrPeriph, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_ScrPeriph_screen_init);
+	}
 }
 void Ui_MultiGauge_Set_Panel3(lv_event_t * e)
 {
-	// Your code here
+	if (PeriphList.size() > 0) 
+	{
+		MultiPosToChange = 2;
+		Ui_MultiGauge_Unload(e);
+		ActiveScreen = &MultiGaugeScreen;
+		_ui_screen_change(&ui_ScrPeriph, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_ScrPeriph_screen_init);
+	}
 }
 void Ui_MultiGauge_Set_Panel4(lv_event_t * e)
 {
-	// Your code here
+	if (PeriphList.size() > 0) 
+	{
+		MultiPosToChange = 3;
+		Ui_MultiGauge_Unload(e);
+		ActiveScreen = &MultiGaugeScreen;
+		_ui_screen_change(&ui_ScrPeriph, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_ScrPeriph_screen_init);
+	}	
 }
 #pragma endregion Screen_MultiGauge
 #pragma region Menu

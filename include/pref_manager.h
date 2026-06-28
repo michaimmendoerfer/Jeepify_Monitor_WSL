@@ -73,4 +73,5 @@ void   ClearInit();
 void   ReportAll();
 
 extern MultiMonitorClass Screen[MULTI_SCREENS];
+extern MultiMonitorClass MultiGaugeScreen;
 #endif

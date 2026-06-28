@@ -351,8 +351,8 @@ void ui_ScrMultiGauge_screen_init(void)
     lv_img_set_src(ui_ImgVerbrauch, &ui_img_icon_fridge_50_png);
     lv_obj_set_width(ui_ImgVerbrauch, LV_SIZE_CONTENT);   /// 50
     lv_obj_set_height(ui_ImgVerbrauch, LV_SIZE_CONTENT);    /// 51
-    lv_obj_set_x(ui_ImgVerbrauch, -26);
-    lv_obj_set_y(ui_ImgVerbrauch, 95);
+    lv_obj_set_x(ui_ImgVerbrauch, lv_pct(-7));
+    lv_obj_set_y(ui_ImgVerbrauch, lv_pct(26));
     lv_obj_set_align(ui_ImgVerbrauch, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_ImgVerbrauch, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_ImgVerbrauch, LV_OBJ_FLAG_SCROLLABLE);      /// Flags

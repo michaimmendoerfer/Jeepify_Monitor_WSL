@@ -39,6 +39,7 @@ void Ui_Eichen_Prepare(lv_event_t * e);
 void Ui_Eichen_Start(lv_event_t * e);
 void Ui_Volt_Prepare(lv_event_t * e);
 void Ui_Volt_Start(lv_event_t * e);
+void Ui_PeriphChoice_Return();
 void Ui_PeriphChoice_Next(lv_event_t * e);
 void Ui_PeriphChoice_Last(lv_event_t * e);
 void Ui_PeriphChoice_Click(lv_event_t * e);

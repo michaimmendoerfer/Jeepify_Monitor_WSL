@@ -116,6 +116,16 @@ void SavePeers()
       Serial.printf("schreibe: [%s]: %s", Buf, ExportStringMulti.c_str());
       Serial.println();
     }
+
+    Serial.println("jetzt kommt MultiGaugeScreen");
+    snprintf(Buf, sizeof(Buf), "MGScreen");
+    
+    ExportStringMulti = String(MultiGaugeScreen.Export());
+
+    preferences.putString(Buf, ExportStringMulti);
+    Serial.printf("schreibe: [%s]: %s", Buf, ExportStringMulti.c_str());
+    Serial.println();
+    
     preferences.end();
 }
 int  GetPeers() 
@@ -137,7 +147,6 @@ int  GetPeers()
     {
         sprintf(Buf, "Peer-%d", Pi);
         ImportStringPeer = preferences.getString(Buf, "");
-        //Serial.printf("GetPeers(): %s : ImportStringPeer = %s\n\r",Buf, ImportStringPeer.c_str());
         strcpy(ScreenExportImportBuffer, ImportStringPeer.c_str());
         Serial.printf("gelesen: [%s]: %s\n\r", Buf, ScreenExportImportBuffer);
         
@@ -173,7 +182,7 @@ int  GetPeers()
     }
 
     Serial.println("importing MultiGaugeScreen:\n\r");
-    snprintf(Buf, sizeof(Buf), "MultiGaugeScreen");
+    snprintf(Buf, sizeof(Buf), "MGScreen");
 
     ImportStringMulti = preferences.getString(Buf, "");
     if (ImportStringMulti != "") 

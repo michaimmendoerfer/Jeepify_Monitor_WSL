@@ -13,6 +13,7 @@ extern "C" {
 // SCREEN: ui_ScrPeriph
 extern void ui_ScrPeriph_screen_init(void);
 extern void ui_ScrPeriph_screen_destroy(void);
+extern void Ui_PeriphChoice_Return(void);
 extern void ui_event_ScrPeriph(lv_event_t * e);
 extern lv_obj_t * ui_ScrPeriph;
 extern lv_obj_t * ui_ImgBGPeriph;

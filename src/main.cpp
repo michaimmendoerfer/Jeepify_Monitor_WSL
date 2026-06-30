@@ -298,6 +298,8 @@ void setup()
     WebServerActive = !WebServerActive;
     ToggleWebServer();
 
+    MultiGaugeScreen.SetName("MGScreen");
+
     if (esp_now_init() != ESP_OK) { DEBUG1 ("Error initializing ESP-NOWn\r"); return; }
 
     esp_now_register_send_cb((esp_now_send_cb_t) OnDataSent);

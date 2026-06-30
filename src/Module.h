@@ -53,6 +53,7 @@
     #define NODE_NAME "M240_2"
     #define NODE_TYPE MONITOR_ROUND
     #define HAS_ROTARY     0
+    #define HIDE_BG        1
     #define SCREEN_RES_HOR 240
     #define SCREEN_RES_VER 240
     #define UI_H_DIR        "Ui_All/ui.h"

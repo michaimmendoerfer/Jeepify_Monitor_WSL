@@ -444,6 +444,7 @@ void Ui_Multi_Loaded(lv_event_t * e)
 	{
 		MultiTimer = lv_timer_create(MultiUpdateTimer, 100,  &user_data);
 	}
+	ActiveScreen = &Screen[ActiveMultiScreen];
 }
 void MultiUpdateTimer(lv_timer_t * timer)
 {
@@ -584,6 +585,13 @@ void Ui_Multi_Prev(lv_event_t * e)
 }
 #pragma endregion Screen_MultiMeter
 #pragma region Screen_PeriphChoice
+void Ui_PeriphChoice_Return()
+{
+	if (ActiveScreen == &MultiGaugeScreen)
+		_ui_screen_change(&ui_ScrMultiGauge, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMultiGauge_screen_init);
+	else
+		_ui_screen_change(&ui_ScrMulti,      MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMulti_screen_init);
+}
 void Ui_Periph_Choice_FillScreen()
 {
 	PeerClass *P;
@@ -630,20 +638,13 @@ void Ui_PeriphChoice_Last(lv_event_t * e)
 	}
 }
 void Ui_PeriphChoice_Click(lv_event_t * e)
-{
-	Serial.println(ActiveScreen->GetName());
-	Module.SetChanged(true);
-	
+{	
 	if (ActiveScreen == &MultiGaugeScreen)
-	{
 		ActiveScreen->AddPeriph(MultiPosToChange, ActivePeriph);
-		_ui_screen_change(&ui_ScrMultiGauge, MY_ANIM, 500, 0, &ui_ScrMultiGauge_screen_init);
-	}
 	else
-	{
 		Screen[ActiveMultiScreen].AddPeriph(MultiPosToChange, ActivePeriph);
-		_ui_screen_change(&ui_ScrMulti, MY_ANIM, 500, 0, &ui_ScrMulti_screen_init);
-	}
+	
+	Ui_PeriphChoice_Return();
 }
 void Ui_Periph_Choice_Loaded(lv_event_t * e)
 {
@@ -775,7 +776,6 @@ void Ui_Init_Custom(lv_event_t * e)
 	lv_obj_set_style_text_font(ui_LblMGArcLoad,      MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);				//NiceDisplay
 	lv_obj_set_style_text_font(ui_LbLMGArcSolar,     MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
 	lv_obj_set_style_text_font(ui_LblMGArcVerbrauch, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
-	lv_obj_set_style_text_font(ui_LblMGAmp,          MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
 	lv_obj_set_style_text_font(ui_LblMGVolt,         MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
 	lv_obj_set_style_text_font(ui_LblName,           MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);			
 	lv_img_set_zoom(ui_ImgLoad,      256*LV_HOR_RES/360);
@@ -800,6 +800,7 @@ void Ui_Init_Custom(lv_event_t * e)
 		lv_obj_add_flag(ui_ImgBGEichen, LV_OBJ_FLAG_HIDDEN);
 		lv_obj_add_flag(ui_ImgBGJSON, LV_OBJ_FLAG_HIDDEN);
 		lv_obj_add_flag(ui_ImgBGMulti, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(ui_ImgBGMulti2, LV_OBJ_FLAG_HIDDEN);
 		lv_obj_add_flag(ui_ImgBGPeriph, LV_OBJ_FLAG_HIDDEN);
 		lv_obj_add_flag(ui_ImgBGSettings, LV_OBJ_FLAG_HIDDEN);
 		lv_obj_add_flag(ui_ImgBGVolt, LV_OBJ_FLAG_HIDDEN);
@@ -810,6 +811,7 @@ void Ui_Init_Custom(lv_event_t * e)
 		lv_img_set_zoom(ui_ImgBGEichen,   newSize);
 		lv_img_set_zoom(ui_ImgBGJSON,     newSize);
 		lv_img_set_zoom(ui_ImgBGMulti,    newSize);
+		lv_img_set_zoom(ui_ImgBGMulti2,   newSize);
 		lv_img_set_zoom(ui_ImgBGPeriph,   newSize);
 		lv_img_set_zoom(ui_ImgBGSettings, newSize);
 		lv_img_set_zoom(ui_ImgBGVolt,     newSize);
@@ -945,30 +947,6 @@ void MultiGaugeUpdateTimer(lv_timer_t * timer)
 	else _Periph = NULL;
 	if (_Periph)
 	{
-		value = _Periph->GetValue(3); //extern
-		GesamtBilanz -= value;
-
-		if      (value<10)  nk = 2;
-		else if (value<100) nk = 1;
-		else                nk = 0;
-
-		if (value == -99) strcpy(buf, "--"); 
-		else dtostrf(value, 0, nk, buf);
-
-		strcat(buf, " A");
-		lv_label_set_text(ui_LblMGArcVerbrauch, buf);
-		lv_arc_set_value(ui_ArcVerbrauch, value);
-	}
-	else
-	{
-		lv_label_set_text(ui_LblMGArcVerbrauch, "-- A");
-		lv_arc_set_value(ui_ArcVerbrauch, 0);
-	}
-
-	if (MultiGaugeScreen.GetPeriphId(2) >= 0) _Periph = FindPeriphById(MultiGaugeScreen.GetPeriphId(2));
-	else _Periph = NULL;
-	if (_Periph)
-	{
 		value = _Periph->GetValue(3); //Solar
 		GesamtBilanz += value;
 
@@ -989,6 +967,30 @@ void MultiGaugeUpdateTimer(lv_timer_t * timer)
 		lv_arc_set_value(ui_ArcSolar, 0);
 	}
 
+	if (MultiGaugeScreen.GetPeriphId(2) >= 0) _Periph = FindPeriphById(MultiGaugeScreen.GetPeriphId(2));
+	else _Periph = NULL;
+	if (_Periph)
+	{
+		value = _Periph->GetValue(3); //extern
+		GesamtBilanz -= value;
+
+		if      (value<10)  nk = 2;
+		else if (value<100) nk = 1;
+		else                nk = 0;
+
+		if (value == -99) strcpy(buf, "--"); 
+		else dtostrf(value, 0, nk, buf);
+
+		strcat(buf, " A");
+		lv_label_set_text(ui_LblMGArcVerbrauch, buf);
+		lv_arc_set_value(ui_ArcVerbrauch, value);
+	}
+	else
+	{
+		lv_label_set_text(ui_LblMGArcVerbrauch, "-- A");
+		lv_arc_set_value(ui_ArcVerbrauch, 0);
+	}
+
 	if (MultiGaugeScreen.GetPeriphId(3) >= 0) _Periph = FindPeriphById(MultiGaugeScreen.GetPeriphId(3));
 	else _Periph = NULL;
 	if (_Periph)
@@ -1002,25 +1004,26 @@ void MultiGaugeUpdateTimer(lv_timer_t * timer)
 		if (value == -99) strcpy(buf, "--"); 
 		else dtostrf(value, 0, nk, buf);
 
-		strcat(buf, " V");
-		lv_label_set_text(ui_LblMGVolt, buf);
+		strcat(buf, " V\n\r");
 	}
 	else
 	{
-		lv_label_set_text(ui_LblMGVolt, "-- V");
+		strcpy(buf, "-- V\n\r");
 	}
 	
 	value = GesamtBilanz;
-			
+	char buf2[15];
+
 	if      (value<10)  nk = 2;
 	else if (value<100) nk = 1;
 	else                nk = 0;
 
-	if (value == -99) strcpy(buf, "--"); 
-	else dtostrf(value, 0, nk, buf);
+	if (value == -99) strcpy(buf2, "--"); 
+	else dtostrf(value, 0, nk, buf2);
 
-	strcat(buf, " A");
-	lv_label_set_text(ui_LblMGAmp, buf);
+	strcat(buf2, " A");
+	strcat(buf, buf2);
+	lv_label_set_text(ui_LblMGVolt, buf);
 }
 void Ui_MultiGauge_Prepare(lv_event_t * e)
 {
@@ -1033,12 +1036,12 @@ void Ui_MultiGauge_Prepare(lv_event_t * e)
 	{
 		MultiGaugeTimer = lv_timer_create(MultiGaugeUpdateTimer, 1000,  &user_data);
 	}
+	ActiveScreen = &MultiGaugeScreen;
 }
 void Ui_MultiGauge_Unload(lv_event_t * e)
 {
 	if (MultiGaugeTimer) lv_timer_del(MultiGaugeTimer);
 	MultiGaugeTimer = NULL;
-	ActiveScreen = NULL;
 }
 void Ui_MultiGauge_Set_Panel1(lv_event_t * e)
 {
@@ -1047,7 +1050,7 @@ void Ui_MultiGauge_Set_Panel1(lv_event_t * e)
 		MultiPosToChange = 0;
 		Ui_MultiGauge_Unload(e);
 		ActiveScreen = &MultiGaugeScreen;
-		_ui_screen_change(&ui_ScrPeriph, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_ScrPeriph_screen_init);
+		_ui_screen_change(&ui_ScrPeriph, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrPeriph_screen_init);
 	}
 }
 void Ui_MultiGauge_Set_Panel2(lv_event_t * e)

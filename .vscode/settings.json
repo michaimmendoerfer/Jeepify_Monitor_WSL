@@ -3,5 +3,5 @@
         "compbutton.h": "c",
         "esp32_smartdisplay.h": "c"
     },
-    "cmake.sourceDirectory": "C:/Users/micha/Documents/PlatformIO/Projekte/Git-Jeepify-Monitor/src/Ui_240"
+    "cmake.sourceDirectory": "/home/micha/PlatformIO/Jeepify_Monitor_WSL/src/Ui_All"
 }

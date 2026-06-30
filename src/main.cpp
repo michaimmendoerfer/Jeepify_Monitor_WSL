@@ -180,7 +180,12 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
                     {
                         const char *_PeerName    = doc[SEND_CMD_JSON_PEER_NAME];
                         Serial.printf("PeerName: %s - ", _PeerName);
-                        if (strcmp(_PeerName, P->GetName())) P->SetName(_PeerName);
+                        if (strcmp(_PeerName, P->GetName())) 
+                        {
+                            P->SetName(_PeerName);
+                            SaveNeeded = true;
+                            DEBUG2 ("PeerName changed to: %s\n\r", P->GetName());
+                        }
                     }    
                     
                     for (int Si=0; Si<MAX_PERIPHERALS; Si++) 
@@ -198,7 +203,11 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
                             float _Value3     = atof(strtok(NULL, ";"));
                             
                             // check for periph name change
-                            if (strcmp(_PeriphName, P->GetPeriphName(Si))) P->SetPeriphName(Si, _PeriphName);
+                            if (strcmp(_PeriphName, P->GetPeriphName(Si))) 
+                            {
+                                P->SetPeriphName(Si, _PeriphName);
+                                SaveNeeded = true;
+                            }
                             
                             P->SetPeriphOldValue(Si, P->GetPeriphValue(Si, 0), 0);// überflüssig?
                             P->SetPeriphValue(Si, _Value0, 0);
@@ -327,6 +336,10 @@ void setup()
 			{
 				_ui_screen_change(&ui_ScrJSON, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrJSON_screen_init);
 			}
+            else if (strcmp(buf, "Nicey") == 0)
+            {
+                _ui_screen_change(&ui_ScrMultiGauge, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMultiGauge_screen_init);
+            }
 			else if (strncmp(buf, "Multi: ", 7) == 0)
 			{
 				char ScreenName[50];

@@ -278,7 +278,7 @@ void Ui_Peers_Prepare(lv_event_t * e)
 					MaxRollerItems = PeerList.size();
 					break;
 				case 1: // StartScreen
-					Options = "Menu\nJSON\n";
+					Options = "Menu\nJSON\nNicey\n";
 					for (int i=0; i<MULTI_SCREENS; i++) 
 					{
 						Options += "Multi: ";
@@ -294,7 +294,7 @@ void Ui_Peers_Prepare(lv_event_t * e)
 						Options += Periph->GetName();
 						Options += "\n";
 					}
-					MaxRollerItems = MULTI_SCREENS + PeriphList.size() + 2;
+					MaxRollerItems = MULTI_SCREENS + PeriphList.size() + 3;
 					break;
 			}
 	
@@ -773,8 +773,8 @@ void Ui_Init_Custom(lv_event_t * e)
 	lv_obj_set_style_text_font(ui_LblPeriphChoiceOnline, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
 	
 	lv_obj_set_style_text_font(ui_LblMGArcLoad,      MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);				//NiceDisplay
-	lv_obj_set_style_text_font(ui_LbLMGArcSolar,     MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);			
-	lv_obj_set_style_text_font(ui_LblMGArcVerbrauch, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);			
+	lv_obj_set_style_text_font(ui_LbLMGArcSolar,     MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
+	lv_obj_set_style_text_font(ui_LblMGArcVerbrauch, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
 	lv_obj_set_style_text_font(ui_LblMGAmp,          MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
 	lv_obj_set_style_text_font(ui_LblMGVolt,         MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);			
 	lv_obj_set_style_text_font(ui_LblName,           MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);			

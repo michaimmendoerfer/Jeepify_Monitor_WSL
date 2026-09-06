@@ -49,6 +49,8 @@ void Ui_Multi_Loaded(lv_event_t * e);
 void Ui_Multi_Unload(lv_event_t * e);
 void Ui_Multi_Next(lv_event_t * e);
 void Ui_Multi_Prev(lv_event_t * e);
+void Ui_Multi_ClearScreen();
+void Ui_Multi_FillScreen();
 void Ui_Multi_Set_Panel1(lv_event_t * e);
 void Ui_Multi_Set_Panel2(lv_event_t * e);
 void Ui_Multi_Set_Panel3(lv_event_t * e);
@@ -59,6 +61,11 @@ void Ui_MultiGauge_Set_Panel1(lv_event_t * e);
 void Ui_MultiGauge_Set_Panel2(lv_event_t * e);
 void Ui_MultiGauge_Set_Panel3(lv_event_t * e);
 void Ui_MultiGauge_Set_Panel4(lv_event_t * e);
+
+
+extern int ActiveRollerId;
+extern int MaxRollerItems;
+extern int Scr_Peers_Mode;
 
 #ifdef __cplusplus
 } /*extern "C"*/

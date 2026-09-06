@@ -83,6 +83,7 @@ void   PrintMAC(const uint8_t * mac_addr);
 void   MacCharToByte(uint8_t *mac, char *MAC);
 char  *MacByteToChar(char *MAC, uint8_t *mac);
 void   GarbageMessages(lv_timer_t * timer);
+void   RequestMessageBox(const char * Titel, const char *Txt, int delay, int opa);
 
 void   InitWebServer();
 
@@ -91,6 +92,11 @@ esp_err_t  JeepifySend(const uint8_t *peer, const uint8_t *data, size_t len, boo
 extern volatile uint32_t TSMsgRcv;
 extern volatile uint32_t TSMsgSnd;
 extern volatile uint32_t TSPair;
+
+extern volatile bool saveandrestartRequested;
+extern volatile bool savePeersRequested;
+extern volatile bool saveModuleRequested;
+
 
 extern lv_obj_t *Ui_LedSnd;
 extern lv_obj_t *Ui_LedRcv;

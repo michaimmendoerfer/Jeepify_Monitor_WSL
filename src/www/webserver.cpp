@@ -17,13 +17,11 @@ const char* MESSAGE_PERIPH = "periph";
 
 PeerClass   *ActiveWebPeer = NULL;
 PeriphClass *ActiveWebPeriph = NULL;
-bool SaveModuleNeeded = false;
-bool SavePeersNeeded = false;
 
 String processor(const String& var)
 {
     String ReturnString = "";
-    char Buf[30];
+    char Buf[100];
 
     if (var == "TYPE")        if (ActiveWebPeriph) return "text";
                               else return "hidden";
@@ -34,14 +32,14 @@ String processor(const String& var)
     {
         ReturnString += "<tr><td><input name='root' type='submit' value='";
         ReturnString += Module.GetName();
-        ReturnString += "'/</td></tr>";
+        ReturnString += "'/></td></tr>";
 
         for (int p=0; p<PeerList.size(); p++)
         {
         
             ReturnString += "<tr><td><input name='root' type='submit' value='";
             ReturnString += PeerList.get(p)->GetName();
-            ReturnString += "'/</td></tr>";
+            ReturnString += "'/></td></tr>";
 
         }
         return ReturnString;
@@ -240,7 +238,6 @@ bool SendWebNullwertChange()
 
     doc[SEND_CMD_JSON_FROM]  = MacByteToChar(mac, Module.GetBroadcastAddress());
     doc[SEND_CMD_JSON_TO]    = MacByteToChar(mac, ActiveWebPeer->GetBroadcastAddress());
-    doc[SEND_CMD_JSON_TO]    = mac;
     doc[SEND_CMD_JSON_TS]    = millis();
     doc[SEND_CMD_JSON_TTL]   = SEND_CMD_MSG_TTL;
     doc[SEND_CMD_JSON_ORDER] = SEND_CMD_UPDATE_NULLWERT;
@@ -304,9 +301,7 @@ void InitWebServer()
     server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
         String message = "dumm";
         String WebBuffer;
-        SaveModuleNeeded = false;
-        SavePeersNeeded = false;
-
+        
         Serial.println("in get");
         
         if      (request->hasParam(MESSAGE_ROOT)   and !request->getParam(MESSAGE_ROOT)->value().isEmpty())
@@ -356,7 +351,7 @@ void InitWebServer()
                         }
                         else
                         {
-                            SaveModuleNeeded = true;
+                            saveModuleRequested = true;
                         }
                     }
                 }
@@ -368,7 +363,7 @@ void InitWebServer()
                         DEBUG3 ("Received from web: NewScreen-%d-Name = %s\n\r", i+1, WebBuffer.c_str());  
                         if (ActiveWebPeer == &Module)    
                         {
-                            SavePeersNeeded = true;
+                            savePeersRequested = true;
                             Screen[i].SetName((char*) WebBuffer.c_str());
                         }
                     }
@@ -396,7 +391,7 @@ void InitWebServer()
                     
                     if (ActiveWebPeriph) 
                     {
-                        SavePeersNeeded = true;
+                        savePeersRequested = true;
                         ActiveWebPeriph->SetName(WebBuffer.c_str());
                         if (ActiveWebPeer != &Module) SendWebPeriphNameChange();
 
@@ -408,7 +403,7 @@ void InitWebServer()
                     DEBUG3 ("Received from web: NewNullwert = %s\n\r", WebBuffer.c_str());  
                     if (ActiveWebPeriph) 
                     {
-                        SavePeersNeeded = true;
+                        savePeersRequested = true;
                         ActiveWebPeriph->SetNullwert(atof(WebBuffer.c_str()));
                         SendWebNullwertChange();
                     }
@@ -419,7 +414,7 @@ void InitWebServer()
                     DEBUG3 ("Received from web: NewVperAmp = %s\n\r", WebBuffer.c_str());  
                     if (ActiveWebPeriph) 
                     {
-                        SavePeersNeeded = true;
+                        savePeersRequested = true;
                         ActiveWebPeriph->SetVperAmp(atof(WebBuffer.c_str()));
                         if (ActiveWebPeer != &Module) SendWebVperAmpChange();
                     }
@@ -439,21 +434,7 @@ void InitWebServer()
         else 
         {
             request->redirect("/");
-        }
-        
-        if (SavePeersNeeded) 
-            SavePeers();
-
-        if (SaveModuleNeeded)
-        {
-            preferences.begin("JeepifyInit", false);
-            preferences.putString("ModuleName", Module.GetName());
-            preferences.end();
-            DEBUG2 ("Neuer Module Name:%s gespeichert\n\r", Module.GetName());
-        }
-        SavePeersNeeded = false;
-        SaveModuleNeeded = false;
-        
+        }        
     });
     
   server.onNotFound(notFound);

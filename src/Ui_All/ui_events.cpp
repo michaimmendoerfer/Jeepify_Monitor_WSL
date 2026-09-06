@@ -1,4 +1,4 @@
-// Ui_All 3.32
+// Ui_All 4.01
 
 #include <Arduino.h>
 #include "main.h"
@@ -81,6 +81,7 @@ void Ui_Peer_Loaded(lv_event_t * e)
 	}
 
 	if (!ActivePeer) ActivePeer = FindNextPeer(NULL, MODULE_ALL, CIRCULAR);
+	lv_label_set_recolor(ui_LblPeerName, true);
 	Ui_Peer_Prepare();
 }
 
@@ -101,11 +102,16 @@ void Ui_Peer_ToggleSleep(lv_event_t * e)
 
 void Ui_Peer_ToggleDemo(lv_event_t * e)
 {
-	if (ActivePeer) SendCommand(ActivePeer, SEND_CMD_DEMOMODE_TOGGLE);
+	//if (ActivePeer) SendCommand(ActivePeer, SEND_CMD_DEMOMODE_TOGGLE);
+	if (ActivePeer) SendCommand(ActivePeer, SEND_CMD_PAIRMODE_TOGGLE);
+}
+void Ui_Peer_TogglePair(lv_event_t * e)
+{
+	if (ActivePeer) SendCommand(ActivePeer, SEND_CMD_PAIRMODE_TOGGLE);
 }
 void PeerUpdateTimer(lv_timer_t * timer)
 {
-	if (Knob.Clicked)
+	/*if (Knob.Clicked)
 	{
 		Knob.LastClicked = Knob.Clicked;
 		Knob.Clicked     = 0;
@@ -118,6 +124,30 @@ void PeerUpdateTimer(lv_timer_t * timer)
 		{
 			ActivePeer = FindNextPeer(ActivePeer, MODULE_ALL, CIRCULAR); 
 			if (ActivePeer) Ui_Peer_Prepare();
+		}
+	}
+	*/
+	if (ActivePeer)
+	{	
+		char buf[50];
+	
+		if ((ActivePeer->GetTSLastSeen() == 0) or (millis()- ActivePeer->GetTSLastSeen() > OFFLINE_INTERVAL))
+		{
+			strcpy(buf, "#f000000");
+			strcat(buf, ActivePeer->GetName());
+			strcat(buf, "#");
+		}
+		else
+		{
+			strcpy(buf, ActivePeer->GetName());
+		}
+		lv_label_set_text(ui_LblPeerName, buf);	
+		
+		if (ActivePeer->GetPairMode()) {
+			lv_obj_add_state(ui_BtnPeer6, LV_STATE_CHECKED);
+		}
+		else {
+			lv_obj_clear_state(ui_BtnPeer6, LV_STATE_CHECKED);
 		}
 	}
 }
@@ -226,7 +256,7 @@ void Ui_Set_Leave(lv_event_t * e)
 void PeersUpdateTimer(lv_timer_t * timer)
 {
 	static int activeId;
-	if (Knob.Clicked)
+	/*if (Knob.Clicked)
 	{
 		Knob.LastClicked = Knob.Clicked;
 		Knob.Clicked     = 0;
@@ -244,6 +274,7 @@ void PeersUpdateTimer(lv_timer_t * timer)
 			lv_roller_set_selected(ui_RollerPeers1, ActiveRollerId, LV_ANIM_ON);	
 		}
 	}
+		*/
 }
 void Ui_Peers_Prepare(lv_event_t * e)
 {
@@ -342,9 +373,13 @@ void Ui_Peers_Selected(lv_event_t * e)
 		}
 		case 1: 
 		{
+			buf[45] = '\0'; // Hartes Abschneiden vor dem Flash-Schreiben
+			preferences.putString("StartScreen", buf);
+
 			preferences.begin("JeepifyInit", false);
 			preferences.putString("StartScreen", buf);
     		preferences.end();
+
 			DEBUG3("StartScreen set to %s\n\r", buf);
 			ShowMessageBox("StartScreen set to", buf, 2000, 200);
 			_ui_screen_change(&ui_ScrMenu, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMenu_screen_init);
@@ -428,12 +463,12 @@ void Ui_Multi_Loaded(lv_event_t * e)
 {
 	static uint32_t user_data = 10;
 	
-	if (Knob.Clicked)
+	/*if (Knob.Clicked)
 	{
 		Knob.LastClicked = Knob.Clicked;
 		Knob.Clicked     = 0;
 	}
-	
+	*/
 	Ui_Multi_FillScreen();
 	
 	if (MultiTimer) 
@@ -448,7 +483,7 @@ void Ui_Multi_Loaded(lv_event_t * e)
 }
 void MultiUpdateTimer(lv_timer_t * timer)
 {
-	if (Knob.Clicked)
+	/*if (Knob.Clicked)
 	{
 		Knob.LastClicked = Knob.Clicked;
 		Knob.Clicked     = 0;
@@ -466,7 +501,7 @@ void MultiUpdateTimer(lv_timer_t * timer)
 		}
 		Ui_Multi_FillScreen();
 	}
-
+	*/
 	for (int Pos=0; Pos<PERIPH_PER_SCREEN; Pos++) 
 		if (Screen[ActiveMultiScreen].GetPeriphId(Pos) >= 0) CompThingArray[Pos]->Update();
 
@@ -649,12 +684,12 @@ void Ui_PeriphChoice_Click(lv_event_t * e)
 void Ui_Periph_Choice_Loaded(lv_event_t * e)
 {
 	static uint32_t user_data = 10;
-	if (Knob.Clicked)
+	/*if (Knob.Clicked)
 	{
 		Knob.LastClicked = Knob.Clicked;
 		Knob.Clicked     = 0;
 	}
-
+	*/
 	Ui_Periph_Choice_FillScreen();
 
 	if (ChoiceTimer) 
@@ -668,7 +703,7 @@ void Ui_Periph_Choice_Loaded(lv_event_t * e)
 }
 void ChoiceUpdateTimer(lv_timer_t * timer)
 {
-	if (Knob.Clicked)
+	/*if (Knob.Clicked)
 	{
 		Knob.LastClicked = Knob.Clicked;
 		Knob.Clicked     = 0;
@@ -691,6 +726,7 @@ void ChoiceUpdateTimer(lv_timer_t * timer)
 		}
 		Ui_Periph_Choice_FillScreen();
 	}
+	*/
 }
 void Ui_Periph_Choice_Unload(lv_event_t * e)
 {

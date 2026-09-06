@@ -1,6 +1,6 @@
 /*
 include PeerList and PeriphList
-Version 3.31
+Version 3.32
 */
 
 #ifndef PEERCLASS_H
@@ -57,7 +57,7 @@ class PeriphClass {
                     float Nullwert, float VperAmp, float Vin, int PeerId);
         void  Setup(const char* Name, int Type, int PeerId);
         
-        bool  SetName(const char* Name) { strcpy(_Name, Name); return true; }
+        bool  SetName(const char* Name) { strncpy(_Name, Name, sizeof(_Name) - 1); _Name[sizeof(_Name) - 1] = '\0'; return true; }
         char *GetName(){ return (_Name); }
         int   GetId() { return _Id; }
         void  SetId(int Id) { _Id = Id; }
@@ -76,7 +76,7 @@ class PeriphClass {
         void  SetVperAmp(float VperAmp) { _VperAmp = VperAmp; }
         float GetVin() { return _Vin; }
         void  SetVin(float Vin) { _Vin = Vin; }
-        float GetValue(int i=0) { return _Value[i]; }
+        float GetValue(int i=0) { if (i > 3 || i < 0) return -1; else return _Value[i]; }
         void  SetValue(float Value, int i=0) { _Value[i] = Value; }
         float GetOldValue(int i=0) { return _OldValue[i]; }
         void  SetOldValue(float OldValue, int i=0) { _OldValue[i] = OldValue; }
@@ -127,9 +127,9 @@ class PeerClass
         char* Export();
         void  Import(char *Buf);
 
-        void  SetName(const char *Name) { strcpy(_Name, Name); }
+        void  SetName(const char *Name) { strncpy(_Name, Name, sizeof(_Name) - 1); _Name[sizeof(_Name) - 1] = '\0'; }
         char *GetName() { return (_Name); }
-        void  SetVersion(const char *Version) { strcpy(_Version, Version); }
+        void  SetVersion(const char *Version) { strncpy(_Version, Version, sizeof(_Version) - 1); _Version[sizeof(_Version) - 1] = '\0'; }
         char *GetVersion() { return (_Version); }
         int   GetId() { return _Id; }
         void  SetId(int Id) { _Id = Id; }
@@ -139,6 +139,8 @@ class PeerClass
         void     SetBroadcastAddress(const uint8_t *BroadcastAddress) { memcpy(_BroadcastAddress, BroadcastAddress, 6); }
         uint32_t GetTSLastSeen() { return _TSLastSeen; }
         void     SetTSLastSeen(uint32_t TSLastSeen) { _TSLastSeen = TSLastSeen; }
+        uint32_t GetLastContact() { return _TSLastSeen; }
+        void     SetLastContact(uint32_t TSLastSeen) { _TSLastSeen = TSLastSeen; }
         bool  GetSleepMode() { return _SleepMode; }
         void  SetSleepMode(bool SleepMode) { _SleepMode = SleepMode; }
         bool  GetDebugMode() { return _DebugMode; }
@@ -233,6 +235,6 @@ char *TypeInText(int Type);
 extern PeerClass *ActivePeer;
 extern PeriphClass *ActivePeriph;
 
-extern char ExportImportBuffer[300];
+extern char ExportImportBuffer[1000];
 
 #endif

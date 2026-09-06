@@ -49,6 +49,18 @@ volatile uint32_t TSPair    = 0;
 volatile uint32_t TSConfirm = 0;
 
 int ActiveMultiScreen;
+
+// Flags für asynchrone MessageBox-Aufrufe aus dem WiFi-Callback
+volatile bool msgBoxPending = false;
+char msgBoxTitle[32] = {};
+char msgBoxText[64] = {};
+int msgBoxDelay = 1000;
+int msgBoxOpa = 200;
+
+volatile bool saveandrestartRequested = false;
+volatile bool savePeersRequested = false;
+volatile bool saveModuleRequested = false;
+
 #pragma endregion Globals
 
 #pragma region Main
@@ -57,8 +69,6 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
     PeerClass *P;
     
     char* buff = (char*) incomingData;   
-    
-    JsonDocument doc; 
     String jsondata = String(buff); 
 
     Serial.println(jsondata);
@@ -69,8 +79,8 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
     char buf[100];
     
     jsondataBuf = jsondata;
-    PrepareJSON();
-    
+
+    JsonDocument doc;
     DeserializationError error = deserializeJson(doc, jsondata);
 
     if (!error) // erfolgreich JSON
@@ -116,7 +126,11 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
         {
             Serial.printf("bekannter Peer: %s\n\r", P->GetName());
             
-            if ((Module.GetDebugMode()) and (millis() - P->GetTSLastSeen() > OFFLINE_INTERVAL)) ShowMessageBox("Peer online", P->GetName(), 1000, 200);
+            if ((Module.GetDebugMode()) and (millis() - P->GetTSLastSeen() > OFFLINE_INTERVAL)) 
+            {
+                RequestMessageBox("Peer online", P->GetName(), 1000, 200);
+            }
+            
             P->SetTSLastSeen(millis());
         
             #ifdef MODULE_MONITOR_240
@@ -146,7 +160,10 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
                     Module.SetPairMode(false); TSPair = 0;
                     P->Setup(_PeerName, _Type, _PeerVersion, _From, (bool) bitRead(_Status, 1), (bool) bitRead(_Status, 0), (bool) bitRead(_Status, 2), (bool) bitRead(_Status, 3));                    
 
-                    if (Module.GetDebugMode()) ShowMessageBox("Peer added...", doc[SEND_CMD_JSON_PEER_NAME], 2000, 150);
+                    if (Module.GetDebugMode()) 
+                    {
+                        RequestMessageBox("Peer added...", doc[SEND_CMD_JSON_PEER_NAME], 2000, 150);
+                    }
 
                     for (int Si=0; Si<MAX_PERIPHERALS; Si++) 
                     {
@@ -258,11 +275,7 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
         
         if (SaveNeeded)
         {
-            SavePeers();
-            SaveNeeded = false;
-            if (Module.GetDebugMode()) ShowMessageBox("Saving...", "complete", 1000, 200);
-            delay(500);
-            ESP.restart();
+            savePeersRequested = true;
         }
     }
     else // Error bei JSON
@@ -311,7 +324,8 @@ void setup()
         Module.SetDebugMode(preferences.getBool("DebugMode", true));
         Module.SetSleepMode(preferences.getBool("SleepMode", false));
         Module.SetName(preferences.getString("ModuleName", NODE_NAME).c_str());
-        strcpy(buf, preferences.getString("StartScreen", "Menu").c_str());
+        strncpy(buf, preferences.getString("StartScreen", "Menu").c_str(), sizeof(buf) - 1);
+        buf[sizeof(buf) - 1] = '\0';
     preferences.end();
 
     GetPeers();
@@ -331,63 +345,63 @@ void setup()
 
     DEBUG3("buf=%s\n\r", buf);
     if (strcmp(buf, "Menu") == 0) 
-			{
-				_ui_screen_change(&ui_ScrMenu, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMenu_screen_init);
-			}
-			else if (strcmp(buf, "JSON") == 0) 
-			{
-				_ui_screen_change(&ui_ScrJSON, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrJSON_screen_init);
-			}
-            else if (strcmp(buf, "Nicey") == 0)
+    {
+        _ui_screen_change(&ui_ScrMenu, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMenu_screen_init);
+    }
+    else if (strcmp(buf, "JSON") == 0) 
+    {
+        _ui_screen_change(&ui_ScrJSON, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrJSON_screen_init);
+    }
+    else if (strcmp(buf, "Nicey") == 0)
+    {
+        _ui_screen_change(&ui_ScrMultiGauge, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMultiGauge_screen_init);
+    }
+    else if (strncmp(buf, "Multi: ", 7) == 0)
+    {
+        char ScreenName[50];
+        memcpy(ScreenName, buf+7, strlen(buf)-7);
+        ScreenName[strlen(buf)-7] = 0;
+        DEBUG3("MultiScreenName=%s\n\r", ScreenName);
+
+        for (int i=0; i<MULTI_SCREENS; i++) 
+        {
+            if (strcmp(ScreenName, Screen[i].GetName()) == 0)
             {
-                _ui_screen_change(&ui_ScrMultiGauge, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMultiGauge_screen_init);
+                ActiveMultiScreen = i;
+                _ui_screen_change(&ui_ScrMulti, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMulti_screen_init);
+                break;
             }
-			else if (strncmp(buf, "Multi: ", 7) == 0)
-			{
-				char ScreenName[50];
-				memcpy(ScreenName, buf+7, strlen(buf)-7);
-				ScreenName[strlen(buf)-7] = 0;
-				DEBUG3("MultiScreenName=%s\n\r", ScreenName);
+        }
+    }
+    else if (strncmp(buf, "<", 1) == 0)
+    {
+        
+        char *Start = strchr(buf,'<'); 
+        char *End = strchr(buf,'>'); 
+        char PeerName[20];
+        char PeriphName[20];
 
-				for (int i=0; i<MULTI_SCREENS; i++) 
-				{
-					if (strcmp(ScreenName, Screen[i].GetName()) == 0)
-					{
-						ActiveMultiScreen = i;
-						_ui_screen_change(&ui_ScrMulti, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMulti_screen_init);
-						break;
-					}
-				}
-			}
-			else if (strncmp(buf, "<", 1) == 0)
-			{
-				
-			    char *Start = strchr(buf,'<'); 
-                char *End = strchr(buf,'>'); 
-                char PeerName[20];
-                char PeriphName[20];
+        memcpy(PeerName, Start+1, End-Start-1);
+        memcpy(PeriphName, End+2, strlen(buf)-strlen(End)-1);
+        
+        DEBUG3("PeerName=%s\n\r", PeerName);
+        DEBUG3("PeriphName=%s\n\r", PeriphName);
 
-                memcpy(PeerName, Start+1, End-Start-1);
-                memcpy(PeriphName, End+2, strlen(buf)-strlen(End)-1);
-                
-                DEBUG3("PeerName=%s\n\r", PeerName);
-				DEBUG3("PeriphName=%s\n\r", PeriphName);
-
-				for (int i=0; i<PeriphList.size(); i++) 
-				{
-					PeriphClass *Periph = PeriphList.get(i);
-					if (Periph)
-					if (strcmp(PeriphName, Periph->GetName()) == 0)
-                        if (strcmp(PeerName, FindPeerById(Periph->GetPeerId())->GetName()) == 0)
-                        {
-                            ActivePeriphSensor = Periph;
-                            ActivePeriphShown  = ActivePeriphSensor;
-                            ActivePeer   = PeerOf(Periph);
-                            _ui_screen_change(&ui_ScrSingle, MY_ANIM, 500, 0, &ui_ScrSingle_screen_init);
-                            break;
-                        }
-				}
-			}
+        for (int i=0; i<PeriphList.size(); i++) 
+        {
+            PeriphClass *Periph = PeriphList.get(i);
+            if (Periph)
+            if (strcmp(PeriphName, Periph->GetName()) == 0)
+                if (strcmp(PeerName, FindPeerById(Periph->GetPeerId())->GetName()) == 0)
+                {
+                    ActivePeriphSensor = Periph;
+                    ActivePeriphShown  = ActivePeriphSensor;
+                    ActivePeer   = PeerOf(Periph);
+                    _ui_screen_change(&ui_ScrSingle, MY_ANIM, 500, 0, &ui_ScrSingle_screen_init);
+                    break;
+                }
+        }
+    }
 }
 void loop() 
 {
@@ -399,6 +413,147 @@ void loop()
         delay(5);
     #endif
 
+    if (msgBoxPending) 
+    {
+        msgBoxPending = false; // Flag sofort zurücksetzen
+        ShowMessageBox(msgBoxTitle, msgBoxText, msgBoxDelay, msgBoxOpa);
+    }
+    if (savePeersRequested) //KI
+    {
+        savePeersRequested = false; // Flag zurücksetzen
+        
+        // Peers sicher im Haupt-Task speichern
+        SavePeers(); 
+        
+        if (Module.GetDebugMode()) 
+        {
+            // Sichere UI-Anforderung abschicken
+            ShowMessageBox("Saving...", "complete", 1500, 200);
+            
+            // Dem LVGL-Task kurz Zeit geben, die MessageBox auch wirklich zu rendern
+            for(int i = 0; i < 20; i++) {
+                lv_timer_handler();
+                delay(10);
+            }
+        }
+        else 
+        {
+            delay(100); // Kurze Beruhigungspause für den Wi-Fi-Stack
+        }
+    }
+    if (saveandrestartRequested) //KI
+    {
+        saveandrestartRequested = false; // Flag zurücksetzen
+        
+        // Peers sicher im Haupt-Task speichern
+        SavePeers(); 
+        
+        if (Module.GetDebugMode()) 
+        {
+            // Sichere UI-Anforderung abschicken
+            ShowMessageBox("Saving...", "complete, restarting...", 1500, 200);
+            
+            // Dem LVGL-Task kurz Zeit geben, die MessageBox auch wirklich zu rendern
+            for(int i = 0; i < 20; i++) {
+                lv_timer_handler();
+                delay(10);
+            }
+        }
+        else 
+        {
+            delay(100); // Kurze Beruhigungspause für den Wi-Fi-Stack
+        }
+        
+        ESP.restart();
+    }
+    if (saveModuleRequested) //KI
+    {
+        saveModuleRequested = false; // Flag zurücksetzen
+        
+        preferences.begin("JeepifyInit", false);
+        preferences.putString("ModuleName", Module.GetName());
+        preferences.end();
+
+        if (Module.GetDebugMode()) 
+        {
+            // Sichere UI-Anforderung abschicken
+            ShowMessageBox("Saving Module...", "complete, restarting...", 1500, 200);
+            DEBUG2 ("Neuer Module Name:%s gespeichert\n\r", Module.GetName());
+
+            // Dem LVGL-Task kurz Zeit geben, die MessageBox auch wirklich zu rendern
+            for(int i = 0; i < 20; i++) {
+                lv_timer_handler();
+                delay(10);
+            }
+        }
+    }
+    
+    // --- ZENTRALES KNOB-EVENT-HANDLING ---
+    if (Knob.Clicked) 
+    {
+        Knob.LastClicked = Knob.Clicked;
+        
+        // Welcher Bildschirm ist gerade aktiv?
+        lv_obj_t * active_screen = lv_scr_act();
+
+        if (active_screen == ui_ScrPeer) 
+        {
+            // Reaktion für den Peer-Screen
+            if (Knob.Diff < 0) {
+                Ui_Peer_Last(NULL);
+            } else {
+                Ui_Peer_Next(NULL);
+            }
+        }
+        else if (active_screen == ui_ScrPeers) 
+        {
+            // Reaktion für die Roller-Auswahl
+            if (Knob.Diff < 0) {
+                ActiveRollerId--;
+                if (ActiveRollerId < 0) ActiveRollerId = MaxRollerItems - 1;
+            } else {
+                ActiveRollerId++;
+                if (ActiveRollerId == MaxRollerItems) ActiveRollerId = 0;
+            }
+            lv_roller_set_selected(ui_RollerPeers1, ActiveRollerId, LV_ANIM_ON);
+        }
+        else if (active_screen == ui_ScrMulti) 
+        {
+            // Reaktion für den MultiMeter-Screen (Wechselt die Screens)
+            Ui_Multi_ClearScreen();
+            if (Knob.Diff < 0) {
+                ActiveMultiScreen--;
+                if (ActiveMultiScreen == -1) ActiveMultiScreen = MULTI_SCREENS - 1;
+            } else {
+                ActiveMultiScreen++;
+                if (ActiveMultiScreen == MULTI_SCREENS) ActiveMultiScreen = 0;
+            }
+            Ui_Multi_FillScreen();
+        }
+        else if (active_screen == ui_ScrPeriph) 
+        {
+            // Reaktion für den Auswahlscreen der Peripherals
+            if (Knob.Diff < 0) {
+                Ui_PeriphChoice_Last(NULL);
+            } else {
+                Ui_PeriphChoice_Next(NULL);
+            }
+        }
+        else if (active_screen == ui_ScrSingle) 
+        {
+            // Reaktion für die Einzelansicht (Single-Screen)
+            if (Knob.Diff < 0) {
+                Ui_Single_Prev(NULL); // Ruft deine Funktion aus CustomScreens auf
+            } else {
+                Ui_Single_Next(NULL);
+            }
+        }
+
+        // ERST HIER, nachdem alle Event-Wege durchlaufen wurden, wird genullt!
+        Knob.Clicked = 0; 
+    }
+
+    PrepareJSON(); 
     lv_timer_handler(); 
     //delay(5);
 }
@@ -415,7 +570,7 @@ void GarbageMessages(lv_timer_t * timer)
         {
             ReceivedMessagesStruct *RMItem = ReceivedMessagesList.get(i);
             
-            if (millis() > RMItem->SaveTime + SEND_CMD_MSG_HOLD*1000)
+            if (millis() - RMItem->SaveTime > SEND_CMD_MSG_HOLD*1000)
             {
                 DEBUG3 ("Garbage-Kollektion: Message aus RMList entfernt\n\r");
                 ReceivedMessagesList.remove(i);
@@ -506,7 +661,11 @@ void SendPing(lv_timer_t * timer) {
             {
                 char TxtBuf[100];
                 if (Module.GetDebugMode()) sprintf(TxtBuf, "SUCCESS - Message to %s successful confirmed after %d tries!", FindPeerByMAC(Confirm->Address)->GetName(), Confirm->Try);
-                if (Module.GetDebugMode()) ShowMessageBox("SUCCESS", TxtBuf, 1000, 200);
+                if (Module.GetDebugMode()) 
+                {
+                    RequestMessageBox("SUCCESS", TxtBuf, 1000, 200);
+                }
+
                 ConfirmList.remove(i);
                 delete Confirm;
             }
@@ -514,7 +673,11 @@ void SendPing(lv_timer_t * timer) {
             {
                 char TxtBuf[100];
                 if (Module.GetDebugMode()) sprintf(TxtBuf, "FAILED - Message to %s deleted after %d tries!", FindPeerByMAC(Confirm->Address)->GetName(), Confirm->Try);
-                if (Module.GetDebugMode()) ShowMessageBox("FAILED", TxtBuf, 1000, 200);
+                if (Module.GetDebugMode()) 
+                {
+                    RequestMessageBox("FAILED", TxtBuf, 1000, 200);
+                }
+
                 ConfirmList.remove(i);
                 delete Confirm;
             }
@@ -523,21 +686,6 @@ void SendPing(lv_timer_t * timer) {
                 DEBUG3 ("%d: reSending Msg: %s from ConfirmList Try: %d\n\r", millis(), Confirm->Message, Confirm->Try);
                 esp_err_t SendStatus = esp_now_send(broadcastAddressAll, (uint8_t*) Confirm->Message, 250); 
             }     
-        }
-    }
-
-    if (ReceivedMessagesList.size() > 0)
-    {  
-        for (int i=ReceivedMessagesList.size()-1; i>=0; i--)
-        {
-            ReceivedMessagesStruct *RMItem = ReceivedMessagesList.get(i);
-            
-            if (millis() > RMItem->TS + SEND_CMD_MSG_HOLD*1000)
-            {
-                DEBUG3 ("Message aus RMList entfernt\n\r");
-                ReceivedMessagesList.remove(i);
-                delete RMItem;
-            }
         }
     }
 }
@@ -614,15 +762,18 @@ void SendCommand(PeerClass *P, int Cmd, String Value) {
 #pragma endregion Send-Things
 #pragma region System-Screens
 void PrepareJSON() {
-  if (jsondataBuf) {
-    JsonDocument doc;
-  
-    DeserializationError error = deserializeJson(doc, jsondataBuf);
-    if (doc["Node"] != NODE_NAME) { 
-      lv_textarea_set_placeholder_text(ui_TxtJSON1, jsondataBuf.c_str());
-      jsondataBuf = "";
+    if (jsondataBuf != "") 
+    { 
+        JsonDocument doc;
+        
+        DeserializationError error = deserializeJson(doc, jsondataBuf);
+        if (!error) {
+            if (doc["Node"] != NODE_NAME) { 
+                lv_textarea_set_placeholder_text(ui_TxtJSON1, jsondataBuf.c_str());
+            }
+        }
+        jsondataBuf = ""; 
     }
-  }
 }
 /*void TopUpdateTimer(lv_timer_t * timer)
 {
@@ -678,6 +829,18 @@ void PrepareJSON() {
 }*/
 #pragma endregion System-Screens
 #pragma region Other
+void RequestMessageBox(const char * Titel, const char *Txt, int delay, int opa)
+{
+    // Falls noch eine Box blockiert ist, überspringen oder überschreiben
+    if (!msgBoxPending) 
+    {
+        strncpy(msgBoxTitle, Titel, sizeof(msgBoxTitle) - 1);
+        strncpy(msgBoxText, Txt, sizeof(msgBoxText) - 1);
+        msgBoxDelay = delay;
+        msgBoxOpa = opa;
+        msgBoxPending = true; // Signal für den LVGL-Task
+    }
+}
 void ShowMessageBox(const char * Titel, const char *Txt, int delay, int opa)
 {
     static const char * btns[] = {""};

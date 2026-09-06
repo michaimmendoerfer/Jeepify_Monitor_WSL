@@ -2,7 +2,7 @@
 #include "main.h"
 #include "CompButton.h"
 
-// Version 3.25
+// Version 4.01
 
 extern lv_obj_t *ui_LblMenuBatt;
 
@@ -241,7 +241,7 @@ void CompButton::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, 
 	}
 
     _LblValue = lv_label_create(_Button);
-    SetStyle(_LblPeriph);
+    SetStyle(_LblValue);
     lv_obj_add_flag(_LblValue, LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_width(_LblValue, LV_SIZE_CONTENT);
     lv_obj_set_height(_LblValue, LV_SIZE_CONTENT);  
@@ -857,7 +857,6 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     lv_obj_set_align(_LblPeer, LV_ALIGN_CENTER);
     SetPeerPos(0, lv_pct(-35));
     lv_obj_set_style_text_font(_LblPeer, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
-    ui_object_set_themeable_style_property(_LblPeer, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxt);
     ui_object_set_themeable_style_property(_LblPeer, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxtInaktive);
     //ui_object_set_themeable_style_property(_LblPeer, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
 
@@ -934,8 +933,10 @@ void CompMeter2::Update()
             value = testv;
         }
 
-        int Tick = 2*Range/30;
-        Angle = -Range+value*Tick;
+        //int Tick = 2*Range/30;
+        //Angle = -Range+value*Tick;
+        Angle = -Range + (int)((value * 2.0f * Range) / 15.0f); //KI
+
         lv_img_set_angle(ui_ImgZeiger, Angle);
     }
     else if (_Periph->GetType() == SENS_TYPE_VOLT)

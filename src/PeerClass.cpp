@@ -1,4 +1,4 @@
-//Version 3.30
+//Version 4.01
 #include <Arduino.h>
 #include "PeerClass.h"
 #include "LinkedList.h"
@@ -12,7 +12,7 @@ MyLinkedList<PeriphClass*> PeriphList = MyLinkedList<PeriphClass*>();
 int  PeriphClass::_ClassId = 1;
 int  PeerClass::_ClassId   = 1;
 
-char ExportImportBuffer[300];
+char ExportImportBuffer[1000];
 
 extern void PrintMAC(const uint8_t * mac_addr);
 
@@ -22,7 +22,9 @@ PeriphClass::PeriphClass()
     _Id = _ClassId;
     _ClassId++;
 
-    strcpy(_Name, "n.n.");
+    strncpy(_Name, "n.n.", sizeof(_Name) - 1);
+    _Name[sizeof(_Name) - 1] = '\0';
+
     _Type = 0;  
     _Pos = 0;       
     for (int i=0; i<4; i++) _IOPort[i]  = -1;
@@ -42,7 +44,9 @@ void  PeriphClass::Setup(const char* Name, int Type, bool isADS,
                          int IOPort0, int IOPort1, int IOPort2, int IOPort3,  
                          float Nullwert, float VperAmp, float Vin, int PeerId)
 {
-    strcpy(_Name, Name);
+    strncpy(_Name, Name, sizeof(_Name) - 1);
+    _Name[sizeof(_Name) - 1] = '\0';
+
     _Type = Type;
     
     _IOPort[0] = IOPort0;
@@ -62,7 +66,8 @@ void  PeriphClass::Setup(const char* Name, int Type, bool isADS,
 }
 void  PeriphClass::Setup(const char* Name, int Type, int PeerId)
 {
-    strcpy(_Name, Name);
+    strncpy(_Name, Name, sizeof(_Name) - 1);
+    _Name[sizeof(_Name) - 1] = '\0';
     _Type = Type;
     _PeerId = PeerId;
 }
@@ -104,7 +109,9 @@ PeerClass::PeerClass()
     _Id = _ClassId;
     _ClassId++;
 
-    strcpy(_Name, "n.n.") ;
+    strncpy(_Name, "n.n.", sizeof(_Name) - 1);
+    _Name[sizeof(_Name) - 1] = '\0';
+
     _Type = 0;  
     _SleepMode = false;
     _DebugMode = false;
@@ -119,9 +126,13 @@ PeerClass::PeerClass()
 void  PeerClass::Setup(const char* Name, int Type, const char *Version, const uint8_t *BroadcastAddress, 
                        bool SleepMode, bool DebugMode, bool DemoMode, bool PairMode)
 {
-    strcpy(_Name, Name);
+    strncpy(_Name, Name, sizeof(_Name) - 1);
+    _Name[sizeof(_Name) - 1] = '\0';
+
     _Type = Type;
-    strcpy(_Version, Version);
+    strncpy(_Version, Version, sizeof(_Version) - 1);
+    _Version[sizeof(_Version) - 1] = '\0';
+
     if (BroadcastAddress) memcpy(_BroadcastAddress, BroadcastAddress, 6);
     _SleepMode = SleepMode;
     _DebugMode = DebugMode;
@@ -133,15 +144,13 @@ void  PeerClass::Setup(const char* Name, int Type, const char *Version, const ui
 
 char* PeerClass::Export() 
 {
-    char ReturnBufferPeriph[40];
-
     int UsedPeriph = 0;
-    for (int Si=0; Si<MAX_PERIPHERALS; Si++)
-    { 
+    for (int Si=0; Si<MAX_PERIPHERALS; Si++) { 
         if (Periph[Si].GetType() > 0) UsedPeriph++;
     } 
 
-    snprintf(ExportImportBuffer, sizeof(ExportImportBuffer), "%s;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d", 
+    // Ersten Teil schreiben und die Anzahl der geschriebenen Bytes merken
+    int written = snprintf(ExportImportBuffer, sizeof(ExportImportBuffer), "%s;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d", 
                         _Name, _Type, 
                         _BroadcastAddress[0], _BroadcastAddress[1], _BroadcastAddress[2],
                         _BroadcastAddress[3], _BroadcastAddress[4], _BroadcastAddress[5],
@@ -151,42 +160,62 @@ char* PeerClass::Export()
     { 
         if (Periph[Si].GetType() > 0) 
         {
-            snprintf(ReturnBufferPeriph, sizeof(ReturnBufferPeriph), ";%s;%d;%.3f;%.2f", Periph[Si].GetName(), Periph[Si].GetType(), Periph[Si].GetNullwert(), Periph[Si].GetVin());
-            strcat(ExportImportBuffer, ReturnBufferPeriph);
+            // Abbrechen, falls der Puffer voll ist oder kein Platz für ein weiteres Zeichen bleibt
+            if (written >= (int)sizeof(ExportImportBuffer) - 1) break;
+
+            // Schreibt direkt an das aktuelle Ende des Puffers unter Beachtung des Restplatzes
+            int res = snprintf(ExportImportBuffer + written, sizeof(ExportImportBuffer) - written, 
+                               ";%s;%d;%.3f;%.2f", 
+                               Periph[Si].GetName(), Periph[Si].GetType(), Periph[Si].GetNullwert(), Periph[Si].GetVin());
+            
+            if (res > 0) {
+                written += res;
+            }
         }
     }
-
     return ExportImportBuffer;
 }
+
 void PeerClass::Import(char *Buf) 
 {
-    int UsedPeriph = 0;
+    if (!Buf) return;
 
-    strcpy(_Name, strtok(Buf, ";"));
-    _Type = atoi(strtok(NULL, ";"));
+    char *token = strtok(Buf, ";");
+    if (!token) return;
+    strncpy(_Name, token, sizeof(_Name) - 1);
+    _Name[sizeof(_Name) - 1] = '\0';
     
-    _BroadcastAddress[0] = (byte) atoi(strtok(NULL, ";"));
-    _BroadcastAddress[1] = (byte) atoi(strtok(NULL, ";"));
-    _BroadcastAddress[2] = (byte) atoi(strtok(NULL, ";"));
-    _BroadcastAddress[3] = (byte) atoi(strtok(NULL, ";"));
-    _BroadcastAddress[4] = (byte) atoi(strtok(NULL, ";"));
-    _BroadcastAddress[5] = (byte) atoi(strtok(NULL, ";"));
+    #define GET_NEXT_TOKEN() token = strtok(NULL, ";"); if (!token) return;
+
+    GET_NEXT_TOKEN(); _Type = atoi(token);
+    GET_NEXT_TOKEN(); _BroadcastAddress[0] = (byte) atoi(token);
+    GET_NEXT_TOKEN(); _BroadcastAddress[1] = (byte) atoi(token);
+    GET_NEXT_TOKEN(); _BroadcastAddress[2] = (byte) atoi(token);
+    GET_NEXT_TOKEN(); _BroadcastAddress[3] = (byte) atoi(token);
+    GET_NEXT_TOKEN(); _BroadcastAddress[4] = (byte) atoi(token);
+    GET_NEXT_TOKEN(); _BroadcastAddress[5] = (byte) atoi(token);
    
-    _SleepMode = (bool) atoi(strtok(NULL, ";"));
-    _DebugMode = (bool) atoi(strtok(NULL, ";"));
-    _DemoMode  = (bool) atoi(strtok(NULL, ";"));
-    UsedPeriph =        atoi(strtok(NULL, ";"));
+    GET_NEXT_TOKEN(); _SleepMode = (bool) atoi(token);
+    GET_NEXT_TOKEN(); _DebugMode = (bool) atoi(token);
+    GET_NEXT_TOKEN(); _DemoMode  = (bool) atoi(token);
+    GET_NEXT_TOKEN(); int UsedPeriph = atoi(token);
+
+    // Schutz vor Buffer Overflow/Underrun bei der Array-Zuweisung
+    if (UsedPeriph > MAX_PERIPHERALS) UsedPeriph = MAX_PERIPHERALS;
 
     for (int Si=0; Si<UsedPeriph; Si++)
     {
-        Periph[Si].SetName(strtok(NULL, ";"));
-        Periph[Si].SetType(atoi(strtok(NULL, ";")));
-        Periph[Si].SetNullwert(atof(strtok(NULL, ";")));
-        Periph[Si].SetVin(atof(strtok(NULL, ";")));
+        token = strtok(NULL, ";"); if (!token) break;
+        Periph[Si].SetName(token);
+
+        GET_NEXT_TOKEN(); Periph[Si].SetType(atoi(token));
+        GET_NEXT_TOKEN(); Periph[Si].SetNullwert(atof(token));
+        GET_NEXT_TOKEN(); Periph[Si].SetVin(atof(token));
+        
         Periph[Si].SetPos(Si);
         Periph[Si].SetPeerId(_Id);
     }
-    //Serial.println("ende import");
+    #undef GET_NEXT_TOKEN
 }
         
 void  PeerClass::PeriphSetup(int Pos, const char* Name, int Type, 
@@ -241,25 +270,26 @@ PeerClass *PeerOf(PeriphClass *P)
 }
 bool IsOnline(PeerClass *P)
 {
+    if (P == NULL) return 0;
     if ((P->GetTSLastSeen() != 0) and (millis() - P->GetTSLastSeen() < OFFLINE_INTERVAL)) return 1;
     return 0;
 }
 bool IsOnline(PeriphClass *P)
 {
+    if (P == NULL) return 0;
     PeerClass *Peer = PeerOf(P);
+    if (Peer == NULL) return 0;
+
     if ((Peer->GetTSLastSeen() != 0) and (millis() - Peer->GetTSLastSeen() < OFFLINE_INTERVAL)) return 1;
     return 0;
 }
 int FindPeriphListPos(PeriphClass *Periph)
 {
-    if (PeriphList.size() == 0) return -1;
+    if ((PeriphList.size() == 0)  or (Periph == NULL)) return -1;
 
-    if (Periph != NULL)
-    {
-        for(int i = 0; i < PeriphList.size(); i++) 
-        {   
-            if (PeriphList.get(i) == Periph) return i;
-        }
+    for(int i = 0; i < PeriphList.size(); i++) 
+    {   
+        if (PeriphList.get(i) == Periph) return i;
     }
     return -1;
 }
@@ -343,7 +373,7 @@ PeriphClass *FindNextPeriph(PeerClass *Peer, PeriphClass *Periph, int Type, bool
     if (PeriphList.size() == 0) return NULL;
 
     int PeriphPos = -1;
-    if (Periph) PeriphPos = FindPeriphListPos(Periph);
+    PeriphPos = FindPeriphListPos(Periph);
     
     if (Peer == NULL) circular = true;  // if Peer doesnt matter, always search circular
 
@@ -356,6 +386,7 @@ PeriphClass *FindNextPeriph(PeerClass *Peer, PeriphClass *Periph, int Type, bool
             PeriphPos = 0;
         }
         TPeriph = PeriphList.get(PeriphPos);
+        if (TPeriph == NULL) continue;
 
         if ((Peer == NULL) or (Peer->GetId() == TPeriph->GetPeerId()))
         // Peer fits
@@ -391,7 +422,8 @@ PeriphClass *FindPrevPeriph(PeerClass *Peer, PeriphClass *Periph, int Type, bool
             PeriphPos = PeriphList.size()-1;
         }
         TPeriph = PeriphList.get(PeriphPos);
-
+        if (TPeriph == NULL) continue;
+        
         if ((Peer == NULL) or (Peer->GetId() == TPeriph->GetPeerId()))
         // Peer fits
         {

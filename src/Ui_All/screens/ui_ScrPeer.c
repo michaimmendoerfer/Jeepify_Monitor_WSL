@@ -315,7 +315,7 @@ void ui_ScrPeer_screen_init(void)
     lv_obj_set_width(ui_BtnPeer6Lbl1, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_BtnPeer6Lbl1, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_BtnPeer6Lbl1, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_BtnPeer6Lbl1, "Demo");
+    lv_label_set_text(ui_BtnPeer6Lbl1, "Pair");
     lv_obj_add_flag(ui_BtnPeer6Lbl1, LV_OBJ_FLAG_CHECKABLE);     /// Flags
 
     ui_BtnPeer4 = lv_btn_create(ui_Container3);

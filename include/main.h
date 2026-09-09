@@ -29,7 +29,7 @@
 
 struct ConfirmStruct {
     uint8_t  Address[6];
-    char     Message[250];
+    char     Message[260];
     volatile uint32_t TSMessage;
     int      Try;
     bool     Confirmed;
@@ -80,8 +80,8 @@ void   CalibVolt();
 void   CalibAmp();
 void   PrepareJSON();
 void   PrintMAC(const uint8_t * mac_addr);
-void   MacCharToByte(uint8_t *mac, char *MAC);
-char  *MacByteToChar(char *MAC, uint8_t *mac);
+void   MacCharToByte(uint8_t *mac, const char *MAC);
+char  *MacByteToChar(char *MAC, const uint8_t *mac);
 void   GarbageMessages(lv_timer_t * timer);
 void   RequestMessageBox(const char * Titel, const char *Txt, int delay, int opa);
 

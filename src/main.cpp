@@ -18,10 +18,12 @@
 #pragma endregion Board-specifics
 #pragma region Globals
 
-const char *ArrNullwert[MAX_PERIPHERALS] = {"NW0",  "NW1",  "NW2",  "NW3",  "NW4",  "NW5",  "NW6",  "NW7",  "NW8" };
-const char *ArrVperAmp[MAX_PERIPHERALS] =  {"VpA0", "VpA1", "VpA2", "VpA3", "VpA4", "VpA5", "VpA6", "VpA7", "VpA8"};
-const char *ArrVin[MAX_PERIPHERALS] =      {"Vin0", "Vin1", "Vin2", "Vin3", "Vin4", "Vin5", "Vin6", "Vin7", "Vin8"};
-const char *ArrPeriph[MAX_PERIPHERALS]   = {"Per0", "Per1", "Per2", "Per3", "Per4", "Per5", "Per6", "Per7", "Per8"};
+const char *ArrNullwert[MAX_PERIPHERALS] = {"N0",  "N1",  "N2",  "N3",  "N4",  "N5",  "N6",  "N7",  "N8"};
+const char *ArrRaw[MAX_PERIPHERALS]      = {"R0", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8"};
+const char *ArrRawVolt[MAX_PERIPHERALS]  = {"RaV0", "RaV1", "RaV2", "RaV3", "RaV4", "RaV5", "RaV6", "RaV7", "RaV8"};
+const char *ArrVperAmp[MAX_PERIPHERALS]  = {"VpA0", "VpA1", "VpA2", "VpA3", "VpA4", "VpA5", "VpA6", "VpA7", "VpA8"};
+const char *ArrVin[MAX_PERIPHERALS]      = {"Vin0", "Vin1", "Vin2", "Vin3", "Vin4", "Vin5", "Vin6", "Vin7", "Vin8"};
+const char *ArrPeriph[MAX_PERIPHERALS]   = {"P0", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"};
 
 int PeerCount;
 Preferences preferences;
@@ -80,6 +82,8 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
     
     jsondataBuf = jsondata;
 
+    DEBUG3 ("RAW: OnDataRecv: %s\n\r", jsondata.c_str());
+
     JsonDocument doc;
     DeserializationError error = deserializeJson(doc, jsondata);
 
@@ -96,7 +100,11 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
         const char *MACT = doc[SEND_CMD_JSON_TO];
         MacCharToByte(_To, (char *) MACT);
         
-        if ( (memcmp(_To, Module.GetBroadcastAddress(), 6)) and (memcmp(_To, broadcastAddressAll, 6)) ) return;
+        if ( (memcmp(_To, Module.GetBroadcastAddress(), 6)) and (memcmp(_To, broadcastAddressAll, 6)) ) 
+        {
+            DEBUG3 ("Message an unbekannten Empfänger\n\r");
+            return;
+        }
         DEBUG2 ("%s\n\rwird verarbeitet - Order:%d\n\r", jsondata.c_str(), _Order);
 
         //already recevied?
@@ -610,7 +618,8 @@ esp_err_t  JeepifySend(const uint8_t *peer, const uint8_t *data, size_t len, boo
 
             ConfirmStruct *Confirm = new ConfirmStruct;
             memcpy(Confirm->Address, _To, 6);
-            strcpy(Confirm->Message, (const char *)data);
+            strncpy(Confirm->Message, (const char *)data, sizeof(Confirm->Message) - 1);
+            Confirm->Message[sizeof(Confirm->Message) - 1] = '\0'; // Sicherstellen, dass der String null-terminiert ist
             Confirm->Confirmed = false;
             Confirm->TSMessage = doc[SEND_CMD_JSON_TS];
             Confirm->Try = 1;
@@ -934,13 +943,23 @@ void PrintMAC(const uint8_t * mac_addr){
            mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5]);
   Serial.print(macStr);
 }
-void MacCharToByte(uint8_t *mac, char *MAC)
-{
-    sscanf(MAC, "%2x%2x%2x%2x%2x%2x", &mac[0], &mac[1], &mac[2], &mac[3], &mac[4], &mac[5]);
+void MacCharToByte(uint8_t *mac, const char *MAC) { 
+    if (strcmp(MAC, "X") == 0) { 
+        memset(mac, 0xFF, 6); 
+    } 
+    else
+    {
+        // sscanf gibt die Anzahl erfolgreich gelesener Elemente zurück
+        int parsed = sscanf(MAC, "%2hhx%2hhx%2hhx%2hhx%2hhx%2hhx", 
+                     &mac[0], &mac[1], &mac[2], &mac[3], &mac[4], &mac[5]);               
+    }
 }
-char *MacByteToChar(char *MAC, uint8_t *mac)
+char *MacByteToChar(char *MAC, const uint8_t *mac)
 {
-    sprintf(MAC, "%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    // snprintf verhindert das Überschreiben von Speicher über 13 Bytes hinaus
+    // 12 Zeichen für die MAC-Adresse + 1 Zeichen für das String-Ende '\0'
+    snprintf(MAC, 13, "%02X%02X%02X%02X%02X%02X", 
+             mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
     return MAC;
 }
 

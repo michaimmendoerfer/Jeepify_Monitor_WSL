@@ -448,7 +448,7 @@ PeriphClass *FindPrevPeriph(PeerClass *Peer, PeriphClass *Periph, int Type, bool
 }
 #pragma endregion MAC-Things
 
-char *TypeInText(int Type)
+char *TypeInText(int Type) //???
 {
     switch (Type)
     {

@@ -103,7 +103,7 @@ String processor(const String& var)
     if (var == "PeriphName")  if (ActiveWebPeriph) return ActiveWebPeriph->GetName();
     if (var == "Nullwert")    if (ActiveWebPeriph) { dtostrf(ActiveWebPeriph->GetNullwert(), 0, 3, Buf); return String(Buf); }
     if (var == "VperAmp")     if (ActiveWebPeriph) { dtostrf(ActiveWebPeriph->GetVperAmp(), 0, 3, Buf); return String(Buf); }
-    if (var == "Vin")         if (ActiveWebPeriph) return String(ActiveWebPeriph->GetVin());
+    if (var == "VCorr")         if (ActiveWebPeriph) return String(ActiveWebPeriph->GetVCorr());
     
     if (var == "AnzPeers")    return String(PeerList.size()+1);
     if (var == "AnzPeriphs")  return String(PeriphList.size());
@@ -197,7 +197,7 @@ bool SendWebVinChange()
     doc[SEND_CMD_JSON_TS]    = millis();
     doc[SEND_CMD_JSON_TTL]   = SEND_CMD_MSG_TTL;
     doc[SEND_CMD_JSON_ORDER] = SEND_CMD_UPDATE_VIN;
-    doc[SEND_CMD_JSON_VALUE] = ActiveWebPeriph->GetVin();
+    doc[SEND_CMD_JSON_VALUE] = ActiveWebPeriph->GetVCorr();
     doc[SEND_CMD_JSON_PERIPH_POS] = ActiveWebPeriph->GetPos();
     
     serializeJson(doc, jsondata);  

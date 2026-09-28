@@ -47,17 +47,17 @@ void Ui_Single_FillScreen()
 }
 void Ui_Single_Next(lv_event_t * e)
 {	
-	if (ActivePeriphShown->IsType(SENS_TYPE_SENS))   
+	if (ActivePeriphShown->IsSwitch()) 
+	{
+		ActivePeriphSwitch = FindNextPeriph(NULL, ActivePeriphShown, SENS_TYPE_SWITCH, CIRCULAR);
+		ActivePeriphShown  = ActivePeriphSwitch;
+	}
+	else if (ActivePeriphShown->IsSensor())   
 	{
 		ActivePeriphSensor = FindNextPeriph(NULL, ActivePeriphShown, SENS_TYPE_SENS, CIRCULAR);
 		ActivePeriphShown  = ActivePeriphSensor;
 	}
 	
-	if (ActivePeriphShown->IsType(SENS_TYPE_SW_ALL)) 
-	{
-		ActivePeriphSwitch = FindNextPeriph(NULL, ActivePeriphShown, SENS_TYPE_SW_ALL, CIRCULAR);
-		ActivePeriphShown  = ActivePeriphSwitch;
-	}
 
 	if (ActivePeriphShown)
 	{
@@ -67,17 +67,18 @@ void Ui_Single_Next(lv_event_t * e)
 }
 void Ui_Single_Prev(lv_event_t * e)
 {
-	if (ActivePeriphShown->IsType(SENS_TYPE_SENS))   
+	if (ActivePeriphShown->IsSwitch()) 
+	{
+		ActivePeriphSwitch = FindPrevPeriph(NULL, ActivePeriphShown, SENS_TYPE_SWITCH, CIRCULAR);
+		ActivePeriphShown  = ActivePeriphSwitch;
+	}
+	else if (ActivePeriphShown->IsSensor())   
 	{
 		ActivePeriphSensor = FindPrevPeriph(NULL, ActivePeriphShown, SENS_TYPE_SENS, CIRCULAR);
 		ActivePeriphShown  = ActivePeriphSensor;
 	}
 	
-	if (ActivePeriphShown->IsType(SENS_TYPE_SW_ALL)) 
-	{
-		ActivePeriphSwitch = FindPrevPeriph(NULL, ActivePeriphShown, SENS_TYPE_SW_ALL, CIRCULAR);
-		ActivePeriphShown  = ActivePeriphSwitch;
-	}
+	
 	
 	if (ActivePeriphShown)
 	{

@@ -160,35 +160,42 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
                     int         _Type        = (int) (doc[SEND_CMD_JSON_MODULE_TYPE]);
                     const char *_PeerVersion = doc[SEND_CMD_JSON_VERSION];
                     
-                    Serial.println("neuen Peer erstellen");
-                    P = new PeerClass();
-                    PeerList.add(P);
-                    SaveNeeded = true;
-                    NewPeer    = true;
-                    Module.SetPairMode(false); TSPair = 0;
-                    P->Setup(_PeerName, _Type, _PeerVersion, _From, (bool) bitRead(_Status, 1), (bool) bitRead(_Status, 0), (bool) bitRead(_Status, 2), (bool) bitRead(_Status, 3));                    
-
-                    if (Module.GetDebugMode()) 
+                    if (doc[SEND_CMD_JSON_PROTOCOL] == PROTOKOLL_VERSION) 
                     {
-                        RequestMessageBox("Peer added...", doc[SEND_CMD_JSON_PEER_NAME], 2000, 150);
-                    }
+                        Serial.println("neuen Peer erstellen");
+                        P = new PeerClass();
+                        PeerList.add(P);
+                        SaveNeeded = true;
+                        NewPeer    = true;
+                        Module.SetPairMode(false); TSPair = 0;
+                        P->Setup(_PeerName, _Type, _PeerVersion, _From, (bool) bitRead(_Status, 1), (bool) bitRead(_Status, 0), (bool) bitRead(_Status, 2), (bool) bitRead(_Status, 3));                    
 
-                    for (int Si=0; Si<MAX_PERIPHERALS; Si++) 
-                    {
-                        DEBUG3 ("Check Pairing for: %s\n\r", ArrPeriph[Si]);
-                        
-                        if (doc[ArrPeriph[Si]].is<JsonVariant>()) // vielleicht String (Per+Si)
+                        if (Module.GetDebugMode()) 
                         {
-                            strcpy(buf, doc[ArrPeriph[Si]]);
-                            int   _PeriphType = atoi(strtok(buf, ";"));
-                            char *_PeriphName = strtok(NULL, ";");
-                            P->PeriphSetup(Si, _PeriphName, _PeriphType, P->GetId()); 
-                            
-                            P->SetPeriphChanged(Si, true);
-                            PeriphList.add(P->GetPeriphPtr(Si));
-                            SaveNeeded = true;
-                            DEBUG2 ("%s->Periph[%d].Name is now: %s\n\r", P->GetName(), Si, P->GetPeriphName(Si));
+                            RequestMessageBox("Peer added...", doc[SEND_CMD_JSON_PEER_NAME], 2000, 150);
                         }
+
+                        for (int Si=0; Si<MAX_PERIPHERALS; Si++) 
+                        {
+                            DEBUG3 ("Check Pairing for: %s\n\r", ArrPeriph[Si]);
+                            
+                            if (doc[ArrPeriph[Si]].is<JsonVariant>()) // vielleicht String (Per+Si)
+                            {
+                                strcpy(buf, doc[ArrPeriph[Si]]);
+                                int   _PeriphType = atoi(strtok(buf, ";"));
+                                char *_PeriphName = strtok(NULL, ";");
+                                P->PeriphSetup(Si, _PeriphName, _PeriphType, P->GetId()); 
+                                
+                                P->SetPeriphChanged(Si, true);
+                                PeriphList.add(P->GetPeriphPtr(Si));
+                                SaveNeeded = true;
+                                DEBUG2 ("%s->Periph[%d].Name is now: %s\n\r", P->GetName(), Si, P->GetPeriphName(Si));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        DEBUG3 ("No Pairing with %s - incompatible protocol-version (%s) - Should be: %s\n\r", _PeerName, doc[SEND_CMD_JSON_PROTOCOL], PROTOKOLL_VERSION);
                     }
                 }
                 if (P) // already known or just created - confirm

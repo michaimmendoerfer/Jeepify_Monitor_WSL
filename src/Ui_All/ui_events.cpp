@@ -1137,7 +1137,7 @@ void Ui_Menu_Btn1_Clicked(lv_event_t * e)
 
 void Ui_Menu_Btn2_Clicked(lv_event_t * e)
 {
-	if (!ActivePeriphSwitch) ActivePeriphSwitch = FindNextPeriph(NULL, NULL, SENS_TYPE_SW_ALL, CIRCULAR, ONLINE);
+	if (!ActivePeriphSwitch) ActivePeriphSwitch = FindNextPeriph(NULL, NULL, SENS_TYPE_SWITCH, CIRCULAR, ONLINE);
 	if (ActivePeriphSwitch) 
 	{
 		ActivePeriphShown = ActivePeriphSwitch;
@@ -1146,5 +1146,4 @@ void Ui_Menu_Btn2_Clicked(lv_event_t * e)
 	}
 }
 #pragma endregion Menu
-
 

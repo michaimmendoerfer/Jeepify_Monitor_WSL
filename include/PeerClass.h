@@ -1,6 +1,6 @@
 /*
 include PeerList and PeriphList
-Version 3.32
+Version 3.41
 */
 
 #ifndef PEERCLASS_H
@@ -31,16 +31,20 @@ class PeriphClass {
     private:
         char            _Name[20];
         int             _Id;
-        int             _Type;       //1=Switch, 2=Amp, 3=Volt, 4=Switch/Amp, 5=LatchingRelay, 6=LatchingRelay/Amp
+        //int             _Type;       //1=Switch, 2=Amp, 3=Volt, 4=Switch/Amp, 5=LatchingRelay, 6=LatchingRelay/Amp
+        int             _Type_bit;
         int             _Pos;        //Periph 1..4.. from one peer
         bool            _i2c[4];     //
         int             _IOPort[4];  //on/off/volt/amp
         int             _I2CPort[4]; //corresponding i2c-channel
         float           _Nullwert;
         float           _VperAmp;
-        float           _Vin;
+        float           _VCorr;
         volatile float  _Value[4];   //switch/---/volt/amp
         float           _OldValue[4];
+        float           _AlarmLow[4];
+        float           _AlarmHigh[4];
+        bool            _AlarmTriggered[4];
         bool            _Changed;
         int             _PeerId;
 
@@ -54,15 +58,19 @@ class PeriphClass {
         void  Setup(const char* Name, int Type, bool isADS, 
                     int I2CPort0, int I2CPort1, int I2CPort2, int I2CPort3, 
                     int IOPort0,  int IOPort1,  int IOPort2,  int IOPort3, 
-                    float Nullwert, float VperAmp, float Vin, int PeerId);
+                    float Nullwert, float VperAmp, float VCorr, int PeerId);
         void  Setup(const char* Name, int Type, int PeerId);
         
         bool  SetName(const char* Name) { strncpy(_Name, Name, sizeof(_Name) - 1); _Name[sizeof(_Name) - 1] = '\0'; return true; }
         char *GetName(){ return (_Name); }
         int   GetId() { return _Id; }
         void  SetId(int Id) { _Id = Id; }
-        int   GetType() { return _Type; }
-        void  SetType(int Type) { _Type = Type; }
+        int   GetType() { return _Type_bit; }
+        void  SetType(int Type) { _Type_bit = Type; }
+        //int   GetTypeBit() { return _Type_bit; }
+        void  SetTypeBit(int BitToSet) { bitSet(_Type_bit, BitToSet); }
+        void  ClearTypeBit(int BitToClear) { bitClear(_Type_bit, BitToClear); }
+        bool  GetTypeBit(int BitToCheck) { return bitRead(_Type_bit, BitToCheck); }
         bool  IsType(int Type);
         int   GetPos() { return _Pos; }
         void  SetPos(int Pos) {_Pos = Pos; }
@@ -74,8 +82,8 @@ class PeriphClass {
         void  SetNullwert(float Nullwert) { _Nullwert = Nullwert; }
         float GetVperAmp() { return _VperAmp; }
         void  SetVperAmp(float VperAmp) { _VperAmp = VperAmp; }
-        float GetVin() { return _Vin; }
-        void  SetVin(float Vin) { _Vin = Vin; }
+        float GetVCorr() { return _VCorr; }
+        void  SetVCorr(float VCorr) { _VCorr = VCorr; }
         float GetValue(int i=0) { if (i > 3 || i < 0) return -1; else return _Value[i]; }
         void  SetValue(float Value, int i=0) { _Value[i] = Value; }
         float GetOldValue(int i=0) { return _OldValue[i]; }
@@ -85,14 +93,22 @@ class PeriphClass {
         void  SetChanged(bool Changed) { _Changed = Changed; }
         int   GetPeerId() { return _PeerId; }
         void  SetPeerId(int PeerId) { _PeerId = PeerId; }
-        bool  IsSensor() { return ((_Type == SENS_TYPE_VOLT) or (_Type == SENS_TYPE_AMP)); }
-        bool  IsSwitch() { return ((_Type == SENS_TYPE_SWITCH) or (_Type == SENS_TYPE_SW_AMP) or (_Type == SENS_TYPE_LT) or (_Type == SENS_TYPE_LT_AMP)); }
-        bool  IsCombo()  { return ((_Type == SENS_TYPE_SW_AMP) or (_Type == SENS_TYPE_LT_AMP)); }
-        bool  isEmpty() { return (_Type == 0); }
-        
+        bool  IsSensor() { return ((_Type_bit & P_IS_SENSOR) != 0); }
+        bool  IsSwitch() { return ((_Type_bit & P_IS_SWITCH) != 0); }
+        bool  IsAmp() { return ((_Type_bit & P_IS_AMP) != 0); }
+        bool  IsVolt() { return ((_Type_bit & P_IS_VOLT) != 0); }
+        bool  IsLatch() { return ((_Type_bit & P_IS_LATCH) != 0); }
+        bool  IsCombo()  { return ((_Type_bit & P_IS_SWITCH) != 0) and ((_Type_bit & P_IS_SENSOR) != 0); }
+        bool  isEmpty() { return (_Type_bit == 0); }
         float GetSavedValue(int Index, int i) { return _SavedValue[Index][i]; }
         void  AddSavedValue(float V0, float V1, float V2, float V3);
         int   GetSavedValueIndex() { return _SavedValueIndex; }
+        float GetAlarmLow(int i) { return _AlarmLow[i]; }
+        void  SetAlarmLow(int i, float Value) { _AlarmLow[i] = Value; }
+        float GetAlarmHigh(int i) { return _AlarmHigh[i]; }
+        void  SetAlarmHigh(int i, float Value) { _AlarmHigh[i] = Value; }
+        void  SetAlarmTriggered(int i, bool Value=true) { _AlarmTriggered[i] = Value; }
+        bool  IsAlarmTriggered(int i) { return _AlarmTriggered[i]; }
 
         PeriphClass *GetPtrToSelf() { return this; }
 };
@@ -162,7 +178,7 @@ class PeerClass
         void  PeriphSetup(int Pos, const char* Name, int Type, 
                           int I2CPort0, int I2CPort1, int I2CPort2, int I2CPort3, 
                           int IOPort0, int IOPort1, int IOPort2, int IOPort3,  
-                          float Nullwert, float VperAmp, float Vin, int PeerId);
+                          float Nullwert, float VperAmp, float VCorr, int PeerId);
         void  PeriphSetup(int Pos, const char* Name, int Type, int PeerId);
         
         char *GetPeriphName(int P) { return Periph[P].GetName(); }
@@ -186,9 +202,9 @@ class PeerClass
         bool  PeriphChanged(int P) { return Periph[P].GetChanged(); }
         
         int   GetPeriphType(int P) { return Periph[P].GetType(); }
-        
-        float GetPeriphVin(int P) { return Periph[P].GetVin(); }
-        void  SetPeriphVin(int P, float Vin) { Periph[P].SetVin(Vin); }
+
+        float GetPeriphVCorr(int P) { return Periph[P].GetVCorr(); }
+        void  SetPeriphVCorr(int P, float VCorr) { Periph[P].SetVCorr(VCorr); }
         
         float GetPeriphVperAmp(int P){ return Periph[P].GetVperAmp(); }
         void  SetPeriphVperAmp(int P, float VperAmp) { return Periph[P].SetVperAmp(VperAmp); }
@@ -214,7 +230,17 @@ class PeerClass
         bool isPeriphEmpty(int SNr) { return Periph[SNr].isEmpty(); }
         bool isPeriphSensor(int SNr) { return Periph[SNr].IsSensor(); }
         bool isPeriphSwitch(int SNr) { return Periph[SNr].IsSwitch(); }
+        bool isPeriphVolt(int SNr) { return Periph[SNr].IsVolt(); }
+        bool isPeriphAmp(int SNr) { return Periph[SNr].IsAmp(); }
+        bool isPeriphLatch(int SNr) { return Periph[SNr].IsLatch(); }
         bool isPeriphCombo(int SNr) { return Periph[SNr].IsCombo(); }
+
+        float GetPeriphAlarmLow(int SNr, int i) { return Periph[SNr].GetAlarmLow(i); }
+        void  SetPeriphAlarmLow(int SNr, int i, float Value) { Periph[SNr].SetAlarmLow(i, Value); }
+        float GetPeriphAlarmHigh(int SNr, int i) { return Periph[SNr].GetAlarmHigh(i); }
+        void  SetPeriphAlarmHigh(int SNr, int i, float Value) { Periph[SNr].SetAlarmHigh(i, Value); }
+        void  SetPeriphAlarmTriggered(int SNr, int i, bool Value=true) { Periph[SNr].SetAlarmTriggered(i, Value); }
+        bool  IsPeriphAlarmTriggered(int SNr, int i) { return Periph[SNr].IsAlarmTriggered(i); }
 };
 
 PeerClass *FindPeerByMAC(const uint8_t *BroadcastAddress);
@@ -235,6 +261,6 @@ char *TypeInText(int Type);
 extern PeerClass *ActivePeer;
 extern PeriphClass *ActivePeriph;
 
-extern char ExportImportBuffer[1000];
+extern char ExportImportBuffer[500];
 
 #endif

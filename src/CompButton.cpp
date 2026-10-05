@@ -2,7 +2,20 @@
 #include "main.h"
 #include "CompButton.h"
 
-// Version 4.01
+// Version 4.20
+
+#define VALUE_V_MIN     90
+#define VALUE_V_MAX     150
+#define VALUE_V_GREEN   13
+#define VALUE_V_YELLOW  14.4
+#define VALUE_A_MIN     0
+#define VALUE_A_MAX     400
+#define VALUE_A_GREEN   20
+#define VALUE_A_YELLOW  25
+#define VALUE_W_MIN     0
+#define VALUE_W_MAX     4000
+#define VALUE_W_GREEN   300
+#define VALUE_W_YELLOW  350
 
 extern lv_obj_t *ui_LblMenuBatt;
 
@@ -515,9 +528,9 @@ void CompSensor::Update()
         lv_color_t bg;
         float value;
 
-        if (_Periph->GetType() == SENS_TYPE_AMP)
+        if (_Periph->GetPrimary() == PRIM_AMP)
         {
-            value = _Periph->GetValue(3);
+            value = _Periph->GetValue(V_AMP);
         
             if      (value<10)  nk = 2;
             else if (value<100) nk = 1;
@@ -527,17 +540,17 @@ void CompSensor::Update()
             else dtostrf(value, 0, nk, buf);
             strcat(buf, " A");
             
-            if      (value < 20) bg = lv_color_hex(0x135A25);
-            else if (value < 25) bg = lv_color_hex(0x7C7E26);
-            else 		     bg = lv_color_hex(0x88182C);
+            if      (value < VALUE_A_GREEN)  bg = lv_color_hex(0x135A25);
+            else if (value < VALUE_A_YELLOW) bg = lv_color_hex(0x7C7E26);
+            else 		                     bg = lv_color_hex(0x88182C);
             lv_obj_set_style_bg_color(_Button, bg, LV_PART_MAIN | LV_STATE_DEFAULT);
             
-            lv_arc_set_range(_Arc, 0, 400);
+            lv_arc_set_range(_Arc, VALUE_A_MIN, VALUE_A_MAX);
             lv_arc_set_value(_Arc, value*10);
         }
-        else if (_Periph->GetType() == SENS_TYPE_VOLT)
+        else if (_Periph->GetPrimary() == PRIM_VOLT)
         {
-            float value = _Periph->GetValue(2);
+            float value = _Periph->GetValue(V_VOLT);
         
             if      (value<10)  nk = 2;
             else if (value<100) nk = 1;
@@ -547,12 +560,32 @@ void CompSensor::Update()
             else dtostrf(value, 0, nk, buf);
             strcat(buf, " V");
                         
-            if 	(value < 13)   	bg = lv_color_hex(0x135A25);
-            else if (value < 14.4) 	bg = lv_color_hex(0x7C7E26);
-            else 	 		bg = lv_color_hex(0x88182C);
+            if 	    (value < VALUE_V_GREEN)  bg = lv_color_hex(0x135A25);
+            else if (value < VALUE_V_YELLOW) bg = lv_color_hex(0x7C7E26);
+            else 	 		                 bg = lv_color_hex(0x88182C);
             lv_obj_set_style_bg_color(_Button, bg, LV_PART_MAIN | LV_STATE_DEFAULT);
             
-            lv_arc_set_range(_Arc, 90, 150);
+            lv_arc_set_range(_Arc, VALUE_V_MIN, VALUE_V_MAX);
+            lv_arc_set_value(_Arc, value*10);
+        }
+        else if (_Periph->GetPrimary() == PRIM_WATT)
+        {
+            float value = _Periph->GetValue(V_VOLT) * _Periph->GetValue(V_AMP);
+        
+            if      (value<10)  nk = 2;
+            else if (value<100) nk = 1;
+            else                nk = 0;
+
+            if (value == -99) strcpy(buf, "--"); 
+            else dtostrf(value, 0, nk, buf);
+            strcat(buf, " W");
+                        
+            if 	    (value < VALUE_W_GREEN)  bg = lv_color_hex(0x135A25);
+            else if (value < VALUE_W_YELLOW) bg = lv_color_hex(0x7C7E26);
+            else 	 		                 bg = lv_color_hex(0x88182C);
+            lv_obj_set_style_bg_color(_Button, bg, LV_PART_MAIN | LV_STATE_DEFAULT);
+            
+            lv_arc_set_range(_Arc, VALUE_W_MIN, VALUE_W_MAX);
             lv_arc_set_value(_Arc, value*10);
         }
             
@@ -614,12 +647,12 @@ void CompMeter::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, P
 	
 	_IndicNeedle = lv_meter_add_needle_line(_Button, _Scale, 4, lv_palette_main(LV_PALETTE_GREY), -10);
 	
-	if (_Periph->GetType() == SENS_TYPE_AMP)
+	if (_Periph->IsAmp())
 	{
         _GraphValuePos = V_AMP;
         lv_meter_set_scale_ticks(_Button, _Scale, 41, 2, 10, lv_palette_main(LV_PALETTE_GREY));
     	lv_meter_set_scale_major_ticks(_Button, _Scale, 5, 4, 15, lv_color_black(), 15);
-    	lv_meter_set_scale_range(_Button, _Scale, 0, 400, 240, 150);
+    	lv_meter_set_scale_range(_Button, _Scale, VALUE_A_MIN, VALUE_A_MAX, 240, 150);
 	
 		//Add a green arc to the start
 		_Indic = lv_meter_add_scale_lines(_Button, _Scale, lv_palette_main(LV_PALETTE_GREEN), lv_palette_main(LV_PALETTE_GREEN), false, 0);
@@ -639,12 +672,12 @@ void CompMeter::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, P
         
 		lv_obj_add_event_cb(_Button, Meter_cb, LV_EVENT_DRAW_PART_BEGIN, NULL);
 	}
-	else if (_Periph->GetType() == SENS_TYPE_VOLT)
+	else if (_Periph->IsVolt())
 	{	
         _GraphValuePos = V_VOLT;
         lv_meter_set_scale_ticks(_Button, _Scale, 31, 2, 10, lv_palette_main(LV_PALETTE_GREY));
     	lv_meter_set_scale_major_ticks(_Button, _Scale, 5, 4, 15, lv_color_black(), 15);
-    	lv_meter_set_scale_range(_Button, _Scale, 90, 150, 240, 150);
+    	lv_meter_set_scale_range(_Button, _Scale, VALUE_V_MIN, VALUE_V_MAX, 240, 150);
 	
 		_Indic = lv_meter_add_scale_lines(_Button, _Scale, lv_palette_main(LV_PALETTE_RED), lv_palette_main(LV_PALETTE_RED), false, 0);
     	lv_meter_set_indicator_start_value(_Button, _Indic, 90);
@@ -730,23 +763,30 @@ void CompMeter::Update()
     }
 
     char buf[10];
+    char Einheit[3];
+
 	int nk = 0;
 	float value = 0;
-    if (_Periph->GetType() == SENS_TYPE_AMP)  value = _Periph->GetValue(3);
-    if (_Periph->GetType() == SENS_TYPE_VOLT) value = _Periph->GetValue(2);
-	    
-		Serial.printf("Sensor: %s: %f\n\r", _Periph->GetName(), value);
-		if (abs(value) < SCHWELLE) value = 0;
 
-		if      (value<10)  nk = 2;
-		else if (value<100) nk = 1;
-		else                nk = 0;
+    switch (_Periph->GetPrimary())
+    {
+        case PRIM_AMP:  value = _Periph->GetValue(3);                        strncpy(Einheit, " A", sizeof(Einheit)); break;
+        case PRIM_VOLT: value = _Periph->GetValue(2);                        strncpy(Einheit, " V", sizeof(Einheit)); break;
+        case PRIM_WATT: value = _Periph->GetValue(2) * _Periph->GetValue(3); strncpy(Einheit, " W", sizeof(Einheit)); break;
+    }
+    Einheit[2] = '\0';
+     
+    Serial.printf("Sensor: %s: %f\n\r", _Periph->GetName(), value);
+    if (fabs(value) < SCHWELLE) value = 0;
 
-		if (value == -99) strcpy(buf, "--"); 
-		else dtostrf(value, 0, nk, buf);
+    if      (value<10)  nk = 2;
+    else if (value<100) nk = 1;
+    else                nk = 0;
 
-		if (_Periph->GetType() == SENS_TYPE_AMP)  strcat(buf, " A");
-		if (_Periph->GetType() == SENS_TYPE_VOLT) strcat(buf, " V");
+    if (value == -99) strcpy(buf, "--"); 
+    else dtostrf(value, 0, nk, buf);
+
+    strncat(buf, Einheit, sizeof(buf));
 		
 	lv_meter_set_indicator_value(_Button, _IndicNeedle, value*10);
 
@@ -796,11 +836,15 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     uint16_t newSize = 256*SCREEN_RES_HOR/360; //+5
     
     ui_ImgMeter2 = lv_img_create(comp_parent);
-    if (_Periph->GetType() == SENS_TYPE_VOLT)
+    if (_Periph->GetPrimary() == PRIM_VOLT)
     { 
         lv_img_set_src(ui_ImgMeter2, &ui_img_voltmeter_360_png);
     }
-    if (_Periph->GetType() == SENS_TYPE_AMP)
+    else if (_Periph->GetPrimary() == PRIM_AMP)
+    { 
+        lv_img_set_src(ui_ImgMeter2, &ui_img_ampmeter_360_png);
+    }
+    else if (_Periph->GetPrimary() == PRIM_WATT)
     { 
         lv_img_set_src(ui_ImgMeter2, &ui_img_ampmeter_360_png);
     }
@@ -846,7 +890,7 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     lv_obj_clear_flag(ui_ImgZeiger, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_img_set_angle(ui_ImgZeiger, 0);
 	
-	if (_Periph->GetType() == SENS_TYPE_VOLT)
+	if (_Periph->GetPrimary() == PRIM_VOLT)
 	{	
         if (_GraphVisible) ChartInit(SCREEN_RES_HOR/2, SCREEN_RES_VER*0.7, SCREEN_RES_HOR/3, SCREEN_RES_VER/15, RECORDED_VALUES);
     }
@@ -888,10 +932,7 @@ void CompMeter2::Update()
     
     lv_obj_set_pos(_LblPeer,   _X_Peer,   _Y_Peer);
     lv_obj_set_pos(_LblPeriph, _X_Periph, _Y_Periph);
-    //lv_obj_set_pos(_LblValue,  _X_Value,  _Y_Value);
-
-	//Serial.printf("Peer:Periph %s:%s", PeerOf(_Periph)->GetName(), _Periph->GetName());
-
+    
 	if ((PeerOf(_Periph)->GetName() == NULL) or (!_PeerVisible))
 	{
 	    lv_obj_add_flag(_LblPeer, LV_OBJ_FLAG_HIDDEN);
@@ -916,39 +957,31 @@ void CompMeter2::Update()
     char buf[10];
 	int nk = 0;
 	float value = 0;
-    static float testv;
-
-    if (_Periph->GetType() == SENS_TYPE_AMP)  value = _Periph->GetValue(3);
-    if (_Periph->GetType() == SENS_TYPE_VOLT) value = _Periph->GetValue(2);
-	
+    
+    if (_Periph->GetPrimary() == PRIM_AMP)       value = _Periph->GetValue(V_AMP);
+    else if (_Periph->GetPrimary() == PRIM_VOLT) value = _Periph->GetValue(V_VOLT);
+    else if (_Periph->GetPrimary() == PRIM_WATT) value = _Periph->GetValue(V_VOLT) * _Periph->GetValue(V_AMP);
+    
     int Range = 485;	
     int Angle = 0;
 
-    if (_Periph->GetType() == SENS_TYPE_AMP)  
+    if (_Periph->GetPrimary() == PRIM_AMP)  
     { 
-        if(0)//if (Module.GetDebugMode())
-        {
-            testv = testv+0.1;
-            if (testv > 30) testv = 0;
-            value = testv;
-        }
-
         //int Tick = 2*Range/30;
         //Angle = -Range+value*Tick;
-        Angle = -Range + (int)((value * 2.0f * Range) / 15.0f); //KI
+        Angle = -Range + (int)((value * 2.0f * 30) / 15.0f); //KI
 
         lv_img_set_angle(ui_ImgZeiger, Angle);
     }
-    else if (_Periph->GetType() == SENS_TYPE_VOLT)
-    { 
-        if(0)//if (Module.GetDebugMode())
-        {
-            testv = testv+0.1;
-            if (testv > 15) testv = 9;
-            value = testv;
-        }
-        
+    else if (_Periph->GetPrimary() == PRIM_VOLT)
+    {         
         int Tick = 2*Range/15;
+        Angle = -Range+value*Tick;
+        lv_img_set_angle(ui_ImgZeiger, Angle);
+    }
+    else if (_Periph->GetPrimary() == PRIM_WATT)
+    {         
+        int Tick = 2*Range/400;
         Angle = -Range+value*Tick;
         lv_img_set_angle(ui_ImgZeiger, Angle);
     }
@@ -965,16 +998,22 @@ void CompMeter2::Update()
 		if (value == -99) strcpy(buf, "--"); 
 		else dtostrf(value, 0, nk, buf);
         
-        if (_Periph->GetType() == SENS_TYPE_AMP)  
+        if (_Periph->GetPrimary() == PRIM_AMP)  
         { 
             strcat(buf, " A");
             if (value > 20) lv_obj_set_pos(_LblValue,   lv_pct(-_X_Value), lv_pct(_Y_Value));
             else            lv_obj_set_pos(_LblValue,   lv_pct( _X_Value), lv_pct(_Y_Value));
         }
-		if (_Periph->GetType() == SENS_TYPE_VOLT)
+		else if (_Periph->GetPrimary() == PRIM_VOLT)
         { 
             strcat(buf, " V");
             if (value > 7.5) lv_obj_set_pos(_LblValue,  lv_pct(-_X_Value), lv_pct(_Y_Value));
+            else             lv_obj_set_pos(_LblValue,   lv_pct(_X_Value), lv_pct(_Y_Value));
+        }
+        else if (_Periph->GetPrimary() == PRIM_WATT)
+        { 
+            strcat(buf, " W");
+            if (value > 200) lv_obj_set_pos(_LblValue,  lv_pct(-_X_Value), lv_pct(_Y_Value));
             else             lv_obj_set_pos(_LblValue,   lv_pct(_X_Value), lv_pct(_Y_Value));
         }
         lv_label_set_text(_LblValue, buf);

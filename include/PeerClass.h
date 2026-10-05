@@ -1,6 +1,6 @@
 /*
 include PeerList and PeriphList
-Version 3.41
+Version 3.44
 */
 
 #ifndef PEERCLASS_H
@@ -25,6 +25,11 @@ Version 3.41
 #define V_VOLT     2
 #define V_AMP      3
 
+#define PRIM_SWITCH   1
+#define PRIM_AMP      2
+#define PRIM_VOLT     3
+#define PRIM_WATT     4
+
 class PeriphClass {
     static int  _ClassId;
 
@@ -47,6 +52,7 @@ class PeriphClass {
         bool            _AlarmTriggered[4];
         bool            _Changed;
         int             _PeerId;
+        int             _Primary;   // primary sensor to show - //switch/Watt/volt/amp/ 0-3
 
     protected:
         float           _SavedValue[RECORDED_VALUES][4];
@@ -93,6 +99,8 @@ class PeriphClass {
         void  SetChanged(bool Changed) { _Changed = Changed; }
         int   GetPeerId() { return _PeerId; }
         void  SetPeerId(int PeerId) { _PeerId = PeerId; }
+        int   GetPrimary() { return _Primary; }
+        void  SetPrimary(int Primary) { _Primary = Primary; }
         bool  IsSensor() { return ((_Type_bit & P_IS_SENSOR) != 0); }
         bool  IsSwitch() { return ((_Type_bit & P_IS_SWITCH) != 0); }
         bool  IsAmp() { return ((_Type_bit & P_IS_AMP) != 0); }
@@ -193,6 +201,9 @@ class PeerClass
 
         float GetPeriphValue(int P, int i=0) { return Periph[P].GetValue(i); }
         void  SetPeriphValue(int P, float Value, int i=0) { Periph[P].SetValue(Value, i); }
+
+        int   GetPeriphPrimary(int P) { return Periph[P].GetPrimary(); }
+        void  SetPeriphPrimary(int P, int Primary) { Periph[P].SetPrimary(Primary); }
         
         float GetPeriphOldValue(int P, int i=0) { return Periph[P].GetOldValue(i); }
         void  SetPeriphOldValue(int P, float Value, int i=0) { Periph[P].SetOldValue(Value, i); }

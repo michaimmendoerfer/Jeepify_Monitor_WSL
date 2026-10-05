@@ -1,5 +1,5 @@
 //#define KILL_NVS 
-//Version 4.52
+//Version 4.80
 #include "main.h"
 
 #pragma region Board-specifics
@@ -68,6 +68,8 @@ volatile bool saveModuleRequested = false;
 #pragma region Main
 void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int len) 
 {
+    if (incomingData == NULL || len <= 0) return;
+
     PeerClass *P;
     
     char* buff = (char*) incomingData;   
@@ -89,16 +91,29 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
 
     if (!error) // erfolgreich JSON
     {
-        int         _Status      = (int)doc[SEND_CMD_JSON_STATUS];
-        int         _Order       = (int)doc[SEND_CMD_JSON_ORDER];   
-        uint32_t    _TS          = (uint32_t)doc[SEND_CMD_JSON_TS];
-        
         uint8_t _From[6];
-        const char *MACF = doc[SEND_CMD_JSON_FROM];
-        MacCharToByte(_From, (char *) MACF);
         uint8_t _To[6];
-        const char *MACT = doc[SEND_CMD_JSON_TO];
-        MacCharToByte(_To, (char *) MACT);
+
+        // 1. SICHERE PRÜFUNG: Existieren die Pflichtfelder und haben das richtige Format?
+        if (!doc[SEND_CMD_JSON_FROM].is<const char*>() || 
+            !doc[SEND_CMD_JSON_TO].is<const char*>() || 
+            !doc[SEND_CMD_JSON_TS].is<uint32_t>())
+        {
+            DEBUG1("Ungueltiges Paket-Format (FROM/TO/TS fehlt oder falsch)\n\r");
+            return;
+        }
+
+        String MacFromS = doc[SEND_CMD_JSON_FROM].as<String>();
+        MacCharToByte(_From, MacFromS.c_str());
+        
+        String MacToS = doc[SEND_CMD_JSON_TO].as<String>();
+        MacCharToByte(_To, MacToS.c_str());
+        
+        uint32_t _TS = doc[SEND_CMD_JSON_TS].as<uint32_t>();
+        int _TTL     = doc[SEND_CMD_JSON_TTL].as<int>();
+        
+        int         _Status      = doc[SEND_CMD_JSON_STATUS].as<int>();
+        int         _Order       = doc[SEND_CMD_JSON_ORDER].as<int>();   
         
         if ( (memcmp(_To, Module.GetBroadcastAddress(), 6)) and (memcmp(_To, broadcastAddressAll, 6)) ) 
         {
@@ -157,7 +172,7 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
                 if ((!P) and Module.GetPairMode())
                 {
                     const char *_PeerName    = doc[SEND_CMD_JSON_PEER_NAME];
-                    int         _Type        = (int) (doc[SEND_CMD_JSON_MODULE_TYPE]);
+                    int         _Type        = doc[SEND_CMD_JSON_MODULE_TYPE].as<int>();
                     const char *_PeerVersion = doc[SEND_CMD_JSON_VERSION];
                     
                     if (doc[SEND_CMD_JSON_PROTOCOL] == PROTOKOLL_VERSION) 
@@ -575,22 +590,26 @@ void loop()
 #pragma endregion Main
 
 #pragma region Send-Things
-void GarbageMessages(lv_timer_t * timer)
+void   GarbageMessages(lv_timer_t * timer) 
 {
     Serial.printf("free Heap: %d\n\r", ESP.getFreeHeap());
 
-    if (ReceivedMessagesList.size() > 0)
-    {  
-        for (int i=ReceivedMessagesList.size()-1; i>=0; i--)
+    // Solange die Liste nicht leer ist und das erste (älteste) Element abgelaufen ist
+    while (ReceivedMessagesList.size() > 0) {
+        ReceivedMessagesStruct *RMItem = ReceivedMessagesList.get(0);
+        
+        if (millis() - RMItem->SaveTime > SEND_CMD_MSG_HOLD * 1000) 
         {
-            ReceivedMessagesStruct *RMItem = ReceivedMessagesList.get(i);
-            
-            if (millis() - RMItem->SaveTime > SEND_CMD_MSG_HOLD*1000)
-            {
-                DEBUG3 ("Garbage-Kollektion: Message aus RMList entfernt\n\r");
-                ReceivedMessagesList.remove(i);
-                delete RMItem;
-            }
+            // 1. Eintrag aus der Liste entfernen (interner Node wird gelöscht)
+            ReceivedMessagesList.remove(0); 
+            // 2. Deine Struktur vom Heap löschen
+            delete RMItem; 
+        } 
+        else 
+        {
+            // Da das älteste Element noch nicht abgelaufen ist, 
+            // sind es die neueren dahinter auch nicht. Wir können abbrechen!
+            break; 
         }
     }
 }

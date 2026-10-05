@@ -3,7 +3,7 @@
 
 #include <Jeepify.h>
 
-#define MODULE_VERSION          "4.78"  
+#define MODULE_VERSION          "4.80"  
 #define PROTOKOLL_VERSION       "3.11"
 
 #ifdef DEV_466_RED

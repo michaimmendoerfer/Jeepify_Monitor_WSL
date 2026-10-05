@@ -1,4 +1,4 @@
-//Version 3.43
+//Version 3.44
 #include <Arduino.h>
 #include "PeerClass.h"
 #include "LinkedList.h"
@@ -43,6 +43,7 @@ PeriphClass::PeriphClass()
     _Changed = false;
     _PeerId = 0;
     _SavedValueIndex = 0;
+    _Primary = 0;
 }
 void  PeriphClass::Setup(const char* Name, int Type, bool isADS, 
                          int I2CPort0, int I2CPort1, int I2CPort2, int I2CPort3, 
@@ -53,6 +54,10 @@ void  PeriphClass::Setup(const char* Name, int Type, bool isADS,
     _Name[sizeof(_Name) - 1] = '\0';
 
     _Type_bit = Type;
+    // Schalter > AMP > VOLT als Primäranzeige
+    if (_Type_bit & P_IS_SWITCH)    _Primary = PRIM_SWITCH;
+    else if (_Type_bit & P_IS_AMP)  _Primary = PRIM_AMP;
+    else if (_Type_bit & P_IS_VOLT) _Primary = PRIM_VOLT;
     
     _IOPort[0] = IOPort0;
     _IOPort[1] = IOPort1;

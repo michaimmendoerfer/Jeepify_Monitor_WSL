@@ -166,7 +166,23 @@ void Ui_Single_Clicked(lv_event_t * e)
 			if (ActivePeriphShown->IsSensor()) Ui_Single_Next(e);
 		}
 	}
-	else if (event_code == LV_EVENT_LONG_PRESSED) {
+	else if (event_code == LV_EVENT_LONG_PRESSED) 
+	{
+		//ändere Primary ???
+		switch (Periph->GetPrimary())
+		{
+			case PRIM_SWITCH: 	if (Periph->IsVolt() and Periph->IsAmp()) 	Periph->SetPrimary(PRIM_WATT); 
+								else if (Periph->IsVolt()) 					Periph->SetPrimary(PRIM_VOLT); 
+								else if (Periph->IsAmp()) 					Periph->SetPrimary(PRIM_AMP); 
+								break;
+			case PRIM_WATT:   	Periph->SetPrimary(PRIM_VOLT); break;
+			case PRIM_VOLT:   	if (Periph->IsAmp()) 						Periph->SetPrimary(PRIM_AMP); 
+								else if (Periph->IsSwitch()) 				Periph->SetPrimary(PRIM_SWITCH); 
+								break;
+			case PRIM_AMP:    	if (Periph->IsSwitch()) 					Periph->SetPrimary(PRIM_SWITCH); 
+								else if (Periph->IsVolt()) 					Periph->SetPrimary(PRIM_WATT); 
+								break;
+		}
     }
 }
 void Ui_Single_Leave(lv_event_t * e)

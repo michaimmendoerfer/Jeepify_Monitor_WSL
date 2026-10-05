@@ -1,4 +1,4 @@
-//Version 3.44
+//Version 3.45
 #include <Arduino.h>
 #include "PeerClass.h"
 #include "LinkedList.h"
@@ -173,7 +173,7 @@ char* PeerClass::Export()
 
             // Schreibt direkt an das aktuelle Ende des Puffers unter Beachtung des Restplatzes
             int res = snprintf(ExportImportBuffer + written, sizeof(ExportImportBuffer) - written, 
-                               ";%s;%d;%.3f;%.2f;%.2f;%.2f,%.2f,%.2f", 
+                               ";%s;%d;%.3f;%.2f;%.2f;%.2f;%.2f;%.2f", 
                                Periph[Si].GetName(), Periph[Si].GetType(), Periph[Si].GetNullwert(), Periph[Si].GetVCorr(), 
                                Periph[Si].GetAlarmLow(2), Periph[Si].GetAlarmHigh(2),
                                Periph[Si].GetAlarmLow(3), Periph[Si].GetAlarmHigh(3));
@@ -215,9 +215,9 @@ void PeerClass::Import(char *Buf)
 
     for (int Si=0; Si<UsedPeriph; Si++)
     {
-        token = strtok(NULL, ";"); if (!token) break;
-        Periph[Si].SetName(token);
-
+        //token = strtok(NULL, ";"); if (!token) break;
+        //Periph[Si].SetName(token);
+        GET_NEXT_TOKEN(); Periph[Si].SetName(token);
         GET_NEXT_TOKEN(); Periph[Si].SetType(atoi(token));
         GET_NEXT_TOKEN(); Periph[Si].SetNullwert(atof(token));
         GET_NEXT_TOKEN(); Periph[Si].SetVCorr(atof(token));
@@ -453,16 +453,21 @@ PeriphClass *FindPrevPeriph(PeerClass *Peer, PeriphClass *Periph, int Type, bool
 }
 #pragma endregion MAC-Things
 
-char *TypeInText(int Type) //???
+char *TypeInText(int Type)
 {
-    switch (Type)
+    if (Type & P_IS_SWITCH)
     {
-        case SENS_TYPE_VOLT:    return (char*) "Voltage-Sensor";
-        case SENS_TYPE_AMP:     return (char*) "Current-Sensor";
-        case SENS_TYPE_SWITCH:  return (char*) "Switch";
-        case SENS_TYPE_SW_AMP:  return (char*) "sensed Switch";
-        case SENS_TYPE_LT:      return (char*) "Switch";
-        case SENS_TYPE_LT_AMP:  return (char*) "sensed Switch";
+        if (Type & P_IS_AMP & P_IS_VOLT) return (char*) "V/A-sensed Switch";
+        if (Type & P_IS_VOLT) return (char*) "V-sensed Switch";
+        if (Type & P_IS_AMP)  return (char*) "A-sensed Switch";
+        return (char*) "Switch";
+    }
+    else if (Type & P_IS_SENSOR)
+    {
+        if (Type & P_IS_AMP & P_IS_VOLT) return (char*) "V/A-sensor";
+        if (Type & P_IS_VOLT) return (char*) "Voltage-Sensor";
+        if (Type & P_IS_AMP)  return (char*) "Current-Sensor";
+        return (char*) "Sensor";
     }
     return (char*) "not known";
 }

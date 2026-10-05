@@ -1,5 +1,5 @@
 //#define KILL_NVS 
-//Version 4.80
+//Version 4.81
 #include "main.h"
 
 #pragma region Board-specifics
@@ -70,24 +70,54 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
 {
     if (incomingData == NULL || len <= 0) return;
 
-    PeerClass *P;
-    
-    char* buff = (char*) incomingData;   
-    String jsondata = String(buff); 
+    // 1. JSON direkt aus dem sicheren Byte-Array einlesen
+    JsonDocument doc;
+    DeserializationError error = deserializeJson(doc, incomingData, len);
 
-    Serial.println(jsondata);
-    
-    String BufS; char Buf[50] = {};
+    if (error) {
+        Serial.printf("JSON Fehler: %s\n", error.c_str());
+        return;
+    }
+
+    // 2. Debug-Ausgabe ohne String-Objekt (mittels Breitenbegrenzung ".*s")
+    // "%.*s" gibt exakt 'len' Zeichen aus, auch ohne Nullterminierung im Puffer!
+    Serial.printf("Len: %d: %.*s\n\r", len, len, (const char*)incomingData);
+    DEBUG3("RAW: OnDataRecv: %.*s\n\r", len, (const char*)incomingData);
+
+    // --- VERSION UND MAX PAYLOAD AUSLESEN ---
+    uint32_t version = 0;
+    if (esp_now_get_version(&version) == ESP_OK) {
+        Serial.println("--- ESP-NOW Status ---");
+        Serial.printf("ESP-NOW Version: %u.0\n", version);
+        
+        if (version >= 2) {
+            Serial.println("Max. Payload:    1470 Bytes (v2.0 aktiv!)");
+        } else {
+            Serial.println("Max. Payload:    250 Bytes (v1.0 aktiv)");
+        }
+        Serial.println("-----------------------");
+    } else {
+        Serial.println("Konnte ESP-NOW Version nicht auslesen.");
+    }
+
+
+
+    // Wenn Sie die Rohdaten global zwischenspeichern müssen (vorher: jsondataBuf = jsondata):
+    // Nutzen Sie ein globales char-Array statt eines Strings:
+    // strncpy(globalerBuffer, (const char*)incomingData, min(len, (int)sizeof(globalerBuffer) - 1));
+    // globalerBuffer[min(len, (int)sizeof(globalerBuffer) - 1)] = '\0';
+
+    // Ihr restlicher Code...
+    PeerClass *P;
+    char Buf[50] = {}; // Hinweis: "char Buf = {};" im Vorcode war ein Syntaxfehler für Arrays
     bool SaveNeeded = false;
     bool NewPeer    = false;
     char buf[100];
+
     
-    jsondataBuf = jsondata;
+    jsondataBuf = (char *)incomingData;
 
-    DEBUG3 ("RAW: OnDataRecv: %s\n\r", jsondata.c_str());
-
-    JsonDocument doc;
-    DeserializationError error = deserializeJson(doc, jsondata);
+    DEBUG3 ("RAW: OnDataRecv: %s\n\r", jsondataBuf);
 
     if (!error) // erfolgreich JSON
     {
@@ -120,10 +150,10 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
             DEBUG3 ("Message an unbekannten Empfänger\n\r");
             return;
         }
-        DEBUG2 ("%s\n\rwird verarbeitet - Order:%d\n\r", jsondata.c_str(), _Order);
+            DEBUG2 ("%s\n\rwird verarbeitet - Order:%d\n\r", jsondataBuf.c_str(), _Order);
 
-        //already recevied?
-        if (ReceivedMessagesList.size() > 0)
+            //already recevied?
+            if (ReceivedMessagesList.size() > 0)
         { 
             for (int i=ReceivedMessagesList.size()-1; i>=0; i--)
             {
@@ -312,7 +342,7 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
     {        
         Serial.print(F("deserializeJson() failed: ")); 
         Serial.println(error.f_str());
-        Serial.printf("jsondata was: %s\n\r", jsondata);
+        Serial.printf("jsondata was: %s\n\r", jsondataBuf);
         return;
     }
 }

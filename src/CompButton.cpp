@@ -2,7 +2,7 @@
 #include "main.h"
 #include "CompButton.h"
 
-// Version 4.20
+// Version 4.21
 
 #define VALUE_V_MIN     90
 #define VALUE_V_MAX     150
@@ -18,6 +18,7 @@
 #define VALUE_W_YELLOW  350
 
 extern lv_obj_t *ui_LblMenuBatt;
+float testvalue;
 
 CompThing::CompThing()
 {
@@ -500,6 +501,9 @@ void CompSensor::Update()
 {
     lv_obj_set_pos(_Button, _x, _y);
     
+    testvalue++;
+    if (testvalue > 20) testvalue = 0;
+
 	if ((PeerOf(_Periph)->GetName() == NULL) or (!_PeerVisible))
 	{
 	    lv_obj_add_flag(_LblPeer, LV_OBJ_FLAG_HIDDEN);
@@ -523,7 +527,7 @@ void CompSensor::Update()
 
     if (_ValueVisible) 
     {
-        char buf[10];
+        char buf[10] = {};
         int nk = 0;
         lv_color_t bg;
         float value;
@@ -531,7 +535,10 @@ void CompSensor::Update()
         if (_Periph->GetPrimary() == PRIM_AMP)
         {
             value = _Periph->GetValue(V_AMP);
-        
+            printf("CompSensor::Update: value = %.2f - testvalue = %.2f\n\r", value, testvalue);
+
+            value = testvalue; // for testing only
+
             if      (value<10)  nk = 2;
             else if (value<100) nk = 1;
             else                nk = 0;
@@ -846,7 +853,7 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     }
     else if (_Periph->GetPrimary() == PRIM_WATT)
     { 
-        lv_img_set_src(ui_ImgMeter2, &ui_img_ampmeter_360_png);
+        lv_img_set_src(ui_ImgMeter2, &ui_img_wattmeter_360_png);
     }
     lv_img_set_zoom(ui_ImgMeter2,     newSize);
     lv_obj_set_width(ui_ImgMeter2, LV_SIZE_CONTENT);   /// 1

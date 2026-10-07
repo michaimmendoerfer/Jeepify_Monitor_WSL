@@ -1,4 +1,4 @@
-//Version 3.45
+//Version 3.46
 #include <Arduino.h>
 #include "PeerClass.h"
 #include "LinkedList.h"
@@ -55,9 +55,12 @@ void  PeriphClass::Setup(const char* Name, int Type, bool isADS,
 
     _Type_bit = Type;
     // Schalter > AMP > VOLT als Primäranzeige
-    if (_Type_bit & P_IS_SWITCH)    _Primary = PRIM_SWITCH;
-    else if (_Type_bit & P_IS_AMP)  _Primary = PRIM_AMP;
-    else if (_Type_bit & P_IS_VOLT) _Primary = PRIM_VOLT;
+    if (_Primary == 0)
+    {
+        if (_Type_bit & P_IS_SWITCH)    _Primary = PRIM_SWITCH;
+        else if (_Type_bit & P_IS_AMP)  _Primary = PRIM_AMP;
+        else if (_Type_bit & P_IS_VOLT) _Primary = PRIM_VOLT;
+    }
     
     _IOPort[0] = IOPort0;
     _IOPort[1] = IOPort1;
@@ -80,6 +83,14 @@ void  PeriphClass::Setup(const char* Name, int Type, int PeerId)
     _Name[sizeof(_Name) - 1] = '\0'
     ;
     _Type_bit = Type;
+    // Schalter > AMP > VOLT als Primäranzeige
+    if (_Primary == 0)
+    {
+        if (_Type_bit & P_IS_SWITCH)    _Primary = PRIM_SWITCH;
+        else if (_Type_bit & P_IS_AMP)  _Primary = PRIM_AMP;
+        else if (_Type_bit & P_IS_VOLT) _Primary = PRIM_VOLT;
+    }
+
     _PeerId = PeerId;
 }
 
@@ -173,10 +184,11 @@ char* PeerClass::Export()
 
             // Schreibt direkt an das aktuelle Ende des Puffers unter Beachtung des Restplatzes
             int res = snprintf(ExportImportBuffer + written, sizeof(ExportImportBuffer) - written, 
-                               ";%s;%d;%.3f;%.2f;%.2f;%.2f;%.2f;%.2f", 
+                               ";%s;%d;%.3f;%.2f;%.2f;%.2f;%.2f;%.2f;%d", 
                                Periph[Si].GetName(), Periph[Si].GetType(), Periph[Si].GetNullwert(), Periph[Si].GetVCorr(), 
                                Periph[Si].GetAlarmLow(2), Periph[Si].GetAlarmHigh(2),
-                               Periph[Si].GetAlarmLow(3), Periph[Si].GetAlarmHigh(3));
+                               Periph[Si].GetAlarmLow(3), Periph[Si].GetAlarmHigh(3),
+                               Periph[Si].GetPrimary());
             
             if (res > 0) {
                 written += res;
@@ -225,6 +237,14 @@ void PeerClass::Import(char *Buf)
         GET_NEXT_TOKEN(); Periph[Si].SetAlarmHigh(2, atof(token));
         GET_NEXT_TOKEN(); Periph[Si].SetAlarmLow(3, atof(token));
         GET_NEXT_TOKEN(); Periph[Si].SetAlarmHigh(3, atof(token));
+        GET_NEXT_TOKEN(); Periph[Si].SetPrimary(atoi(token));
+
+        if (Periph[Si].GetPrimary() == 0)
+        {
+            if (Periph[Si].GetType() & P_IS_SWITCH)    Periph[Si].SetPrimary(PRIM_SWITCH);
+            else if (Periph[Si].GetType() & P_IS_AMP)  Periph[Si].SetPrimary(PRIM_AMP);
+            else if (Periph[Si].GetType() & P_IS_VOLT) Periph[Si].SetPrimary(PRIM_VOLT);
+        }
 
         Periph[Si].SetPos(Si);
         Periph[Si].SetPeerId(_Id);

@@ -72,6 +72,7 @@ LV_IMG_DECLARE(ui_img_715952573);    // assets/kipp-1-on-120.png
 LV_IMG_DECLARE(ui_img_434995191);    // assets/kipp-1-on-45.png
 LV_IMG_DECLARE(ui_img_voltmeter_360_png);    // assets/Voltmeter_360.png
 LV_IMG_DECLARE(ui_img_zeiger_png);    // assets/zeiger.png
+LV_IMG_DECLARE(ui_img_wattmeter_360_png);    // assets/Wattmeter_360.png
 
 // UI INIT
 void ui_init(void);

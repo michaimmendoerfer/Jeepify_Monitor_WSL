@@ -849,11 +849,11 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     }
     else if (_Periph->GetPrimary() == PRIM_AMP)
     { 
-        lv_img_set_src(ui_ImgMeter2, &ui_img_ampmeter_360_png);
+        lv_img_set_src(ui_ImgMeter2, &ui_img_wattmeter_360_png);
     }
     else if (_Periph->GetPrimary() == PRIM_WATT)
     { 
-        lv_img_set_src(ui_ImgMeter2, &ui_img_wattmeter_360_png);
+        lv_img_set_src(ui_ImgMeter2, &ui_img_voltmeter_360_png);
     }
     lv_img_set_zoom(ui_ImgMeter2,     newSize);
     lv_obj_set_width(ui_ImgMeter2, LV_SIZE_CONTENT);   /// 1

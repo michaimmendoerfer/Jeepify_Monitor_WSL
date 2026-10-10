@@ -1,6 +1,7 @@
 //#define KILL_NVS 
 //Version 4.81
 #include "main.h"
+#include "LittleFS.h"   
 
 #pragma region Board-specifics
 #ifdef DEV_240_KLEIN
@@ -351,6 +352,11 @@ void setup()
 {
     //delay(2000);
     Serial.begin(115200);
+    
+    if (!LittleFS.begin()) {
+        LittleFS.begin(true);
+    }
+
     scr_lvgl_init();
 
     #ifdef KILL_NVS

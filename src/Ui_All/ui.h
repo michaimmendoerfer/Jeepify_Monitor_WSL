@@ -74,6 +74,7 @@ LV_IMG_DECLARE(ui_img_voltmeter_360_png);    // assets/Voltmeter_360.png
 LV_IMG_DECLARE(ui_img_zeiger_png);    // assets/zeiger.png
 LV_IMG_DECLARE(ui_img_wattmeter_360_png);    // assets/Wattmeter_360.png
 
+
 // UI INIT
 void ui_init(void);
 void ui_destroy(void);

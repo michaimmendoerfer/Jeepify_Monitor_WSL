@@ -4,16 +4,16 @@
 
 // Version 4.21
 
-#define VALUE_V_MIN     90
-#define VALUE_V_MAX     150
+#define VALUE_V_MIN     9
+#define VALUE_V_MAX     15
 #define VALUE_V_GREEN   13
 #define VALUE_V_YELLOW  14.4
 #define VALUE_A_MIN     0
-#define VALUE_A_MAX     400
+#define VALUE_A_MAX     40
 #define VALUE_A_GREEN   20
 #define VALUE_A_YELLOW  25
 #define VALUE_W_MIN     0
-#define VALUE_W_MAX     4000
+#define VALUE_W_MAX     400
 #define VALUE_W_GREEN   300
 #define VALUE_W_YELLOW  350
 
@@ -552,7 +552,7 @@ void CompSensor::Update()
             else 		                     bg = lv_color_hex(0x88182C);
             lv_obj_set_style_bg_color(_Button, bg, LV_PART_MAIN | LV_STATE_DEFAULT);
             
-            lv_arc_set_range(_Arc, VALUE_A_MIN, VALUE_A_MAX);
+            lv_arc_set_range(_Arc, VALUE_A_MIN*10, VALUE_A_MAX*10);
             lv_arc_set_value(_Arc, value*10);
         }
         else if (_Periph->GetPrimary() == PRIM_VOLT)
@@ -572,7 +572,7 @@ void CompSensor::Update()
             else 	 		                 bg = lv_color_hex(0x88182C);
             lv_obj_set_style_bg_color(_Button, bg, LV_PART_MAIN | LV_STATE_DEFAULT);
             
-            lv_arc_set_range(_Arc, VALUE_V_MIN, VALUE_V_MAX);
+            lv_arc_set_range(_Arc, VALUE_V_MIN*10, VALUE_V_MAX*10);
             lv_arc_set_value(_Arc, value*10);
         }
         else if (_Periph->GetPrimary() == PRIM_WATT)
@@ -592,7 +592,7 @@ void CompSensor::Update()
             else 	 		                 bg = lv_color_hex(0x88182C);
             lv_obj_set_style_bg_color(_Button, bg, LV_PART_MAIN | LV_STATE_DEFAULT);
             
-            lv_arc_set_range(_Arc, VALUE_W_MIN, VALUE_W_MAX);
+            lv_arc_set_range(_Arc, VALUE_W_MIN*10, VALUE_W_MAX*10);
             lv_arc_set_value(_Arc, value*10);
         }
             
@@ -849,11 +849,11 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     }
     else if (_Periph->GetPrimary() == PRIM_AMP)
     { 
-        lv_img_set_src(ui_ImgMeter2, &ui_img_wattmeter_360_png);
+        lv_img_set_src(ui_ImgMeter2, &ui_img_ampmeter_360_png);
     }
     else if (_Periph->GetPrimary() == PRIM_WATT)
     { 
-        lv_img_set_src(ui_ImgMeter2, &ui_img_voltmeter_360_png);
+        lv_img_set_src(ui_ImgMeter2, &ui_img_wattmeter_360_png);
     }
     lv_img_set_zoom(ui_ImgMeter2,     newSize);
     lv_obj_set_width(ui_ImgMeter2, LV_SIZE_CONTENT);   /// 1

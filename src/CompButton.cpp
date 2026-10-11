@@ -2,7 +2,7 @@
 #include "main.h"
 #include "CompButton.h"
 
-// Version 4.21
+// Version 4.22
 
 #define VALUE_V_MIN     9
 #define VALUE_V_MAX     15

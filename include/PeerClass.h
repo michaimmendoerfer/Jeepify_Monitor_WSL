@@ -1,6 +1,6 @@
 /*
 include PeerList and PeriphList
-Version 3.46
+Version 3.47
 */
 
 #ifndef PEERCLASS_H
@@ -105,6 +105,7 @@ class PeriphClass {
         bool  IsSwitch() { return ((_Type_bit & P_IS_SWITCH) != 0); }
         bool  IsAmp() { return ((_Type_bit & P_IS_AMP) != 0); }
         bool  IsVolt() { return ((_Type_bit & P_IS_VOLT) != 0); }
+        bool  IsWatt() { return ((_Type_bit & P_IS_VOLT & P_IS_AMP) != 0); }
         bool  IsLatch() { return ((_Type_bit & P_IS_LATCH) != 0); }
         bool  IsCombo()  { return ((_Type_bit & P_IS_SWITCH) != 0) and ((_Type_bit & P_IS_SENSOR) != 0); }
         bool  isEmpty() { return (_Type_bit == 0); }

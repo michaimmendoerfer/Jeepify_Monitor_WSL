@@ -237,7 +237,7 @@ void ui_ScrMultiGauge_screen_init(void)
     lv_obj_set_width(ui_LblMGVolt, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_LblMGVolt, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_LblMGVolt, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_LblMGVolt, "13,5 V\n2,5 A");
+    lv_label_set_text(ui_LblMGVolt, "---");
     ui_object_set_themeable_style_property(ui_LblMGVolt, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
                                            _ui_theme_color_BtnTxt);
     ui_object_set_themeable_style_property(ui_LblMGVolt, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
@@ -263,7 +263,7 @@ void ui_ScrMultiGauge_screen_init(void)
     lv_obj_set_x(ui_LblMGArcLoad, lv_pct(-27));
     lv_obj_set_y(ui_LblMGArcLoad, lv_pct(0));
     lv_obj_set_align(ui_LblMGArcLoad, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_LblMGArcLoad, "+0,00 A");
+    lv_label_set_text(ui_LblMGArcLoad, "---");
     ui_object_set_themeable_style_property(ui_LblMGArcLoad, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
                                            _ui_theme_color_BtnTxt);
     ui_object_set_themeable_style_property(ui_LblMGArcLoad, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
@@ -277,7 +277,7 @@ void ui_ScrMultiGauge_screen_init(void)
     lv_obj_set_x(ui_LbLMGArcSolar, lv_pct(30));
     lv_obj_set_y(ui_LbLMGArcSolar, lv_pct(0));
     lv_obj_set_align(ui_LbLMGArcSolar, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_LbLMGArcSolar, "+3,5 A");
+    lv_label_set_text(ui_LbLMGArcSolar, "---");
     ui_object_set_themeable_style_property(ui_LbLMGArcSolar, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
                                            _ui_theme_color_BtnTxt);
     ui_object_set_themeable_style_property(ui_LbLMGArcSolar, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
@@ -291,7 +291,7 @@ void ui_ScrMultiGauge_screen_init(void)
     lv_obj_set_x(ui_LblMGArcVerbrauch, lv_pct(11));
     lv_obj_set_y(ui_LblMGArcVerbrauch, lv_pct(30));
     lv_obj_set_align(ui_LblMGArcVerbrauch, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_LblMGArcVerbrauch, "0,5 A");
+    lv_label_set_text(ui_LblMGArcVerbrauch, "---");
     ui_object_set_themeable_style_property(ui_LblMGArcVerbrauch, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
                                            _ui_theme_color_BtnTxt);
     ui_object_set_themeable_style_property(ui_LblMGArcVerbrauch, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,

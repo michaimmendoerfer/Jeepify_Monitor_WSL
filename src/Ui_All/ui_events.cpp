@@ -953,13 +953,33 @@ void MultiGaugeUpdateTimer(lv_timer_t * timer)
 	int nk = 0;
 	float value = 0;
     float GesamtBilanz = 0;
-	PeriphClass *_Periph = NULL;
+	PeriphClass *_Periph[4] = {NULL, NULL, NULL, NULL};
+	
+	int AnzeigeArt = PRIM_AMP;
 
-	if (MultiGaugeScreen.GetPeriphId(0) >= 0) _Periph = FindPeriphById(MultiGaugeScreen.GetPeriphId(0));
-	else _Periph = NULL;
-	if (_Periph)
+	if (MultiGaugeScreen.GetPeriphId(0) >= 0) _Periph[0] = FindPeriphById(MultiGaugeScreen.GetPeriphId(0));
+	else _Periph[0] = NULL;
+	if (MultiGaugeScreen.GetPeriphId(1) >= 0) _Periph[1] = FindPeriphById(MultiGaugeScreen.GetPeriphId(1));
+		else _Periph[1] = NULL;
+	if (MultiGaugeScreen.GetPeriphId(2) >= 0) _Periph[2] = FindPeriphById(MultiGaugeScreen.GetPeriphId(2));
+		else _Periph[2] = NULL;
+	if (MultiGaugeScreen.GetPeriphId(3) >= 0) _Periph[3] = FindPeriphById(MultiGaugeScreen.GetPeriphId(3));
+		else _Periph[3] = NULL;
+
+	if (Periph[0] && Periph[1] && Periph[2])
+		if (Periph[0]->IsWatt() && Periph[1]->IsWatt() && Periph[2]->IsWatt()) AnzeigeArt = PRIM_WATT;
+
+	if (_Periph[0])
 	{
-		value = _Periph->GetValue(3); //Load
+		if (AnzeigeArt == PRIM_WATT) //Load
+		{
+			value = _Periph[0]->GetValue(2) * _Periph[0]->GetValue(3);
+		}
+		else
+		{
+			value = _Periph[0]->GetValue(3);
+		}
+
 		GesamtBilanz += value;
 
 		if      (value<10)  nk = 2;
@@ -969,21 +989,29 @@ void MultiGaugeUpdateTimer(lv_timer_t * timer)
 		if (value == -99) strcpy(buf, "--"); 
 		else dtostrf(value, 0, nk, buf);
 
-		strcat(buf, " A");
+		if (AnzeigeArt == PRIM_WATT) strcat(buf, " W");
+		else strcat(buf, " A");
+
 		lv_label_set_text(ui_LblMGArcLoad, buf);
 		lv_arc_set_value(ui_ArcAlternator, value);
 	}
 	else
 	{
-		lv_label_set_text(ui_LblMGArcLoad, "-- A");
+		lv_label_set_text(ui_LblMGArcLoad, "---");
 		lv_arc_set_value(ui_ArcAlternator, 0);
 	}
 
-	if (MultiGaugeScreen.GetPeriphId(1) >= 0) _Periph = FindPeriphById(MultiGaugeScreen.GetPeriphId(1));
-	else _Periph = NULL;
-	if (_Periph)
+	if (_Periph[1])
 	{
-		value = _Periph->GetValue(3); //Solar
+		if (AnzeigeArt == PRIM_WATT) //Solar
+		{
+			value = _Periph[1]->GetValue(2) * _Periph[1]->GetValue(3);
+		}
+		else
+		{
+			value = _Periph[1]->GetValue(3);
+		}
+		
 		GesamtBilanz += value;
 
 		if      (value<10)  nk = 2;
@@ -993,21 +1021,29 @@ void MultiGaugeUpdateTimer(lv_timer_t * timer)
 		if (value == -99) strcpy(buf, "--"); 
 		else dtostrf(value, 0, nk, buf);
 
-		strcat(buf, " A");
+		if (AnzeigeArt == PRIM_WATT) strcat(buf, " W");
+		else strcat(buf, " A");
+
 		lv_label_set_text(ui_LbLMGArcSolar, buf);
 		lv_arc_set_value(ui_ArcSolar, value);
 	}
 	else
 	{
-		lv_label_set_text(ui_LbLMGArcSolar, "-- A");
+		lv_label_set_text(ui_LbLMGArcSolar, "---");
 		lv_arc_set_value(ui_ArcSolar, 0);
 	}
 
-	if (MultiGaugeScreen.GetPeriphId(2) >= 0) _Periph = FindPeriphById(MultiGaugeScreen.GetPeriphId(2));
-	else _Periph = NULL;
-	if (_Periph)
+	if (_Periph[2])
 	{
-		value = _Periph->GetValue(3); //extern
+		if (AnzeigeArt == PRIM_WATT) //Load
+		{
+			value = _Periph[2]->GetValue(2) * _Periph[2]->GetValue(3);
+		}
+		else
+		{
+			value = _Periph[2]->GetValue(3);
+		}
+		
 		GesamtBilanz -= value;
 
 		if      (value<10)  nk = 2;
@@ -1017,21 +1053,21 @@ void MultiGaugeUpdateTimer(lv_timer_t * timer)
 		if (value == -99) strcpy(buf, "--"); 
 		else dtostrf(value, 0, nk, buf);
 
-		strcat(buf, " A");
+		if (AnzeigeArt == PRIM_WATT) strcat(buf, " W");
+		else strcat(buf, " A");
+
 		lv_label_set_text(ui_LblMGArcVerbrauch, buf);
 		lv_arc_set_value(ui_ArcVerbrauch, value);
 	}
 	else
 	{
-		lv_label_set_text(ui_LblMGArcVerbrauch, "-- A");
+		lv_label_set_text(ui_LblMGArcVerbrauch, "---");
 		lv_arc_set_value(ui_ArcVerbrauch, 0);
 	}
 
-	if (MultiGaugeScreen.GetPeriphId(3) >= 0) _Periph = FindPeriphById(MultiGaugeScreen.GetPeriphId(3));
-	else _Periph = NULL;
-	if (_Periph)
+	if (_Periph[3])
 	{
-		value = _Periph->GetValue(2); //VMon
+		value = _Periph[3]->GetValue(2); //VMon
 		
 		if      (value<10)  nk = 2;
 		else if (value<100) nk = 1;
@@ -1044,7 +1080,7 @@ void MultiGaugeUpdateTimer(lv_timer_t * timer)
 	}
 	else
 	{
-		strcpy(buf, "-- V\n\r");
+		strcpy(buf, "---\n\r");
 	}
 	
 	value = GesamtBilanz;
@@ -1057,7 +1093,8 @@ void MultiGaugeUpdateTimer(lv_timer_t * timer)
 	if (value == -99) strcpy(buf2, "--"); 
 	else dtostrf(value, 0, nk, buf2);
 
-	strcat(buf2, " A");
+	if (AnzeigeArt == PRIM_WATT) strcat(buf, " W");
+	else strcat(buf, " A");
 	strcat(buf, buf2);
 	lv_label_set_text(ui_LblMGVolt, buf);
 }

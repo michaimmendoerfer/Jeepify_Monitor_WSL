@@ -1,14 +1,15 @@
-// Version 4.23
+// Version 4.24
 
 #include <Arduino.h>
 #include "main.h"
 #include "CustomScreens.h"
 #include "lv_meter.h"
-
+#include "PeerClass.h"
 #include "CompButton.h"
 
 lv_timer_t *SingleTimer;
 lv_obj_t *ui_ScrSingle;
+lv_obj_t *ui_TimeArc;
 
 
 void ui_ScrSingle_screen_init(void)
@@ -32,6 +33,11 @@ void Ui_Single_ClearScreen()
 		delete CompThingArray[0];
 		CompThingArray[0] = NULL;
 	}
+	if (ui_TimeArc) 
+	{
+		lv_obj_del(ui_TimeArc);
+		ui_TimeArc = NULL;
+	}
 
 }
 void Ui_Single_FillScreen()
@@ -47,6 +53,28 @@ void Ui_Single_FillScreen()
 			CompThingArray[0]->Setup(ui_ScrSingle, 0, 0, 0, 2, ActivePeriphShown, Ui_Single_Clicked);
 		}
 		CompThingArray[0]->Update();
+		
+		ui_TimeArc = lv_arc_create(ui_ScrSingle);
+		lv_obj_set_width(ui_TimeArc, SCREEN_RES_HOR);
+		lv_obj_set_height(ui_TimeArc, SCREEN_RES_VER);
+		lv_obj_set_align(ui_TimeArc, LV_ALIGN_CENTER);
+		lv_obj_clear_flag(ui_TimeArc, LV_OBJ_FLAG_CLICKABLE);      /// Flags
+		lv_arc_set_value(ui_TimeArc, 0);
+		lv_obj_set_style_arc_color(ui_TimeArc, lv_color_hex(0x4A4A4A), LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_arc_opa(ui_TimeArc, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_arc_width(ui_TimeArc, 6, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+		lv_obj_set_style_arc_color(ui_TimeArc, lv_color_hex(0x398F30), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+		lv_obj_set_style_arc_opa(ui_TimeArc, 150, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+		lv_obj_set_style_arc_width(ui_TimeArc, 6, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+
+		lv_obj_set_style_bg_color(ui_TimeArc, lv_color_hex(0xDBDBDB), LV_PART_KNOB | LV_STATE_DEFAULT);
+		lv_obj_set_style_bg_opa(ui_TimeArc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+		lv_obj_set_style_pad_left(ui_TimeArc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+		lv_obj_set_style_pad_right(ui_TimeArc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+		lv_obj_set_style_pad_top(ui_TimeArc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+		lv_obj_set_style_pad_bottom(ui_TimeArc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+
 }
 void Ui_Single_Next(lv_event_t * e)
 {	
@@ -136,7 +164,30 @@ void SingleUpdateTimer(lv_timer_t * timer)
 	}
 	//Serial.println("SingleTimer");
 	
-	if (CompThingArray[0]) CompThingArray[0]->Update();
+	if (CompThingArray[0]) 
+	{
+		CompThingArray[0]->Update();
+		PeerClass *peer = PeerOf(ActivePeriphShown);
+		
+		uint32_t TimeDiff = millis() - peer->GetTSLastSeen();
+		if (TimeDiff < 2000) 
+		{
+			if (peer->GetdBm() > -90) 
+			{
+				lv_obj_set_style_arc_color(ui_TimeArc, lv_color_hex(0x398F30), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+			}
+			else 
+			{
+				lv_obj_set_style_arc_color(ui_TimeArc, lv_color_hex(0x7C7E26), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+			}
+		}
+		else 
+		{
+			lv_obj_set_style_arc_color(ui_TimeArc, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+		}
+		
+		lv_arc_set_value(ui_TimeArc, TimeDiff / 100);
+	}
 }
 void Ui_Single_Clicked(lv_event_t * e)
 {

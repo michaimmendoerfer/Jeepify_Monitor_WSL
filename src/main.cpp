@@ -116,9 +116,9 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
     char buf[100];
 
     
-    jsondataBuf = (char *)incomingData;
+    jsondataBuf = String((const char*)incomingData);
 
-    DEBUG3 ("RAW: OnDataRecv: %s\n\r", jsondataBuf);
+    DEBUG3 ("RAW: OnDataRecv: %s\n\r", jsondataBuf.c_str());
 
     if (!error) // erfolgreich JSON
     {
@@ -154,7 +154,7 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
             DEBUG2 ("%s\n\rwird verarbeitet - Order:%d\n\r", jsondataBuf.c_str(), _Order);
 
             //already recevied?
-            if (ReceivedMessagesList.size() > 0)
+        if (ReceivedMessagesList.size() > 0)
         { 
             for (int i=ReceivedMessagesList.size()-1; i>=0; i--)
             {

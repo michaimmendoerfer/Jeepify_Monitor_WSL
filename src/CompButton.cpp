@@ -2,7 +2,7 @@
 #include "main.h"
 #include "CompButton.h"
 
-// Version 4.22
+// Version 4.23
 
 #define VALUE_V_MIN     9
 #define VALUE_V_MAX     15
@@ -38,6 +38,7 @@ CompThing::CompThing()
     _LblPeriphId = NULL;
     _LblPos = NULL;
     _LblValue = NULL;
+    _LblCentral = NULL;
 
     _Periph = NULL;
 
@@ -769,7 +770,7 @@ void CompMeter::Update()
     
     }
 
-    char buf[10];
+    char buf[20];
     char Einheit[3];
 
 	int nk = 0;
@@ -827,6 +828,7 @@ CompMeter2::~CompMeter2()
     lv_obj_del(_LblPeer);
     lv_obj_del(_LblPeriph); 
     lv_obj_del(_LblValue);
+    lv_obj_del(_LblCentral);
 }
 void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, PeriphClass *Periph, lv_event_cb_t event_cb) 
 {
@@ -921,6 +923,15 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     //ui_object_set_themeable_style_property(_LblPeriph, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxtInaktive);
     //ui_object_set_themeable_style_property(_LblPeriph, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
     
+    _LblCentral = lv_label_create(comp_parent);
+    lv_obj_set_width(_LblCentral, lv_pct(20));   /// 1
+    lv_obj_set_height(_LblCentral, lv_pct(20));    /// 1
+    lv_obj_set_align(_LblCentral, LV_ALIGN_CENTER);
+    lv_obj_set_y(_LblCentral, lv_pct(-10));
+    //SetStyle(_LblCentral);   
+    lv_obj_add_event_cb(_LblCentral, _event_cb, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_flag(_LblCentral, LV_OBJ_FLAG_CLICKABLE);
+    lv_label_set_text(_LblCentral, "");
 
     _LblValue = lv_label_create(comp_parent);
     lv_obj_set_width(_LblValue, LV_SIZE_CONTENT);   /// 1
@@ -930,6 +941,7 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     lv_obj_set_style_text_font(_LblValue, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);
     ui_object_set_themeable_style_property(_LblValue, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxtInaktive);
     ui_object_set_themeable_style_property(_LblValue, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
+
 
     lv_obj_move_foreground(ui_ImgZeiger);
 }
@@ -995,7 +1007,7 @@ void CompMeter2::Update()
     
 	if (_ValueVisible) 
 	{
-		Serial.printf("Sensor: %s: %f\n\r", _Periph->GetName(), value);
+		//Serial.printf("Sensor: %s: %f\n\r", _Periph->GetName(), value);
 		if (abs(value) < SCHWELLE) value = 0;
 
 		if      (value<10)  nk = 2;

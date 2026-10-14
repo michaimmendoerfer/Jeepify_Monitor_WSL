@@ -1,7 +1,7 @@
 #ifndef COMPBUTTON_H
 #define COMPBUTTON_H
 
-// Version 4.20
+// Version 4.22
 
 #include <Arduino.h>
 #include "lvgl.h"
@@ -80,6 +80,7 @@ class CompThing {
         lv_obj_t *_LblPeriphId;
         lv_obj_t *_LblPos;
         lv_obj_t *_LblValue;
+        lv_obj_t *_LblCentral;
 
         PeriphClass *_Periph;
 
@@ -133,15 +134,16 @@ class CompThing {
         void ShowValue() 		        { _ValueVisible = true;  lv_obj_clear_flag(_LblValue, LV_OBJ_FLAG_HIDDEN); };			
         void HideValue() 		        { _ValueVisible = false; lv_obj_add_flag  (_LblValue, LV_OBJ_FLAG_HIDDEN); };	
 
-        void Hide() 			{ lv_obj_add_flag  (_LblPeer,   LV_OBJ_FLAG_HIDDEN);
-			                  lv_obj_add_flag  (_LblPeriph, LV_OBJ_FLAG_HIDDEN); 
-			                  lv_obj_add_flag  (_LblValue,  LV_OBJ_FLAG_HIDDEN); 
-			                  lv_obj_add_flag  (_Button,    LV_OBJ_FLAG_HIDDEN); }
+        void Hide() 			        { lv_obj_add_flag  (_LblPeer,   LV_OBJ_FLAG_HIDDEN);
+                                          lv_obj_add_flag  (_LblPeriph, LV_OBJ_FLAG_HIDDEN); 
+                                          lv_obj_add_flag  (_LblValue,  LV_OBJ_FLAG_HIDDEN); 
+                                          lv_obj_add_flag  (_Button,    LV_OBJ_FLAG_HIDDEN); }
                       
-        void Show() 			{ lv_obj_clear_flag(_Button, LV_OBJ_FLAG_HIDDEN); }
+        void Show() 			        { lv_obj_clear_flag(_Button, LV_OBJ_FLAG_HIDDEN); }
 
-        int  GetPos() 			{ return _Pos; }
-        int  GetClassType() 		{ return _ClassType; }
+        int  GetPos() 			        { return _Pos; }
+        int  GetClassType() 		    { return _ClassType; }
+        lv_obj_t *GetLblCentral()       { return _LblCentral; }
 
 	void SetStyle(lv_obj_t *obj);
 };

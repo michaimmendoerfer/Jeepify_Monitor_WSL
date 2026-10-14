@@ -1,4 +1,4 @@
-// Ui_All 4.01
+// Ui_All 4.20
 
 #include <Arduino.h>
 #include "main.h"
@@ -966,8 +966,8 @@ void MultiGaugeUpdateTimer(lv_timer_t * timer)
 	if (MultiGaugeScreen.GetPeriphId(3) >= 0) _Periph[3] = FindPeriphById(MultiGaugeScreen.GetPeriphId(3));
 		else _Periph[3] = NULL;
 
-	if (Periph[0] && Periph[1] && Periph[2])
-		if (Periph[0]->IsWatt() && Periph[1]->IsWatt() && Periph[2]->IsWatt()) AnzeigeArt = PRIM_WATT;
+	if (_Periph[0] && _Periph[1] && _Periph[2])
+		if (_Periph[0]->IsWatt() && _Periph[1]->IsWatt() && _Periph[2]->IsWatt()) AnzeigeArt = PRIM_WATT;
 
 	if (_Periph[0])
 	{

@@ -1,4 +1,4 @@
-// Version 4.22
+// Version 4.23
 
 #include <Arduino.h>
 #include "main.h"
@@ -9,6 +9,7 @@
 
 lv_timer_t *SingleTimer;
 lv_obj_t *ui_ScrSingle;
+
 
 void ui_ScrSingle_screen_init(void)
 {
@@ -151,7 +152,8 @@ void Ui_Single_Clicked(lv_event_t * e)
         lv_indev_wait_release(lv_indev_get_act());
         Ui_Single_Prev(e);
 	}
-	else if (event_code == LV_EVENT_CLICKED) {
+	else if (event_code == LV_EVENT_CLICKED) 
+	{
 		if (ActivePeriphShown->IsSwitch())
 		{
 			Periph = FindPeriphById(atoi(lv_label_get_text(lv_obj_get_child(target, 3))));
@@ -163,10 +165,35 @@ void Ui_Single_Clicked(lv_event_t * e)
 			
 			ToggleSwitch(Periph);
 		}
-		else 
-		{
-			if (ActivePeriphShown->IsSensor()) Ui_Single_Next(e);
-		}
+		else if (ActivePeriphShown->IsSensor()) 
+        {
+            if (CompThingArray[0] && target == CompThingArray[0]->GetLblCentral()) 
+            {
+                PeriphClass *Periph = ActivePeriphShown;
+				DEBUG3("Primary of %s is switched from %d ", Periph->GetName(), Periph->GetPrimary());
+				switch (Periph->GetPrimary())
+				{
+					case PRIM_SWITCH: 	if (Periph->IsVolt() and Periph->IsAmp()) 	Periph->SetPrimary(PRIM_WATT); 
+										else if (Periph->IsVolt()) 					Periph->SetPrimary(PRIM_VOLT); 
+										else if (Periph->IsAmp()) 					Periph->SetPrimary(PRIM_AMP); 
+										break;
+					case PRIM_WATT:   	Periph->SetPrimary(PRIM_VOLT); break;
+					case PRIM_VOLT:   	if (Periph->IsAmp()) 						Periph->SetPrimary(PRIM_AMP); 
+										else if (Periph->IsSwitch()) 				Periph->SetPrimary(PRIM_SWITCH); 
+										break;
+					case PRIM_AMP:    	if (Periph->IsSwitch()) 					Periph->SetPrimary(PRIM_SWITCH); 
+										else if (Periph->IsVolt()) 					Periph->SetPrimary(PRIM_WATT); 
+										break;
+				}
+				DEBUG3("to %d\n\r", Periph->GetPrimary());
+				Ui_Single_Prepare(e);
+			}
+            else 
+            {
+                // Standardverhalten: Wenn irgendwo anders auf den Sensor geklickt wird
+                Ui_Single_Next(e);
+            }
+        }
 	}
 }
 void Ui_Single_Leave(lv_event_t * e)
@@ -201,24 +228,7 @@ void ui_event_ui_ScrSingle(lv_event_t * e)
 	else if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_BOTTOM) 
 	{
 		//ändere Primary ???
-		PeriphClass *Periph = ActivePeriphShown;
-		DEBUG3("Primary of %s is switched from %d ", Periph->GetName(), Periph->GetPrimary());
-		switch (Periph->GetPrimary())
-		{
-			case PRIM_SWITCH: 	if (Periph->IsVolt() and Periph->IsAmp()) 	Periph->SetPrimary(PRIM_WATT); 
-								else if (Periph->IsVolt()) 					Periph->SetPrimary(PRIM_VOLT); 
-								else if (Periph->IsAmp()) 					Periph->SetPrimary(PRIM_AMP); 
-								break;
-			case PRIM_WATT:   	Periph->SetPrimary(PRIM_VOLT); break;
-			case PRIM_VOLT:   	if (Periph->IsAmp()) 						Periph->SetPrimary(PRIM_AMP); 
-								else if (Periph->IsSwitch()) 				Periph->SetPrimary(PRIM_SWITCH); 
-								break;
-			case PRIM_AMP:    	if (Periph->IsSwitch()) 					Periph->SetPrimary(PRIM_SWITCH); 
-								else if (Periph->IsVolt()) 					Periph->SetPrimary(PRIM_WATT); 
-								break;
-		}
-		DEBUG3("to %d\n\r", Periph->GetPrimary());
-		Ui_Single_Prepare(e);
+		
 	}	
     if(event_code == LV_EVENT_SCREEN_LOAD_START) {
         Ui_Single_Prepare(e);
@@ -226,5 +236,6 @@ void ui_event_ui_ScrSingle(lv_event_t * e)
     if(event_code == LV_EVENT_SCREEN_UNLOAD_START) {
         Ui_Single_Leave(e);
     }
+	
 }
 

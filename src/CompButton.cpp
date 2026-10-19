@@ -2,7 +2,7 @@
 #include "main.h"
 #include "CompButton.h"
 
-// Version 4.23
+// Version 4.24
 
 #define VALUE_V_MIN     9
 #define VALUE_V_MAX     15
@@ -863,8 +863,7 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
     lv_obj_set_align(ui_ImgMeter2, LV_ALIGN_CENTER);
     lv_obj_set_x(ui_ImgMeter2, lv_pct(1));
     lv_obj_add_flag(ui_ImgMeter2, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_ImgMeter2, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_SCROLL_ELASTIC | LV_OBJ_FLAG_SCROLL_MOMENTUM |
-                      LV_OBJ_FLAG_SCROLL_CHAIN);     /// Flags
+    lv_obj_clear_flag(ui_ImgMeter2, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_SCROLL_ELASTIC | LV_OBJ_FLAG_SCROLL_MOMENTUM | LV_OBJ_FLAG_SCROLL_CHAIN);     /// Flags
     lv_obj_move_background(ui_ImgMeter2);
           
     ui_ImgZeiger = lv_img_create(comp_parent);
@@ -976,34 +975,25 @@ void CompMeter2::Update()
     char buf[10];
 	int nk = 0;
 	float value = 0;
-    
-    if (_Periph->GetPrimary() == PRIM_AMP)       value = _Periph->GetValue(V_AMP);
-    else if (_Periph->GetPrimary() == PRIM_VOLT) value = _Periph->GetValue(V_VOLT);
-    else if (_Periph->GetPrimary() == PRIM_WATT) value = _Periph->GetValue(V_VOLT) * _Periph->GetValue(V_AMP);
-    
     int Range = 485;	
     int Angle = 0;
-
-    if (_Periph->GetPrimary() == PRIM_AMP)  
-    { 
-        //int Tick = 2*Range/30;
-        //Angle = -Range+value*Tick;
-        Angle = -Range + (int)((value * 2.0f * 30) / 15.0f); //KI
-
-        lv_img_set_angle(ui_ImgZeiger, Angle);
+    int Tick = 0;
+    
+    switch (_Periph->GetPrimary())
+    {
+        case PRIM_AMP:  value = _Periph->GetValue(V_AMP); 
+                        Angle = -Range + (int)((value * 2.0f * 30) / 15.0f); //KI
+                        break;
+        case PRIM_VOLT: value = _Periph->GetValue(V_VOLT); 
+                        Tick = 2*Range/15;
+                        Angle = -Range+value*Tick;
+                        break;
+        case PRIM_WATT: value = _Periph->GetValue(V_VOLT) * _Periph->GetValue(V_AMP); 
+                        Tick = 2*Range/400;
+                        Angle = -Range+value*Tick;
+                        break;
     }
-    else if (_Periph->GetPrimary() == PRIM_VOLT)
-    {         
-        int Tick = 2*Range/15;
-        Angle = -Range+value*Tick;
-        lv_img_set_angle(ui_ImgZeiger, Angle);
-    }
-    else if (_Periph->GetPrimary() == PRIM_WATT)
-    {         
-        int Tick = 2*Range/400;
-        Angle = -Range+value*Tick;
-        lv_img_set_angle(ui_ImgZeiger, Angle);
-    }
+    lv_img_set_angle(ui_ImgZeiger, Angle);
     
 	if (_ValueVisible) 
 	{

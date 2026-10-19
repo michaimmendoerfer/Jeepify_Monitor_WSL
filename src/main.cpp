@@ -1,7 +1,6 @@
 //#define KILL_NVS 
-//Version 4.81
+//Version 5.01
 #include "main.h"
-#include "LittleFS.h"   
 
 #pragma region Board-specifics
 #ifdef DEV_240_KLEIN
@@ -64,6 +63,8 @@ volatile bool saveandrestartRequested = false;
 volatile bool savePeersRequested = false;
 volatile bool saveModuleRequested = false;
 
+void SendBig(lv_timer_t * timer);
+
 #pragma endregion Globals
 
 #pragma region Main
@@ -96,7 +97,7 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
         } else {
             Serial.println("Max. Payload:    250 Bytes (v1.0 aktiv)");
         }
-        Serial.println("-----------------------");
+        DEBUG3("MAX_DATA_LENGTH: %d -----------------------", ESP_NOW_MAX_DATA_LEN);
     } else {
         Serial.println("Konnte ESP-NOW Version nicht auslesen.");
     }
@@ -353,10 +354,6 @@ void setup()
     //delay(2000);
     Serial.begin(115200);
     
-    if (!LittleFS.begin()) {
-        LittleFS.begin(true);
-    }
-
     scr_lvgl_init();
 
     #ifdef KILL_NVS
@@ -400,7 +397,7 @@ void setup()
   
     static uint32_t user_data = 10;
     lv_timer_t * TimerPing    = lv_timer_create(SendPing, PING_INTERVAL,  &user_data);
-    //lv_timer_t * TimerStatus  = lv_timer_create(SendStatus, PING_INTERVAL,  &user_data);
+    lv_timer_t * TimerLong  = lv_timer_create(SendBig, 5000,  &user_data);
     lv_timer_t * TimerGarbage = lv_timer_create(GarbageMessages, PING_INTERVAL,  &user_data);
 
     #ifdef MON_HAS_PERIPH
@@ -408,7 +405,7 @@ void setup()
     #endif
 
     ui_init();
-
+    
     DEBUG3("buf=%s\n\r", buf);
     if (strcmp(buf, "Menu") == 0) 
     {
@@ -653,7 +650,7 @@ esp_err_t  JeepifySend(const uint8_t *peer, const uint8_t *data, size_t len, boo
 {
     if (!ConfirmNeeded)
     {
-        esp_err_t SendStatus = esp_now_send(broadcastAddressAll, data, 250);
+        esp_err_t SendStatus = esp_now_send(broadcastAddressAll, data, len);
         return SendStatus;
     }
     else
@@ -671,7 +668,7 @@ esp_err_t  JeepifySend(const uint8_t *peer, const uint8_t *data, size_t len, boo
         
             serializeJson(doc, jsondata);  
             
-            esp_err_t SendStatus = esp_now_send(broadcastAddressAll, (uint8_t *)jsondata.c_str(), 250);
+            esp_err_t SendStatus = esp_now_send(broadcastAddressAll, (uint8_t *)jsondata.c_str(), jsondata.length());
             
             DEBUG3 ("SendStatus was %d, ConfirmNeeded = %d\n\r", SendStatus, ConfirmNeeded);
             uint8_t _To[6];
@@ -719,7 +716,7 @@ void SendPing(lv_timer_t * timer) {
 
     serializeJson(doc, jsondata);  
     
-    esp_now_send(broadcastAddressAll, (uint8_t *) jsondata.c_str(), 250);  
+    esp_now_send(broadcastAddressAll, (uint8_t *) jsondata.c_str(), jsondata.length());  
     
     if (ConfirmList.size() > 0)
     { 
@@ -754,11 +751,52 @@ void SendPing(lv_timer_t * timer) {
             }
             else
             {
-                DEBUG3 ("%d: reSending Msg: %s from ConfirmList Try: %d\n\r", millis(), Confirm->Message, Confirm->Try);
-                esp_err_t SendStatus = esp_now_send(broadcastAddressAll, (uint8_t*) Confirm->Message, 250); 
+                DEBUG3 ("%d: reSending Msg: %s from ConfirmList (len: %d)... Try: %d\n\r", millis(), Confirm->Message, strlen(Confirm->Message)+1, Confirm->Try);
+                esp_err_t SendStatus = esp_now_send(broadcastAddressAll, (uint8_t*) Confirm->Message, strlen(Confirm->Message)+1); 
             }     
         }
     }
+}
+void SendBig(lv_timer_t * timer)
+{
+    JsonDocument doc; String jsondata;
+    char mac[13];
+
+    PeerClass *P;
+    
+    MacByteToChar(mac, Module.GetBroadcastAddress());
+    doc[SEND_CMD_JSON_FROM]  = mac;
+    doc[SEND_CMD_JSON_TO]    = broadCastAddressAllC;
+    doc[SEND_CMD_JSON_TS]    = millis();
+    doc[SEND_CMD_JSON_TTL]   = SEND_CMD_MSG_TTL;
+    doc[SEND_CMD_JSON_ORDER] = SEND_CMD_STAY_ALIVE;
+
+    
+// 3. Übergroßes Paket (Sprengt die 250-Byte V1-Grenze absichtlich)
+    
+            doc["O"] = "V2_TEST";
+            
+            // Wir füllen das JSON künstlich mit einer langen Zeichenkette auf (~400 Bytes),
+            // um ein echtes V2-Paket zu erzeugen.
+            String longString = "";
+            for(int i = 0; i < 40; i++) {
+                longString += "Daten_Block_" + String(i) + "_";
+            }
+            doc["daten_strom"] = longString;
+            
+            Serial.print("Sende übergroßes Paket... ");
+
+            serializeJson(doc, jsondata);
+        
+        // Nachricht via ESP-NOW absenden
+        DEBUG3("Länge des JSON-Pakets: %d Bytes\n\r", jsondata.length());
+        esp_err_t result = esp_now_send(broadcastAddressAll, (uint8_t *)jsondata.c_str(), jsondata.length());
+        
+        if (result == ESP_OK) {
+            DEBUG3 ("Erfolgreich gesendet! Länge: %d Bytes\n\r", jsondata.length());
+        } else {
+            Serial.println("Fehler beim Senden");
+        }
 }
 void SendPairingConfirm(PeerClass *P) {
     JsonDocument doc; String jsondata; 
@@ -776,7 +814,7 @@ void SendPairingConfirm(PeerClass *P) {
     serializeJson(doc, jsondata);  
   
     TSMsgSnd = millis();
-    esp_now_send(broadcastAddressAll, (uint8_t *) jsondata.c_str(), 250); 
+    esp_now_send(broadcastAddressAll, (uint8_t *) jsondata.c_str(), jsondata.length());  //Sending "jsondata"
     DEBUG2 ("Sent you are paired\n\r%s\n\r", jsondata.c_str());  
      
 }
@@ -805,7 +843,7 @@ bool ToggleSwitch(PeriphClass *Periph)
     serializeJson(doc, jsondata);  
     
     TSMsgSnd = millis();
-    esp_now_send(broadcastAddressAll, (uint8_t *) jsondata.c_str(), 250);  //Sending "jsondata"  
+    esp_now_send(broadcastAddressAll, (uint8_t *) jsondata.c_str(), jsondata.length());  //Sending "jsondata"  
     DEBUG3 ("%s", jsondata.c_str());
     
     return true;
@@ -826,7 +864,7 @@ void SendCommand(PeerClass *P, int Cmd, String Value) {
     serializeJson(doc, jsondata);  
     
     TSMsgSnd = millis();
-    esp_now_send(broadcastAddressAll, (uint8_t *) jsondata.c_str(), 250);  //Sending "jsondata"  
+    esp_now_send(broadcastAddressAll, (uint8_t *) jsondata.c_str(), jsondata.length());  //Sending "jsondata"  
     DEBUG3 ("%s", jsondata.c_str());
 }
 
@@ -978,7 +1016,7 @@ void CalibVolt() {
     
     serializeJson(doc, jsondata);  
 
-    JeepifySend(broadcastAddressAll, (uint8_t *) jsondata.c_str(), 250, true);  
+    JeepifySend(broadcastAddressAll, (uint8_t *) jsondata.c_str(), jsondata.length(), true);  
         
     DEBUG3 ("%s", jsondata.c_str());
 }
@@ -995,7 +1033,7 @@ void CalibAmp()
     doc[SEND_CMD_JSON_TTL]   = SEND_CMD_MSG_TTL;
         
     serializeJson(doc, jsondata);  
-    JeepifySend(broadcastAddressAll, (uint8_t *) jsondata.c_str(), 250, true);  
+    JeepifySend(broadcastAddressAll, (uint8_t *) jsondata.c_str(), jsondata.length(), true);  
 
     DEBUG1 ("%s", jsondata.c_str());
 }

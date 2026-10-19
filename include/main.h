@@ -29,7 +29,7 @@
 
 struct ConfirmStruct {
     uint8_t  Address[6];
-    char     Message[260];
+    char     Message[ESP_MAX_LEN];
     volatile uint32_t TSMessage;
     int      Try;
     bool     Confirmed;

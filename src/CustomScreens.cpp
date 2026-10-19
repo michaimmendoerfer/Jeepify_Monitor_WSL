@@ -7,6 +7,7 @@
 #include "PeerClass.h"
 #include "CompButton.h"
 
+
 lv_timer_t *SingleTimer;
 lv_obj_t *ui_ScrSingle;
 lv_obj_t *ui_TimeArc;
@@ -289,4 +290,3 @@ void ui_event_ui_ScrSingle(lv_event_t * e)
     }
 	
 }
-

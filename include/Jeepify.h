@@ -1,8 +1,10 @@
 #ifndef JEEPIFY_H
 #define JEEPIFY_H
-// Version 3.42
+// Version 3.43
 
 #include <Arduino.h>
+
+#define ESP_MAX_LEN 1470
 
 #define SEND_CMD_MSG_TTL           2
 #define SEND_CMD_MSG_HOLD          10

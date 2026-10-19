@@ -25,4 +25,5 @@ extern PeriphClass *ActivePeriphSwitch;
 extern PeriphClass *ActivePeriphShown;
 extern CompThing   *CompThingArray[4];
 
+
 #endif

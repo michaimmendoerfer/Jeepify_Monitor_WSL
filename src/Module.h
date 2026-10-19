@@ -3,8 +3,8 @@
 
 #include <Jeepify.h>
 
-#define MODULE_VERSION          "4.81"  
-#define PROTOKOLL_VERSION       "4.0"
+#define MODULE_VERSION          "5.01"  
+#define PROTOKOLL_VERSION       "5.0"
 
 #ifdef DEV_466_RED
     #define NODE_NAME "466-red"

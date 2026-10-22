@@ -1,7 +1,7 @@
 /*
 manage Peers and Periphs,
 defines MultiMonitorClass with one instance: Screen
-Version 3.22
+Version 3.23
 */
 
 #ifndef PREF_MANAGER_H

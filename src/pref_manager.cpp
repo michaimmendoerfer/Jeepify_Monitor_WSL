@@ -5,6 +5,8 @@
 #include <WiFi.h>
 #include <pref_manager.h>
 
+//Version 3.23
+
 extern Preferences preferences;
 
 void   PrintMAC(const uint8_t * mac_addr);
@@ -46,7 +48,7 @@ char* MultiMonitorClass::Export()
         // Abbrechen, falls der Puffer voll sein sollte
         if (written >= (int)sizeof(ScreenExportImportBuffer) - 1) break;
 
-        snprintf(ReturnBufferScreen, sizeof(ReturnBufferScreen), ";%d", _PeriphId[Si]);
+        snprintf(ReturnBufferScreen, sizeof(ReturnBufferScreen), ";%d;%d", _PeriphId[Si], _PrimToShow[Si]);
         
         int res = snprintf(ScreenExportImportBuffer + written, sizeof(ScreenExportImportBuffer) - written, "%s", ReturnBufferScreen);
         if (res > 0) {
@@ -76,6 +78,16 @@ void MultiMonitorClass::Import(char *Buf)
         else 
         {
             _PeriphId[Si] = atoi(nextTok);
+        }
+        
+        nextTok = strtok(NULL, ";");
+        if (!nextTok) 
+        {
+            _PrimToShow[Si] = -1; // Abbrechen/Absichern, falls String zu kurz
+        } 
+        else 
+        {
+            _PrimToShow[Si] = atoi(nextTok);
         }
 
         if (_PeriphId[Si] >= 0)

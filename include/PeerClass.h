@@ -1,6 +1,6 @@
 /*
 include PeerList and PeriphList
-Version 3.47
+Version 3.49
 */
 
 #ifndef PEERCLASS_H
@@ -52,7 +52,8 @@ class PeriphClass {
         bool            _AlarmTriggered[4];
         bool            _Changed;
         int             _PeerId;
-        int             _Primary;   // primary sensor to show - //switch/Watt/volt/amp/ 0-3
+        int             _Primary;    // primary sensor to show - //switch/Watt/volt/amp/ 0-3
+        int             _PrimHelper; // helper for primary sensor to show - //switch/Watt/volt/amp/ 0-3
 
     protected:
         float           _SavedValue[RECORDED_VALUES][4];
@@ -101,7 +102,11 @@ class PeriphClass {
         void  SetPeerId(int PeerId) { _PeerId = PeerId; }
         int   GetPrimary() { return _Primary; }
         void  SetPrimary(int Primary) { _Primary = Primary; }
+        int   GetPrimHelper() { return _PrimHelper; }
+        void  SetPrimHelper(int PrimHelper) { _PrimHelper = PrimHelper; }
         bool  IsSensor() { return ((_Type_bit & P_IS_SENSOR) != 0); }
+        bool  IsPrimarySensor() { return (_Primary == PRIM_VOLT or _Primary == PRIM_AMP or _Primary == PRIM_WATT); }
+        bool  IsPrimarySwitch() { return (_Primary == PRIM_SWITCH); }
         bool  IsSwitch() { return ((_Type_bit & P_IS_SWITCH) != 0); }
         bool  IsAmp() { return ((_Type_bit & P_IS_AMP) != 0); }
         bool  IsVolt() { return ((_Type_bit & P_IS_VOLT) != 0); }

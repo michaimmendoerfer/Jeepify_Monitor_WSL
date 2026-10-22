@@ -1,4 +1,4 @@
-// Ui_All 4.20
+// Ui_All 4.22
 
 #include <Arduino.h>
 #include "main.h"
@@ -434,20 +434,22 @@ void Ui_Multi_FillScreen()
 			lv_obj_add_flag(lv_obj_get_child(ui_Container2, Pos), LV_OBJ_FLAG_HIDDEN);
 			
 			if (CompThingArray[Pos]) 
-				{
-					delete CompThingArray[Pos];
-					CompThingArray[Pos] = NULL;
-				}
-
-			if (Periph->IsSensor())
-			{	
-				CompThingArray[Pos] = new CompSensor;
-					CompThingArray[Pos]->Setup(ui_ScrMulti, x, y, Pos, 1, Periph, Ui_Multi_Clicked);
-				CompThingArray[Pos]->Update();
+			{
+				delete CompThingArray[Pos];
+				CompThingArray[Pos] = NULL;
 			}
-			else if (Periph->IsSwitch())
+
+			if (Screen[ActiveMultiScreen].GetPrimToShow(Pos) == PRIM_SWITCH)
 			{
 				CompThingArray[Pos] = new CompButton;
+				CompThingArray[Pos]->Setup(ui_ScrMulti, x, y, Pos, 1, Periph, Ui_Multi_Clicked);
+				CompThingArray[Pos]->Update();
+			}
+			else if (Screen[ActiveMultiScreen].GetPrimToShow(Pos) == PRIM_VOLT or
+			         Screen[ActiveMultiScreen].GetPrimToShow(Pos) == PRIM_AMP or
+				     Screen[ActiveMultiScreen].GetPrimToShow(Pos) == PRIM_WATT)
+			{	
+				CompThingArray[Pos] = new CompSensor;
 				CompThingArray[Pos]->Setup(ui_ScrMulti, x, y, Pos, 1, Periph, Ui_Multi_Clicked);
 				CompThingArray[Pos]->Update();
 			}
@@ -632,52 +634,124 @@ void Ui_Periph_Choice_FillScreen()
 	PeerClass *P;
 	if (!ActivePeriph) ActivePeriph = FindNextPeriph(NULL, NULL, SENS_TYPE_ALL, CIRCULAR);
 	
-	if (ActivePeriph) 
-	{
-		P = PeerOf(ActivePeriph);
-
-		lv_label_set_text(ui_LblPeriphChoicePeriph, ActivePeriph->GetName());
-		lv_label_set_text(ui_LblPeriphChoicePeer, P->GetName());
+	if (!ActivePeriph) return;
 	
-		if (millis()- P->GetTSLastSeen() > OFFLINE_INTERVAL) 
-			lv_label_set_text(ui_LblPeriphChoiceOnline, "Offline");
-      	else 
-			lv_label_set_text(ui_LblPeriphChoiceOnline, "Online");
+	P = PeerOf(ActivePeriph);
 
-		lv_label_set_text(ui_LblPeriphChoiceType, TypeInText(ActivePeriph->GetType())); 
-
-		if (ActivePeriph->IsSwitch()) lv_img_set_src(ui_ImgPeerChoice, &ui_img_888658411); 
-		if (ActivePeriph->IsSensor()) lv_img_set_src(ui_ImgPeerChoice, &ui_img_menubtn1_png);
+	switch (ActivePeriph->GetPrimHelper()) 
+	{
+		case PRIM_SWITCH: lv_label_set_text_fmt(ui_LblPeriphChoicePeriph, "%s: (SW)", ActivePeriph->GetName()); break;
+		case PRIM_VOLT:   lv_label_set_text_fmt(ui_LblPeriphChoicePeriph, "%s: (V)",  ActivePeriph->GetName()); break;
+		case PRIM_AMP:    lv_label_set_text_fmt(ui_LblPeriphChoicePeriph, "%s: (A)",  ActivePeriph->GetName()); break;
+		case PRIM_WATT:   lv_label_set_text_fmt(ui_LblPeriphChoicePeriph, "%s: (W)",  ActivePeriph->GetName()); break;
+		default:          lv_label_set_text_fmt(ui_LblPeriphChoicePeriph, "%s: (?)",  ActivePeriph->GetName()); break;
 	}
+	
+	lv_label_set_text(ui_LblPeriphChoicePeer, P->GetName());
+
+	if (millis()- P->GetTSLastSeen() > OFFLINE_INTERVAL) 
+		lv_label_set_text(ui_LblPeriphChoiceOnline, "Offline");
+	else 
+		lv_label_set_text(ui_LblPeriphChoiceOnline, "Online");
+
+	lv_label_set_text(ui_LblPeriphChoiceType, TypeInText(ActivePeriph->GetType())); 
+
+	if (ActivePeriph->GetPrimHelper() == PRIM_SWITCH) lv_img_set_src(ui_ImgPeerChoice, &ui_img_888658411); 
+	else lv_img_set_src(ui_ImgPeerChoice, &ui_img_menubtn1_png);
 }
 void Ui_PeriphChoice_Next(lv_event_t * e)
 {
-	if (ActivePeriph) {
+	if (!ActivePeriph) return;
+	
+	int OldPrim = ActivePeriph->GetPrimHelper();
+	int NewPrim = OldPrim;
+
+	static int StartPrim = 0;
+	if (StartPrim == 0) StartPrim = OldPrim;
+
+	if      ((OldPrim == PRIM_SWITCH) && (ActivePeriph->GetType() & P_IS_VOLT)) NewPrim = PRIM_VOLT;
+	else if ((OldPrim == PRIM_SWITCH) && (ActivePeriph->GetType() & P_IS_AMP))  NewPrim = PRIM_AMP;
+	else if ((OldPrim == PRIM_VOLT) && (ActivePeriph->GetType() & P_IS_AMP))    NewPrim = PRIM_AMP;
+	else if ((OldPrim == PRIM_VOLT) && (ActivePeriph->GetType() & P_IS_SWITCH)) NewPrim = PRIM_SWITCH;
+	else if ((OldPrim == PRIM_AMP) && (ActivePeriph->GetType() & P_IS_VOLT))    NewPrim = PRIM_WATT;
+	else if ((OldPrim == PRIM_AMP) && (ActivePeriph->GetType() & P_IS_SWITCH))  NewPrim = PRIM_SWITCH;
+	else if ((OldPrim == PRIM_WATT) && (ActivePeriph->GetType() & P_IS_SWITCH)) NewPrim = PRIM_SWITCH;
+	else if ( OldPrim == PRIM_WATT)   											NewPrim = PRIM_VOLT;
+
+	DEBUG3("OldPrim=%d, NewPrim=%d, ActivePeriph->GetPrimary()=%d\n\r", OldPrim, NewPrim, ActivePeriph->GetPrimary());
+
+	if (NewPrim != StartPrim)
+	{
+		ActivePeriph->SetPrimHelper(NewPrim);
+		DEBUG3("ActivePeriph->SetPrimHelper(NewPrim)=%d\n\r", NewPrim);
+	}
+	else
+	{
 		PeriphClass *PeriphT = FindNextPeriph(NULL, ActivePeriph, SENS_TYPE_ALL, CIRCULAR);
 		if (PeriphT) 
 		{
 			ActivePeriph = PeriphT;
-			Ui_Periph_Choice_FillScreen();
+			ActivePeriph->SetPrimHelper(ActivePeriph->GetPrimary());
+			StartPrim = 0;
+			DEBUG3("new: StartPrim: %d, ActivePeriph: %s, ActivePeriph->GetPrimary()=%d\n\r", StartPrim, ActivePeriph->GetName(), ActivePeriph->GetPrimary());
 		}
 	}
+	Ui_Periph_Choice_FillScreen();
+
 }
 void Ui_PeriphChoice_Last(lv_event_t * e)
 {
-	if (ActivePeriph) {
+	if (!ActivePeriph) return;
+	
+	int OldPrim = ActivePeriph->GetPrimHelper();
+	int NewPrim = OldPrim;
+
+	static int StartPrim = 0;
+	if (StartPrim == 0) StartPrim = OldPrim;
+
+	if      ( OldPrim == PRIM_WATT) NewPrim = PRIM_AMP;
+  	else if ((OldPrim == PRIM_AMP) && (ActivePeriph->GetType() & P_IS_VOLT))    NewPrim = PRIM_VOLT;
+	else if ((OldPrim == PRIM_AMP) && (ActivePeriph->GetType() & P_IS_SWITCH))  NewPrim = PRIM_SWITCH;								
+	else if ((OldPrim == PRIM_VOLT) && (ActivePeriph->GetType() & P_IS_SWITCH)) NewPrim = PRIM_SWITCH;
+	else if ((OldPrim == PRIM_VOLT) && (ActivePeriph->GetType() & P_IS_AMP))    NewPrim = PRIM_WATT;
+	else if ((OldPrim == PRIM_SWITCH) && (ActivePeriph->GetType() & P_IS_VOLT) && (ActivePeriph->GetType() & P_IS_AMP)) NewPrim = PRIM_WATT;
+	else if ((OldPrim == PRIM_SWITCH) && (ActivePeriph->GetType() & P_IS_AMP)) NewPrim = PRIM_AMP;
+	else if ((OldPrim == PRIM_SWITCH) && (ActivePeriph->GetType() & P_IS_VOLT)) NewPrim = PRIM_VOLT;
+	
+	DEBUG3("StartPrim = %d, OldPrim=%d, NewPrim=%d, ActivePeriph->GetPrimary()=%d\n\r", StartPrim, OldPrim, NewPrim, ActivePeriph->GetPrimary());
+
+	if (NewPrim != StartPrim)
+	{
+		ActivePeriph->SetPrimHelper(NewPrim);
+		DEBUG3("ActivePeriph->SetPrimHelper(NewPrim)=%d\n\r", NewPrim);
+	}
+	else
+	{
 		PeriphClass *PeriphT = FindPrevPeriph(NULL, ActivePeriph, SENS_TYPE_ALL, CIRCULAR);
 		if (PeriphT) 
 		{
 			ActivePeriph = PeriphT;
-			Ui_Periph_Choice_FillScreen();
+			ActivePeriph->SetPrimHelper(ActivePeriph->GetPrimary());
+			StartPrim = 0;
+			DEBUG3("new: StartPrim: %d,  ActivePeriph: %s, ActivePeriph->GetPrimary()=%d\n\r", StartPrim, ActivePeriph->GetName(), ActivePeriph->GetPrimary());
+
 		}
 	}
+	Ui_Periph_Choice_FillScreen();
 }
 void Ui_PeriphChoice_Click(lv_event_t * e)
-{	
+{		
 	if (ActiveScreen == &MultiGaugeScreen)
+	{
+		//vielleicht Primary in Activescreen festlegen
 		ActiveScreen->AddPeriph(MultiPosToChange, ActivePeriph);
+		ActiveScreen->SetPrimToShow(MultiPosToChange, ActivePeriph->GetPrimHelper());
+	}
 	else
+	{
 		Screen[ActiveMultiScreen].AddPeriph(MultiPosToChange, ActivePeriph);
+		Screen[ActiveMultiScreen].SetPrimToShow(MultiPosToChange, ActivePeriph->GetPrimHelper());
+	}	
 	
 	Ui_PeriphChoice_Return();
 }
@@ -690,6 +764,9 @@ void Ui_Periph_Choice_Loaded(lv_event_t * e)
 		Knob.Clicked     = 0;
 	}
 	*/
+	if (!ActivePeriph) ActivePeriph = FindNextPeriph(NULL, NULL, SENS_TYPE_ALL, CIRCULAR);
+	ActivePeriph->SetPrimHelper(ActivePeriph->GetPrimary());
+
 	Ui_Periph_Choice_FillScreen();
 
 	if (ChoiceTimer) 

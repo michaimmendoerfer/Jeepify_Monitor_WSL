@@ -42,49 +42,60 @@ void Ui_Single_ClearScreen()
 
 }
 void Ui_Single_FillScreen()
-{
-	if (ActivePeriphShown->IsSensor()) 
-		{
-			CompThingArray[0] = new CompMeter2;
-			CompThingArray[0]->Setup(ui_ScrSingle, 0, 0, 0, SCREEN_RES_HOR, ActivePeriphShown, Ui_Single_Clicked);
-		}
-		else if (ActivePeriphShown->IsSwitch()) 
-		{
-			CompThingArray[0] = new CompButton;
-			CompThingArray[0]->Setup(ui_ScrSingle, 0, 0, 0, 2, ActivePeriphShown, Ui_Single_Clicked);
-		}
-		CompThingArray[0]->Update();
-		
-		ui_TimeArc = lv_arc_create(ui_ScrSingle);
-		lv_obj_set_width(ui_TimeArc, SCREEN_RES_HOR);
-		lv_obj_set_height(ui_TimeArc, SCREEN_RES_VER);
-		lv_obj_set_align(ui_TimeArc, LV_ALIGN_CENTER);
-		lv_obj_clear_flag(ui_TimeArc, LV_OBJ_FLAG_CLICKABLE);      /// Flags
-		lv_arc_set_value(ui_TimeArc, 0);
-		lv_obj_set_style_arc_color(ui_TimeArc, lv_color_hex(0x4A4A4A), LV_PART_MAIN | LV_STATE_DEFAULT);
-		lv_obj_set_style_arc_opa(ui_TimeArc, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-		lv_obj_set_style_arc_width(ui_TimeArc, 6, LV_PART_MAIN | LV_STATE_DEFAULT);
+{	
+	
+	switch (ActivePeriph->GetPrimary())
+    {
+        case PRIM_SWITCH:	CompThingArray[0] = new CompButton;
+							CompThingArray[0]->Setup(ui_ScrSingle, 0, 0, 0, 2, ActivePeriphShown, Ui_Single_Clicked);
+							break;
+		case PRIM_AMP:  	CompThingArray[0] = new CompMeter2;
+							CompThingArray[0]->Setup(ui_ScrSingle, 0, 0, 0, SCREEN_RES_HOR, ActivePeriphShown, Ui_Single_Clicked);
+                        	break;
+        case PRIM_VOLT: 	CompThingArray[0] = new CompMeter2;
+							CompThingArray[0]->Setup(ui_ScrSingle, 0, 0, 0, SCREEN_RES_HOR, ActivePeriphShown, Ui_Single_Clicked);
+                        	break;
+        case PRIM_WATT: 	CompThingArray[0] = new CompMeter2;
+							CompThingArray[0]->Setup(ui_ScrSingle, 0, 0, 0, SCREEN_RES_HOR, ActivePeriphShown, Ui_Single_Clicked);
+                        	break;
+		default:			return;
+    }
+	
+	CompThingArray[0]->Update();
+	
+	ui_TimeArc = lv_arc_create(ui_ScrSingle);
+	lv_obj_set_width(ui_TimeArc, SCREEN_RES_HOR);
+	lv_obj_set_height(ui_TimeArc, SCREEN_RES_VER);
+	lv_obj_set_align(ui_TimeArc, LV_ALIGN_CENTER);
+	lv_obj_clear_flag(ui_TimeArc, LV_OBJ_FLAG_CLICKABLE);      /// Flags
+	lv_arc_set_value(ui_TimeArc, 0);
+	lv_obj_set_style_arc_color(ui_TimeArc, lv_color_hex(0x4A4A4A), LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_arc_opa(ui_TimeArc, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_arc_width(ui_TimeArc, 6, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-		lv_obj_set_style_arc_color(ui_TimeArc, lv_color_hex(0x398F30), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-		lv_obj_set_style_arc_opa(ui_TimeArc, 150, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-		lv_obj_set_style_arc_width(ui_TimeArc, 6, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+	lv_obj_set_style_arc_color(ui_TimeArc, lv_color_hex(0x398F30), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+	lv_obj_set_style_arc_opa(ui_TimeArc, 150, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+	lv_obj_set_style_arc_width(ui_TimeArc, 6, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
-		lv_obj_set_style_bg_color(ui_TimeArc, lv_color_hex(0xDBDBDB), LV_PART_KNOB | LV_STATE_DEFAULT);
-		lv_obj_set_style_bg_opa(ui_TimeArc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-		lv_obj_set_style_pad_left(ui_TimeArc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-		lv_obj_set_style_pad_right(ui_TimeArc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-		lv_obj_set_style_pad_top(ui_TimeArc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-		lv_obj_set_style_pad_bottom(ui_TimeArc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+	lv_obj_set_style_bg_color(ui_TimeArc, lv_color_hex(0xDBDBDB), LV_PART_KNOB | LV_STATE_DEFAULT);
+	lv_obj_set_style_bg_opa(ui_TimeArc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+	lv_obj_set_style_pad_left(ui_TimeArc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+	lv_obj_set_style_pad_right(ui_TimeArc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+	lv_obj_set_style_pad_top(ui_TimeArc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+	lv_obj_set_style_pad_bottom(ui_TimeArc, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
 }
 void Ui_Single_Next(lv_event_t * e)
 {	
-	if (ActivePeriphShown->IsSwitch()) 
+	int PrimType = ActivePeriph->GetPrimary();
+	if (PrimType == 0) return;
+
+	if (PrimType == PRIM_SWITCH)
 	{
 		ActivePeriphSwitch = FindNextPeriph(NULL, ActivePeriphShown, SENS_TYPE_SWITCH, CIRCULAR);
 		ActivePeriphShown  = ActivePeriphSwitch;
 	}
-	else if (ActivePeriphShown->IsSensor())   
+	else  
 	{
 		ActivePeriphSensor = FindNextPeriph(NULL, ActivePeriphShown, SENS_TYPE_SENS, CIRCULAR);
 		ActivePeriphShown  = ActivePeriphSensor;
@@ -122,11 +133,11 @@ void Ui_Single_Prepare(lv_event_t * e)
 {
 	int Pos = 0;
 
-	if (Knob.Clicked)
+	/*if (Knob.Clicked)
 	{
 		Knob.LastClicked = Knob.Clicked;
 		Knob.Clicked     = 0;
-	}
+	}*/
 
 	if (ActivePeriphShown)
 	{
@@ -149,7 +160,7 @@ void Ui_Single_Prepare(lv_event_t * e)
 }
 void SingleUpdateTimer(lv_timer_t * timer)
 {
-	if (Knob.Clicked)
+	/*if (Knob.Clicked)
 	{
 		Knob.LastClicked = Knob.Clicked;
 		Knob.Clicked     = 0;
@@ -162,7 +173,7 @@ void SingleUpdateTimer(lv_timer_t * timer)
 		{
 			Ui_Single_Next(NULL);
 		}
-	}
+	}*/
 	//Serial.println("SingleTimer");
 	
 	if (CompThingArray[0]) 

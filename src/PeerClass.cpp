@@ -395,7 +395,8 @@ PeriphClass *FindNextPeriph(PeerClass *Peer, PeriphClass *Periph, int TypeMask, 
     PeriphClass *TPeriph;
 
     if (PeriphList.size() == 0) return NULL;
-
+    if (TypeMask == SENS_TYPE_ALL) TypeMask = 0;
+    
     int PeriphPos = -1;
     int  P_Type = TypeMask & (P_IS_SWITCH | P_IS_VOLT | P_IS_AMP);
     bool P_Switch_wanted = TypeMask & P_IS_PRIMARY_SWITCH;

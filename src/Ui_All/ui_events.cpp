@@ -678,7 +678,7 @@ void Ui_PeriphChoice_Next(lv_event_t * e)
 	else if ((OldPrim == PRIM_WATT) && (ActivePeriph->GetType() & P_IS_SWITCH)) NewPrim = PRIM_SWITCH;
 	else if ( OldPrim == PRIM_WATT)   											NewPrim = PRIM_VOLT;
 
-	DEBUG3("OldPrim=%d, NewPrim=%d, ActivePeriph->GetPrimary()=%d\n\r", OldPrim, NewPrim, ActivePeriph->GetPrimary());
+	DEBUG3("STartPrim = %d, OldPrim=%d, NewPrim=%d, getType: %d, ActivePeriph->GetPrimary()=%d\n\r", StartPrim, OldPrim, NewPrim, ActivePeriph->GetType(), ActivePeriph->GetPrimary());
 
 	if (NewPrim != StartPrim)
 	{

@@ -1,4 +1,4 @@
-//Version 3.46
+//Version 3.48
 #include <Arduino.h>
 #include "PeerClass.h"
 #include "LinkedList.h"
@@ -94,20 +94,11 @@ void  PeriphClass::Setup(const char* Name, int Type, int PeerId)
     _PeerId = PeerId;
 }
 
-bool PeriphClass::IsType(int Type)
+bool PeriphClass::IsType(int TypeMask)
 {
-    switch (Type) 
-    { 
-        case SENS_TYPE_SENS:    return (IsSensor()); break;
-        case SENS_TYPE_VOLT:    return (IsVolt());   break;
-        case SENS_TYPE_AMP:     return (IsAmp());    break;
-        case SENS_TYPE_SWITCH:  return (IsSwitch()); break;
-        case SENS_TYPE_SW_AMP:  return (IsSwitch() && IsAmp()); break;
-        case SENS_TYPE_LT_AMP:  return (IsSwitch() && IsLatch() && IsAmp()); break;
-        case SENS_TYPE_LT:      return (IsSwitch() && IsLatch()); break;
-        case SENS_TYPE_ALL:     return 1; break;
-    }
-    return false;
+    if (TypeMask == SENS_TYPE_ALL) return 1; 
+
+    return (_Type_bit & TypeMask == TypeMask);
 }
 void PeriphClass::AddSavedValue(float V0, float V1, float V2, float V3)
 {   
@@ -336,7 +327,6 @@ int FindPeerListPos(PeerClass *Peer)
     }
     return -1;
 }
-
 PeerClass *FindNextPeer(PeerClass *P, int Type, bool circular, int Status)
 // returns next Peer, tries PeerList.size() times, otherwise returns NULL
 {
@@ -398,15 +388,21 @@ PeriphClass *FindPeriphById(int Id)
     }
     return NULL;
 }
-
-PeriphClass *FindNextPeriph(PeerClass *Peer, PeriphClass *Periph, int Type, bool circular, int Status)
+PeriphClass *FindNextPeriph(PeerClass *Peer, PeriphClass *Periph, int TypeMask, bool circular, int Status)
 // return next Periph of Type. If Peer=NULL Peer is ignored, if Periph=NULL find first - otherwise NULL, circular...
+// TypeMask: P_IS_PRIMARY_SWITCH, P_IS_PRIMARY_SENSOR, P_IS_SWITCH, P_IS_VOLT, P_IS_AMP, P_IS_WATT
 {
     PeriphClass *TPeriph;
 
     if (PeriphList.size() == 0) return NULL;
 
     int PeriphPos = -1;
+    int  P_Type = TypeMask & (P_IS_SWITCH | P_IS_VOLT | P_IS_AMP);
+    bool P_Switch_wanted = TypeMask & P_IS_PRIMARY_SWITCH;
+    bool P_Sensor_wanted = TypeMask & P_IS_PRIMARY_SENSOR;
+    
+    Serial.printf("P_Type:%d, P_Switch_wanted:%d, P_Sensor_wanted:%d\n\r", P_Type, P_Switch_wanted, P_Sensor_wanted);
+
     PeriphPos = FindPeriphListPos(Periph);
     
     if (Peer == NULL) circular = true;  // if Peer doesnt matter, always search circular
@@ -422,26 +418,52 @@ PeriphClass *FindNextPeriph(PeerClass *Peer, PeriphClass *Periph, int Type, bool
         TPeriph = PeriphList.get(PeriphPos);
         if (TPeriph == NULL) continue;
 
-        if ((Peer == NULL) or (Peer->GetId() == TPeriph->GetPeerId()))
         // Peer fits
+        if ((Peer == NULL) or (Peer->GetId() == TPeriph->GetPeerId()))
         {
-            switch (Status)
+            Serial.printf("TPeriph->GetType() :%d & P_Type:%d == %d, Primary = %d\n\r", TPeriph->GetType(), P_Type, TPeriph->GetType() & P_Type, TPeriph->GetPrimary());
+            
+            //Periph hat die gefordeten Attribute
+            if ((TPeriph->GetType() & P_Type) == P_Type) 
             {
-                case 0: if ((!IsOnline(TPeriph)) and (TPeriph->IsType(Type))) return TPeriph; break; // Periph ist offline
-                case 1: if (( IsOnline(TPeriph)) and (TPeriph->IsType(Type))) return TPeriph; break; // Periph ist  online
-                case 2: if (TPeriph->IsType(Type)) return TPeriph; break;
-            }
+                Serial.printf("%s könnte passen\n\r", TPeriph->GetName());
+                // und Primary stimmt oder ist nicht gewünscht
+                if  ( (P_Switch_wanted and TPeriph->GetPrimary() == PRIM_SWITCH) or 
+                      (P_Sensor_wanted and TPeriph->GetPrimary() == PRIM_VOLT) or
+                      (P_Sensor_wanted and TPeriph->GetPrimary() == PRIM_AMP)  or
+                      (P_Sensor_wanted and TPeriph->GetPrimary() == PRIM_WATT) or
+                      (P_Sensor_wanted == false and P_Switch_wanted == false) )
+                {
+                    // online-Status wie gewünscht
+                    Serial.printf("online?:%d\n\r", IsOnline(TPeriph));
+                    switch (Status)
+                    {
+                        case OFFLINE:  if (!IsOnline(TPeriph)) return TPeriph; 
+                                break; // Periph ist offline
+                        case ONLINE:   if (IsOnline(TPeriph)) return TPeriph;
+                                break; // Periph ist  online
+                        case FUCKLINE: Serial.println("FUCKLINE"); return TPeriph; 
+                                break; // Status egal
+                    }
+                } 
+            }       
         }
     }
     return NULL;
 }
-PeriphClass *FindPrevPeriph(PeerClass *Peer, PeriphClass *Periph, int Type, bool circular, int Status)
-// return previous Periph of Type. If Peer=NULL Peer is ignored, otherwise NULL, circular...
+PeriphClass *FindPrevPeriph(PeerClass *Peer, PeriphClass *Periph, int TypeMask, bool circular, int Status)
+// return previous Periph of TypeMask. If Peer=NULL Peer is ignored, otherwise NULL, circular...
 {
     PeriphClass *TPeriph;
 
     if (PeriphList.size() == 0) return NULL;
     
+    int  P_Type = TypeMask & (P_IS_SWITCH | P_IS_VOLT | P_IS_AMP);
+    bool P_Switch_wanted = TypeMask & P_IS_PRIMARY_SWITCH;
+    bool P_Sensor_wanted = TypeMask & P_IS_PRIMARY_SENSOR;
+    
+    Serial.printf("P_Type:%d, P_Switch_wanted:%d, P_Sensor_wated:%d\n\r", P_Type, P_Switch_wanted, P_Sensor_wanted);
+
     int PeriphPos = FindPeriphListPos(Periph);
     if (PeriphPos == -1) PeriphPos = PeriphList.size(); // if not found prev will start at last element
     
@@ -458,15 +480,32 @@ PeriphClass *FindPrevPeriph(PeerClass *Peer, PeriphClass *Periph, int Type, bool
         TPeriph = PeriphList.get(PeriphPos);
         if (TPeriph == NULL) continue;
         
-        if ((Peer == NULL) or (Peer->GetId() == TPeriph->GetPeerId()))
         // Peer fits
+        if ((Peer == NULL) or (Peer->GetId() == TPeriph->GetPeerId()))
         {
-            switch (Status)
+            //Periph hat die gefordeten Attribute
+            Serial.printf("TPeriph->GetType() :%d & P_Type:%d == %d, Primary = %d\n\r", TPeriph->GetType(), P_Type, TPeriph->GetType() & P_Type, TPeriph->GetPrimary());
+            if ((TPeriph->GetType() & P_Type) == P_Type) 
             {
-                case 0: if ((!IsOnline(TPeriph)) and (TPeriph->IsType(Type))) return TPeriph; break; // Periph ist offline
-                case 1: if (( IsOnline(TPeriph)) and (TPeriph->IsType(Type))) return TPeriph; break; // Periph ist  online
-                case 2: if (TPeriph->IsType(Type)) return TPeriph; break;
-            }
+                // und Primary stimmt oder ist nicht gewünscht
+                if  ( (P_Switch_wanted and TPeriph->GetPrimary() == PRIM_SWITCH) or 
+                      (P_Sensor_wanted and TPeriph->GetPrimary() == PRIM_VOLT) or
+                      (P_Sensor_wanted and TPeriph->GetPrimary() == PRIM_AMP)  or
+                      (P_Sensor_wanted and TPeriph->GetPrimary() == PRIM_WATT) or
+                      (P_Sensor_wanted == false and P_Switch_wanted == false) )
+                {
+                    // online-Status wie gewünscht
+                    switch (Status)
+                    {
+                        case OFFLINE:  if (!IsOnline(TPeriph)) return TPeriph; 
+                                break; // Periph ist offline
+                        case ONLINE:   if (IsOnline(TPeriph)) return TPeriph;
+                                break; // Periph ist  online
+                        case FUCKLINE: return TPeriph; 
+                                break; // Status egal
+                    }
+                } 
+            }       
         }
     }
     return NULL;

@@ -619,210 +619,6 @@ CompMeter::CompMeter()
 }
 CompMeter::~CompMeter() 
 {
-	lv_obj_remove_event_cb(_Button, _event_cb);
-}
-static void Meter_cb(lv_event_t * e) {
-
-	lv_obj_draw_part_dsc_t	*dsc  = (lv_obj_draw_part_dsc_t *)lv_event_get_param(e);
-	double					value;
-
-	if( dsc->text != NULL ) {		// Filter major ticks...
-		value = dsc->value / 10;
-		snprintf(dsc->text, sizeof(dsc->text), "%5.1f", value);
-	}
-
-}
-void CompMeter::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, PeriphClass *Periph, lv_event_cb_t event_cb) 
-{
-	_Periph = Periph;
-    _event_cb = event_cb;
-    _Pos = Pos;
-    _x = x;
-    _y = y;		
-    _Width  = size;
-    _Height = size;
-    _Size = size;	
-    
-	_Button = lv_meter_create(comp_parent);
-	lv_obj_center(_Button);
-	lv_obj_set_style_bg_color(_Button, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(_Button, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_size(_Button, _Width, _Height);
-	
-	_Scale = lv_meter_add_scale(_Button);
-	lv_obj_move_background(_Button);
-	lv_obj_set_style_text_color(_Button, lv_color_hex(0xdbdbdb), LV_PART_TICKS);
-	
-	_IndicNeedle = lv_meter_add_needle_line(_Button, _Scale, 4, lv_palette_main(LV_PALETTE_GREY), -10);
-	
-	if (_Periph->IsAmp())
-	{
-        _GraphValuePos = V_AMP;
-        lv_meter_set_scale_ticks(_Button, _Scale, 41, 2, 10, lv_palette_main(LV_PALETTE_GREY));
-    	lv_meter_set_scale_major_ticks(_Button, _Scale, 5, 4, 15, lv_color_black(), 15);
-    	lv_meter_set_scale_range(_Button, _Scale, VALUE_A_MIN, VALUE_A_MAX, 240, 150);
-	
-		//Add a green arc to the start
-		_Indic = lv_meter_add_scale_lines(_Button, _Scale, lv_palette_main(LV_PALETTE_GREEN), lv_palette_main(LV_PALETTE_GREEN), false, 0);
-    	lv_meter_set_indicator_start_value(_Button, _Indic, 0);
-    	lv_meter_set_indicator_end_value(_Button, _Indic, 250);
-
-		_Indic = lv_meter_add_arc(_Button, _Scale, 3, lv_palette_main(LV_PALETTE_RED), 0);
-    	lv_meter_set_indicator_start_value(_Button, _Indic, 300);
-    	lv_meter_set_indicator_end_value(_Button, _Indic, 400);
-
-		//Make the tick lines red at the end of the scale
-		_Indic = lv_meter_add_scale_lines(_Button, _Scale, lv_palette_main(LV_PALETTE_RED), lv_palette_main(LV_PALETTE_RED), false, 0);
-		lv_meter_set_indicator_start_value(_Button, _Indic, 300);
-		lv_meter_set_indicator_end_value(_Button, _Indic, 400);
-
-        if (_GraphVisible) ChartInit(SCREEN_RES_HOR/2, SCREEN_RES_VER*0.7, SCREEN_RES_HOR/3, SCREEN_RES_VER/15, RECORDED_VALUES);
-        
-		lv_obj_add_event_cb(_Button, Meter_cb, LV_EVENT_DRAW_PART_BEGIN, NULL);
-	}
-	else if (_Periph->IsVolt())
-	{	
-        _GraphValuePos = V_VOLT;
-        lv_meter_set_scale_ticks(_Button, _Scale, 31, 2, 10, lv_palette_main(LV_PALETTE_GREY));
-    	lv_meter_set_scale_major_ticks(_Button, _Scale, 5, 4, 15, lv_color_black(), 15);
-    	lv_meter_set_scale_range(_Button, _Scale, VALUE_V_MIN, VALUE_V_MAX, 240, 150);
-	
-		_Indic = lv_meter_add_scale_lines(_Button, _Scale, lv_palette_main(LV_PALETTE_RED), lv_palette_main(LV_PALETTE_RED), false, 0);
-    	lv_meter_set_indicator_start_value(_Button, _Indic, 90);
-    	lv_meter_set_indicator_end_value(_Button, _Indic, 112);
-		
-		//Add a green arc to the start
-		_Indic = lv_meter_add_scale_lines(_Button, _Scale, lv_palette_main(LV_PALETTE_GREEN), lv_palette_main(LV_PALETTE_GREEN), false, 0);
-    	lv_meter_set_indicator_start_value(_Button, _Indic, 112);
-    	lv_meter_set_indicator_end_value(_Button, _Indic, 144);
-
-		_Indic = lv_meter_add_arc(_Button, _Scale, 3, lv_palette_main(LV_PALETTE_RED), 0);
-    	lv_meter_set_indicator_start_value(_Button, _Indic, 144);
-    	lv_meter_set_indicator_end_value(_Button, _Indic, 150);
-
-		//Make the tick lines red at the end of the scale
-		_Indic = lv_meter_add_scale_lines(_Button, _Scale, lv_palette_main(LV_PALETTE_RED), lv_palette_main(LV_PALETTE_RED), false, 0);
-		lv_meter_set_indicator_start_value(_Button, _Indic, 144);
-		lv_meter_set_indicator_end_value(_Button, _Indic, 150);
-
-        if (_GraphVisible) ChartInit(SCREEN_RES_HOR/2, SCREEN_RES_VER*0.7, SCREEN_RES_HOR/3, SCREEN_RES_VER/15, RECORDED_VALUES);
-
-		//Add draw callback to override default values
-		lv_obj_add_event_cb(_Button, Meter_cb, LV_EVENT_DRAW_PART_BEGIN, NULL);
-    }
-
-    _LblPeer = lv_label_create(_Button);
-    lv_obj_set_width(_LblPeer, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(_LblPeer, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(_LblPeer, LV_ALIGN_CENTER);
-    SetPeerPos(0, lv_pct(35));
-    lv_obj_set_style_text_font(_LblPeer, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
-    ui_object_set_themeable_style_property(_LblPeer, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxt);
-    ui_object_set_themeable_style_property(_LblPeer, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
-    
-
-    _LblPeriph = lv_label_create(_Button);
-    lv_obj_set_width(_LblPeriph, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(_LblPeriph, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(_LblPeriph, LV_ALIGN_CENTER);
-    SetPeriphPos(0, lv_pct(-20));
-    lv_obj_set_style_text_font(_LblPeriph, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);
-    ui_object_set_themeable_style_property(_LblPeriph, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxt);
-    ui_object_set_themeable_style_property(_LblPeriph, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
-    
-
-    _LblValue = lv_label_create(_Button);
-    lv_obj_set_width(_LblValue, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(_LblValue, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(_LblValue, LV_ALIGN_CENTER);
-    SetValuePos(0, lv_pct(15));
-    lv_obj_set_style_text_font(_LblValue, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);
-    ui_object_set_themeable_style_property(_LblValue, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxt);
-    ui_object_set_themeable_style_property(_LblValue, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
-}
-void CompMeter::Update() 
-{    
-    lv_obj_set_pos(_Button,    _x,        _y);
-    lv_obj_set_pos(_LblPeer,   _X_Peer,   _Y_Peer);
-    lv_obj_set_pos(_LblPeriph, _X_Periph, _Y_Periph);
-    lv_obj_set_pos(_LblValue,  _X_Value,  _Y_Value);
-
-	//Serial.printf("Peer:Periph %s:%s", PeerOf(_Periph)->GetName(), _Periph->GetName());
-
-	if ((PeerOf(_Periph)->GetName() == NULL) or (!_PeerVisible))
-	{
-	    lv_obj_add_flag(_LblPeer, LV_OBJ_FLAG_HIDDEN);
-	}
-	else
-	{
-        lv_label_set_text_fmt(_LblPeer, "%.6s (%d dBm)", PeerOf(_Periph)->GetName(), PeerOf(_Periph)->GetdBm());
-        lv_obj_clear_flag(_LblPeer, LV_OBJ_FLAG_HIDDEN);
-	}
-    
-    if ((_Periph->GetName() == NULL) or (!_PeriphVisible)) 
-    {
-		lv_obj_add_flag(_LblPeriph, LV_OBJ_FLAG_HIDDEN);
-    }
-    else 
-    {
-		lv_label_set_text_fmt(_LblPeriph, "%.6s", _Periph->GetName());
-		lv_obj_clear_flag(_LblPeriph, LV_OBJ_FLAG_HIDDEN);
-    
-    }
-
-    char buf[20];
-    char Einheit[3];
-
-	int nk = 0;
-	float value = 0;
-
-    switch (_Periph->GetPrimary())
-    {
-        case PRIM_AMP:  value = _Periph->GetValue(3);                        strncpy(Einheit, " A", sizeof(Einheit)); break;
-        case PRIM_VOLT: value = _Periph->GetValue(2);                        strncpy(Einheit, " V", sizeof(Einheit)); break;
-        case PRIM_WATT: value = _Periph->GetValue(2) * _Periph->GetValue(3); strncpy(Einheit, " W", sizeof(Einheit)); break;
-    }
-    Einheit[2] = '\0';
-     
-    Serial.printf("Sensor: %s: %f\n\r", _Periph->GetName(), value);
-    if (fabs(value) < SCHWELLE) value = 0;
-
-    if      (value<10)  nk = 2;
-    else if (value<100) nk = 1;
-    else                nk = 0;
-
-    if (value == -99) strcpy(buf, "--"); 
-    else dtostrf(value, 0, nk, buf);
-
-    strncat(buf, Einheit, sizeof(buf));
-		
-	lv_meter_set_indicator_value(_Button, _IndicNeedle, value*10);
-
-	if (_ValueVisible) 
-	{
-		lv_label_set_text(_LblValue, buf);
-		lv_obj_clear_flag(_LblValue, LV_OBJ_FLAG_HIDDEN);
-	}
-	else 
-	{
-		lv_obj_add_flag(_LblValue, LV_OBJ_FLAG_HIDDEN);
-	}
-
-    if (_GraphVisible) ChartUpdate();
-}
-
-CompMeter2::CompMeter2() 
-{
-    _PeerVisible = true;
-    _PeriphVisible = true;
-    _ValueVisible = true;
-    _SystemVisible = false;
-    _PeriphValueCombo = false;
-    _GraphVisible = false;
-    _dBmVisible = true;
-}
-CompMeter2::~CompMeter2() 
-{
 	lv_obj_del(ui_ImgMeter2);
 	lv_obj_del(ui_ImgZeiger);
     lv_obj_del(_LblPeer);
@@ -830,7 +626,7 @@ CompMeter2::~CompMeter2()
     lv_obj_del(_LblValue);
     lv_obj_del(_LblCentral);
 }
-void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, PeriphClass *Periph, lv_event_cb_t event_cb) 
+void CompMeter::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, PeriphClass *Periph, lv_event_cb_t event_cb) 
 {
 	_Periph = Periph;
     _event_cb = event_cb;
@@ -944,7 +740,7 @@ void CompMeter2 ::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size,
 
     lv_obj_move_foreground(ui_ImgZeiger);
 }
-void CompMeter2::Update() 
+void CompMeter::Update() 
 {    
     uint16_t newSize = 256*SCREEN_RES_HOR/360+5;
     

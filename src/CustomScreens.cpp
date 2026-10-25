@@ -1,4 +1,4 @@
-// Version 4.24
+// Version 4.25
 
 #include <Arduino.h>
 #include "main.h"
@@ -7,11 +7,9 @@
 #include "PeerClass.h"
 #include "CompButton.h"
 
-
 lv_timer_t *SingleTimer;
 lv_obj_t *ui_ScrSingle;
 lv_obj_t *ui_TimeArc;
-
 
 void ui_ScrSingle_screen_init(void)
 {
@@ -44,18 +42,18 @@ void Ui_Single_ClearScreen()
 void Ui_Single_FillScreen()
 {	
 	
-	switch (ActivePeriph->GetPrimary())
+	switch (ActivePeriphShown->GetPrimary())
     {
         case PRIM_SWITCH:	CompThingArray[0] = new CompButton;
 							CompThingArray[0]->Setup(ui_ScrSingle, 0, 0, 0, 2, ActivePeriphShown, Ui_Single_Clicked);
 							break;
-		case PRIM_AMP:  	CompThingArray[0] = new CompMeter2;
+		case PRIM_AMP:  	CompThingArray[0] = new CompMeter;
 							CompThingArray[0]->Setup(ui_ScrSingle, 0, 0, 0, SCREEN_RES_HOR, ActivePeriphShown, Ui_Single_Clicked);
                         	break;
-        case PRIM_VOLT: 	CompThingArray[0] = new CompMeter2;
+        case PRIM_VOLT: 	CompThingArray[0] = new CompMeter;
 							CompThingArray[0]->Setup(ui_ScrSingle, 0, 0, 0, SCREEN_RES_HOR, ActivePeriphShown, Ui_Single_Clicked);
                         	break;
-        case PRIM_WATT: 	CompThingArray[0] = new CompMeter2;
+        case PRIM_WATT: 	CompThingArray[0] = new CompMeter;
 							CompThingArray[0]->Setup(ui_ScrSingle, 0, 0, 0, SCREEN_RES_HOR, ActivePeriphShown, Ui_Single_Clicked);
                         	break;
 		default:			return;
@@ -87,20 +85,19 @@ void Ui_Single_FillScreen()
 }
 void Ui_Single_Next(lv_event_t * e)
 {	
-	int PrimType = ActivePeriph->GetPrimary();
+	int PrimType = ActivePeriphShown->GetPrimary();
 	if (PrimType == 0) return;
 
 	if (PrimType == PRIM_SWITCH)
 	{
-		ActivePeriphSwitch = FindNextPeriph(NULL, ActivePeriphShown, SENS_TYPE_SWITCH, CIRCULAR);
+		ActivePeriphSwitch = FindNextPeriph(NULL, ActivePeriphShown, P_IS_PRIMARY_SWITCH, CIRCULAR);
 		ActivePeriphShown  = ActivePeriphSwitch;
 	}
 	else  
 	{
-		ActivePeriphSensor = FindNextPeriph(NULL, ActivePeriphShown, SENS_TYPE_SENS, CIRCULAR);
+		ActivePeriphSensor = FindNextPeriph(NULL, ActivePeriphShown, P_IS_PRIMARY_SENSOR, CIRCULAR);
 		ActivePeriphShown  = ActivePeriphSensor;
 	}
-	
 
 	if (ActivePeriphShown)
 	{
@@ -110,19 +107,21 @@ void Ui_Single_Next(lv_event_t * e)
 }
 void Ui_Single_Prev(lv_event_t * e)
 {
-	if (ActivePeriphShown->IsSwitch()) 
+	int PrimType = ActivePeriphShown->GetPrimary();
+	if (PrimType == 0) return;
+
+	if (PrimType == PRIM_SWITCH)
 	{
-		ActivePeriphSwitch = FindPrevPeriph(NULL, ActivePeriphShown, SENS_TYPE_SWITCH, CIRCULAR);
+		ActivePeriphSwitch = FindPrevPeriph(NULL, ActivePeriphShown, P_IS_PRIMARY_SWITCH, CIRCULAR);
 		ActivePeriphShown  = ActivePeriphSwitch;
 	}
-	else if (ActivePeriphShown->IsSensor())   
+	else  
 	{
-		ActivePeriphSensor = FindPrevPeriph(NULL, ActivePeriphShown, SENS_TYPE_SENS, CIRCULAR);
+		ActivePeriphSensor = FindPrevPeriph(NULL, ActivePeriphShown, P_IS_PRIMARY_SENSOR, CIRCULAR);
 		ActivePeriphShown  = ActivePeriphSensor;
 	}
 	
-	
-	
+
 	if (ActivePeriphShown)
 	{
 		Ui_Single_ClearScreen();
@@ -132,12 +131,6 @@ void Ui_Single_Prev(lv_event_t * e)
 void Ui_Single_Prepare(lv_event_t * e)
 {
 	int Pos = 0;
-
-	/*if (Knob.Clicked)
-	{
-		Knob.LastClicked = Knob.Clicked;
-		Knob.Clicked     = 0;
-	}*/
 
 	if (ActivePeriphShown)
 	{
@@ -217,7 +210,7 @@ void Ui_Single_Clicked(lv_event_t * e)
 	}
 	else if (event_code == LV_EVENT_CLICKED) 
 	{
-		if (ActivePeriphShown->IsSwitch())
+		if (ActivePeriphShown->IsPrimarySwitch())
 		{
 			Periph = FindPeriphById(atoi(lv_label_get_text(lv_obj_get_child(target, 3))));
 
@@ -228,7 +221,7 @@ void Ui_Single_Clicked(lv_event_t * e)
 			
 			ToggleSwitch(Periph);
 		}
-		else if (ActivePeriphShown->IsSensor()) 
+		else if (ActivePeriphShown->IsPrimarySensor()) 
         {
             if (CompThingArray[0] && target == CompThingArray[0]->GetLblCentral()) 
             {

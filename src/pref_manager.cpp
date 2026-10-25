@@ -5,7 +5,7 @@
 #include <WiFi.h>
 #include <pref_manager.h>
 
-//Version 3.23
+//Version 3.24
 
 extern Preferences preferences;
 

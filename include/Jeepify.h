@@ -1,6 +1,6 @@
 #ifndef JEEPIFY_H
 #define JEEPIFY_H
-// Version 3.43
+// Version 3.44
 
 #include <Arduino.h>
 
@@ -86,15 +86,17 @@
 #define RELAY_REVERSED      -1
 #define RELAY_NORMAL        1
 
-#define P_IS_SWITCH     1       //bit 0
-#define P_IS_SENSOR     2       //bit 1
-#define P_IS_LATCH      4       //bit 2
-#define P_IS_AMP        8       //bit 3
-#define P_IS_VOLT       16      //bit 4
-#define P_IS_INPUT      32      //bit 5
-#define P_IS_OUTPUT     64      //bit 6
-#define P_IS_BIDIRECT   128     //bit 7
-#define P_IS_REVERSED   256     //bit 8
+#define P_IS_SWITCH         1       //bit 0
+#define P_IS_VOLT           2       //bit 1
+#define P_IS_AMP            4       //bit 2
+#define P_IS_SENSOR         8       //bit 3
+#define P_IS_LATCH          16      //bit 4
+#define P_IS_INPUT          32      //bit 5
+#define P_IS_OUTPUT         64      //bit 6
+#define P_IS_BIDIRECT       128     //bit 7
+#define P_IS_REVERSED       256     //bit 8
+#define P_IS_PRIMARY_SWITCH 512     //bit 9
+#define P_IS_PRIMARY_SENSOR 1024    //bit 10
 
 // Sensor-Types
 #define SENS_TYPE_SWITCH  (P_IS_SWITCH)

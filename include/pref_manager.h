@@ -19,13 +19,13 @@ class MultiMonitorClass {
         char         _Name[20];
         int          _Id;
         bool         _Changed;
-        PeerClass   *_Peer     [PERIPH_PER_SCREEN];
-        int          _PeerId   [PERIPH_PER_SCREEN];
-        PeriphClass *_Periph   [PERIPH_PER_SCREEN];
-        int          _PeriphId [PERIPH_PER_SCREEN];
+        PeerClass   *_Peer      [PERIPH_PER_SCREEN];
+        int          _PeerId    [PERIPH_PER_SCREEN];
+        PeriphClass *_Periph    [PERIPH_PER_SCREEN];
+        int          _PeriphId  [PERIPH_PER_SCREEN];
         bool         _Used;
-        void        *_Component[PERIPH_PER_SCREEN];
-        int          _PrimToShow[PERIPH_PER_SCREEN];
+        void        *_Component [PERIPH_PER_SCREEN];
+        int          _PrimToShow[PERIPH_PER_SCREEN];  // what to show PRIM_SWITCH, PRIM_VOLT, PRIM_AMP, PRIM_WATT
         //lv_obj_t    *_Component[PERIPH_PER_SCREEN];
     
     public:

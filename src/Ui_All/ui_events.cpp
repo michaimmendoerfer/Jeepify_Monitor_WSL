@@ -1,4 +1,4 @@
-// Ui_All 4.22
+// Ui_All 4.24
 
 #include <Arduino.h>
 #include "main.h"
@@ -1241,9 +1241,10 @@ void Ui_Menu_Loaded(lv_event_t * e)
 }
 void Ui_Menu_Btn1_Clicked(lv_event_t * e)
 {
-	if (!ActivePeriphSensor) ActivePeriphSensor = FindNextPeriph(NULL, NULL, SENS_TYPE_SENS, ONLINE);
+	if (!ActivePeriphSensor) ActivePeriphSensor = FindNextPeriph(NULL, NULL, P_IS_PRIMARY_SENSOR, CIRCULAR, FUCKLINE);
 	if (ActivePeriphSensor) 
 	{	
+		DEBUG3("PeriphName = %s\n\r", ActivePeriphSensor->GetName());
 		ActivePeriphShown = ActivePeriphSensor;
 		_ui_screen_change(&ui_ScrSingle, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrSingle_screen_init);
 	}
@@ -1251,7 +1252,7 @@ void Ui_Menu_Btn1_Clicked(lv_event_t * e)
 
 void Ui_Menu_Btn2_Clicked(lv_event_t * e)
 {
-	if (!ActivePeriphSwitch) ActivePeriphSwitch = FindNextPeriph(NULL, NULL, SENS_TYPE_SWITCH, CIRCULAR, ONLINE);
+	if (!ActivePeriphSwitch) ActivePeriphSwitch = FindNextPeriph(NULL, NULL, P_IS_PRIMARY_SWITCH, CIRCULAR, FUCKLINE);
 	if (ActivePeriphSwitch) 
 	{
 		ActivePeriphShown = ActivePeriphSwitch;

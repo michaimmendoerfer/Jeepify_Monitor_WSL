@@ -149,7 +149,7 @@ void ui_ScrPeer_screen_init(void)
     lv_obj_clear_flag(ui_ScrPeer, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_ScrPeer, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_ScrPeer, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_ScrPeer, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_ScrPeer, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ImgBGPeer = lv_img_create(ui_ScrPeer);
     lv_img_set_src(ui_ImgBGPeer, &ui_img_jeepifybackground_png);
@@ -172,7 +172,7 @@ void ui_ScrPeer_screen_init(void)
                                            _ui_theme_color_BtnTxt);
     ui_object_set_themeable_style_property(ui_LblPeerName, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
                                            _ui_theme_alpha_BtnTxt);
-    lv_obj_set_style_text_font(ui_LblPeerName, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LblPeerName, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_radius(ui_LblPeerName, 15, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_LblPeerName, lv_color_hex(0xDBDBDB), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_LblPeerName, 50, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -196,7 +196,7 @@ void ui_ScrPeer_screen_init(void)
     lv_obj_add_flag(ui_LblPeerTypeLbl, LV_OBJ_FLAG_HIDDEN);     /// Flags
     lv_obj_set_style_text_color(ui_LblPeerTypeLbl, lv_color_hex(0xDBDBDB), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_LblPeerTypeLbl, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_LblPeerTypeLbl, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LblPeerTypeLbl, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Container3 = lv_obj_create(ui_ScrPeer);
     lv_obj_remove_style_all(ui_Container3);

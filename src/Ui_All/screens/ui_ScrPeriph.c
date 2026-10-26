@@ -4,6 +4,7 @@
 // Project name: SQ-Jeepify-Monitor-All
 
 #include "../ui.h"
+#include "MyFonts.h"
 
 lv_obj_t * ui_ScrPeriph = NULL;
 lv_obj_t * ui_ImgBGPeriph = NULL;
@@ -48,7 +49,7 @@ void ui_ScrPeriph_screen_init(void)
     lv_obj_clear_flag(ui_ScrPeriph, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_ScrPeriph, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_ScrPeriph, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_ScrPeriph, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_ScrPeriph, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ImgBGPeriph = lv_img_create(ui_ScrPeriph);
     lv_img_set_src(ui_ImgBGPeriph, &ui_img_jeepifybackground_png);
@@ -79,7 +80,7 @@ void ui_ScrPeriph_screen_init(void)
     lv_label_set_text(ui_LblPeriphChoicePeer, "Peer");
     lv_obj_set_style_text_color(ui_LblPeriphChoicePeer, lv_color_hex(0xAD0808), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_LblPeriphChoicePeer, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_LblPeriphChoicePeer, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LblPeriphChoicePeer, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_LblPeriphChoiceType = lv_label_create(ui_ScrPeriph);
     lv_obj_set_width(ui_LblPeriphChoiceType, LV_SIZE_CONTENT);   /// 1

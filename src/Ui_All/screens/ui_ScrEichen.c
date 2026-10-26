@@ -52,7 +52,7 @@ void ui_ScrEichen_screen_init(void)
     lv_obj_clear_flag(ui_ScrEichen, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_ScrEichen, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_ScrEichen, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_ScrEichen, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_ScrEichen, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ImgBGEichen = lv_img_create(ui_ScrEichen);
     lv_img_set_src(ui_ImgBGEichen, &ui_img_jeepifybackground_png);

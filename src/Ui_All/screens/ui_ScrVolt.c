@@ -4,6 +4,7 @@
 // Project name: SQ-Jeepify-Monitor-All
 
 #include "../ui.h"
+#include "MyFonts.h"
 
 lv_obj_t * ui_ScrVolt = NULL;
 lv_obj_t * ui_ImgBGVolt = NULL;
@@ -50,7 +51,7 @@ void ui_ScrVolt_screen_init(void)
     lv_obj_clear_flag(ui_ScrVolt, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_ScrVolt, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_ScrVolt, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_ScrVolt, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_ScrVolt, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ImgBGVolt = lv_img_create(ui_ScrVolt);
     lv_img_set_src(ui_ImgBGVolt, &ui_img_jeepifybackground_png);
@@ -68,7 +69,7 @@ void ui_ScrVolt_screen_init(void)
     lv_obj_set_height(ui_Keyboard, lv_pct(50));
     lv_obj_set_align(ui_Keyboard, LV_ALIGN_CENTER);
 
-    lv_obj_set_style_text_font(ui_Keyboard, &lv_font_montserrat_18, LV_PART_ITEMS | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_Keyboard, MY_FONT2, LV_PART_ITEMS | LV_STATE_DEFAULT);
 
     ui_TxtVolt = lv_textarea_create(ui_ScrVolt);
     lv_obj_set_width(ui_TxtVolt, lv_pct(30));
@@ -92,7 +93,7 @@ void ui_ScrVolt_screen_init(void)
     lv_label_set_text(ui_LblVoltPeer, "Peer");
     lv_obj_set_style_text_color(ui_LblVoltPeer, lv_color_hex(0xAD0808), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_LblVoltPeer, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_LblVoltPeer, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LblVoltPeer, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_keyboard_set_textarea(ui_Keyboard, ui_TxtVolt);
     lv_obj_add_event_cb(ui_Keyboard, ui_event_Keyboard, LV_EVENT_ALL, NULL);

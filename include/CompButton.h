@@ -1,7 +1,7 @@
 #ifndef COMPBUTTON_H
 #define COMPBUTTON_H
 
-// Version 4.22
+// Version 4.25
 
 #include <Arduino.h>
 #include "lvgl.h"

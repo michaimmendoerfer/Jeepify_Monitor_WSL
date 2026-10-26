@@ -86,7 +86,7 @@ void ui_ScrMulti_screen_init(void)
     lv_obj_clear_flag(ui_ScrMulti, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_ScrMulti, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_ScrMulti, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_ScrMulti, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_ScrMulti, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ImgBGMulti = lv_img_create(ui_ScrMulti);
     lv_img_set_src(ui_ImgBGMulti, &ui_img_jeepifybackground_png);
@@ -138,7 +138,7 @@ void ui_ScrMulti_screen_init(void)
     lv_obj_set_height(ui_Label6, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_Label6, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label6, "+");
-    lv_obj_set_style_text_font(ui_Label6, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_Label6, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ButtonMulti2 = lv_btn_create(ui_Container2);
     lv_obj_set_width(ui_ButtonMulti2, lv_pct(40));
@@ -159,7 +159,7 @@ void ui_ScrMulti_screen_init(void)
     lv_obj_set_height(ui_Label2, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_Label2, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label2, "+");
-    lv_obj_set_style_text_font(ui_Label2, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_Label2, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ButtonMulti3 = lv_btn_create(ui_Container2);
     lv_obj_set_width(ui_ButtonMulti3, lv_pct(40));
@@ -180,7 +180,7 @@ void ui_ScrMulti_screen_init(void)
     lv_obj_set_height(ui_Label3, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_Label3, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label3, "+");
-    lv_obj_set_style_text_font(ui_Label3, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_Label3, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ButtonMulti4 = lv_btn_create(ui_Container2);
     lv_obj_set_width(ui_ButtonMulti4, lv_pct(40));
@@ -201,7 +201,7 @@ void ui_ScrMulti_screen_init(void)
     lv_obj_set_height(ui_Label4, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(ui_Label4, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label4, "+");
-    lv_obj_set_style_text_font(ui_Label4, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_Label4, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_add_event_cb(ui_ButtonMulti1, ui_event_ButtonMulti1, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_ButtonMulti2, ui_event_ButtonMulti2, LV_EVENT_ALL, NULL);

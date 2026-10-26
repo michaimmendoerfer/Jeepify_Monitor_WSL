@@ -4,6 +4,7 @@
 // Project name: SQ-Jeepify-Monitor-All
 
 #include "../ui.h"
+#include "MyFonts.h"
 
 lv_obj_t * ui_ScrPeers = NULL;
 lv_obj_t * ui_ImgBGPeers = NULL;
@@ -62,7 +63,7 @@ void ui_ScrPeers_screen_init(void)
     lv_obj_set_x(ui_RollerPeers1, 0);
     lv_obj_set_y(ui_RollerPeers1, lv_pct(-10));
     lv_obj_set_align(ui_RollerPeers1, LV_ALIGN_CENTER);
-    lv_obj_set_style_text_font(ui_RollerPeers1, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_RollerPeers1, MY_FONT3, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_RollerPeers1, lv_color_hex(0xAD0808), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_RollerPeers1, 180, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -79,7 +80,7 @@ void ui_ScrPeers_screen_init(void)
     lv_obj_set_style_border_color(ui_BtnPeer9, lv_color_hex(0xDBDBDB), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_opa(ui_BtnPeer9, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_BtnPeer9, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_BtnPeer9, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_BtnPeer9, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_BtnPeer4Lbl4 = lv_label_create(ui_BtnPeer9);
     lv_obj_set_width(ui_BtnPeer4Lbl4, LV_SIZE_CONTENT);   /// 1

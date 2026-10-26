@@ -41,7 +41,7 @@ void ui_ScrSystem_screen_init(void)
     lv_obj_clear_flag(ui_ScrSystem, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_obj_set_style_bg_color(ui_ScrSystem, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_ScrSystem, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_ScrSystem, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_ScrSystem, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_LblSystemPeer = lv_label_create(ui_ScrSystem);
     lv_obj_set_width(ui_LblSystemPeer, LV_SIZE_CONTENT);   /// 1
@@ -52,7 +52,7 @@ void ui_ScrSystem_screen_init(void)
     lv_label_set_text(ui_LblSystemPeer, "Peer");
     lv_obj_set_style_text_color(ui_LblSystemPeer, lv_color_hex(0xAD0808), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_LblSystemPeer, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_LblSystemPeer, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LblSystemPeer, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_LblSystemLeft = lv_textarea_create(ui_ScrSystem);
     lv_obj_set_width(ui_LblSystemLeft, 90);

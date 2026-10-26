@@ -960,7 +960,7 @@ void ShowMessageBox(const char * Titel, const char *Txt, int delay, int opa)
     lv_obj_set_style_border_color(MsgBox, lv_color_hex(0xDBDBDB), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_opa(MsgBox, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(MsgBox, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(MsgBox, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(MsgBox, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_color(MsgBox, lv_color_hex(0xDBDBDB), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(MsgBox, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 

@@ -38,7 +38,7 @@ lv_obj_t * ui_ButtonSensorSmall_create(lv_obj_t * comp_parent)
     lv_obj_set_y(cui_LblSensSmallPeer, 33);
     lv_obj_set_align(cui_LblSensSmallPeer, LV_ALIGN_CENTER);
     lv_label_set_text(cui_LblSensSmallPeer, "Peer");
-    lv_obj_set_style_text_font(cui_LblSensSmallPeer, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(cui_LblSensSmallPeer, MY_FONT1, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_t * cui_LblSensSmallPeriph;
     cui_LblSensSmallPeriph = lv_label_create(cui_ButtonSensorSmall);
@@ -46,7 +46,7 @@ lv_obj_t * ui_ButtonSensorSmall_create(lv_obj_t * comp_parent)
     lv_obj_set_height(cui_LblSensSmallPeriph, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(cui_LblSensSmallPeriph, LV_ALIGN_CENTER);
     lv_label_set_text(cui_LblSensSmallPeriph, "Periph");
-    lv_obj_set_style_text_font(cui_LblSensSmallPeriph, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(cui_LblSensSmallPeriph,MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_t * cui_LblSensSmallValue;
     cui_LblSensSmallValue = lv_label_create(cui_ButtonSensorSmall);

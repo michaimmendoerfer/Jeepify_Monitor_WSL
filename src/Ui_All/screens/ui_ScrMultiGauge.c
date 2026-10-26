@@ -107,7 +107,7 @@ void ui_ScrMultiGauge_screen_init(void)
                                            _ui_theme_color_BtnTxt);
     ui_object_set_themeable_style_property(ui_LblName, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
                                            _ui_theme_alpha_BtnTxt);
-    lv_obj_set_style_text_font(ui_LblName, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LblName, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Container6 = lv_obj_create(ui_ScrMultiGauge);
     lv_obj_remove_style_all(ui_Container6);
@@ -243,7 +243,7 @@ void ui_ScrMultiGauge_screen_init(void)
     ui_object_set_themeable_style_property(ui_LblMGVolt, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
                                            _ui_theme_alpha_BtnTxt);
     lv_obj_set_style_text_align(ui_LblMGVolt, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_LblMGVolt, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LblMGVolt, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_radius(ui_LblMGVolt, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_LblMGVolt, lv_color_hex(0xDBDBDB), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_LblMGVolt, 40, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -269,7 +269,7 @@ void ui_ScrMultiGauge_screen_init(void)
     ui_object_set_themeable_style_property(ui_LblMGArcLoad, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
                                            _ui_theme_alpha_BtnTxt);
     lv_obj_set_style_text_align(ui_LblMGArcLoad, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_LblMGArcLoad, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LblMGArcLoad, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_LbLMGArcSolar = lv_label_create(ui_ScrMultiGauge);
     lv_obj_set_width(ui_LbLMGArcSolar, lv_pct(25));
@@ -283,7 +283,7 @@ void ui_ScrMultiGauge_screen_init(void)
     ui_object_set_themeable_style_property(ui_LbLMGArcSolar, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
                                            _ui_theme_alpha_BtnTxt);
     lv_obj_set_style_text_align(ui_LbLMGArcSolar, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_LbLMGArcSolar, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LbLMGArcSolar, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_LblMGArcVerbrauch = lv_label_create(ui_ScrMultiGauge);
     lv_obj_set_width(ui_LblMGArcVerbrauch, lv_pct(20));
@@ -296,7 +296,7 @@ void ui_ScrMultiGauge_screen_init(void)
                                            _ui_theme_color_BtnTxt);
     ui_object_set_themeable_style_property(ui_LblMGArcVerbrauch, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
                                            _ui_theme_alpha_BtnTxt);
-    lv_obj_set_style_text_font(ui_LblMGArcVerbrauch, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LblMGArcVerbrauch, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_ImgVerbrauch = lv_img_create(ui_ScrMultiGauge);
     lv_img_set_src(ui_ImgVerbrauch, &ui_img_icon_fridge_50_png);

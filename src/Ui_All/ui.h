@@ -28,6 +28,7 @@ extern "C" {
 #include "ui_events.h"
 #include "ui_theme_manager.h"
 #include "ui_themes.h"
+#include "MyFonts.h"
 
 ///////////////////// SCREENS ////////////////////
 

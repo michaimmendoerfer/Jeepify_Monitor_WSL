@@ -98,7 +98,7 @@ bool PeriphClass::IsType(int TypeMask)
 {
     if (TypeMask == SENS_TYPE_ALL) return 1; 
 
-    return (_Type_bit & TypeMask == TypeMask);
+    return ((_Type_bit & TypeMask) == TypeMask);
 }
 void PeriphClass::AddSavedValue(float V0, float V1, float V2, float V3)
 {   
@@ -458,6 +458,7 @@ PeriphClass *FindPrevPeriph(PeerClass *Peer, PeriphClass *Periph, int TypeMask, 
     PeriphClass *TPeriph;
 
     if (PeriphList.size() == 0) return NULL;
+    if (TypeMask == SENS_TYPE_ALL) TypeMask = 0;
     
     int  P_Type = TypeMask & (P_IS_SWITCH | P_IS_VOLT | P_IS_AMP);
     bool P_Switch_wanted = TypeMask & P_IS_PRIMARY_SWITCH;

@@ -3,8 +3,8 @@
 
 #include <Jeepify.h>
 
-#define MODULE_VERSION          "5.01"  
-#define PROTOKOLL_VERSION       "5.0"
+#define MODULE_VERSION          "5.10"  
+#define PROTOKOLL_VERSION       "5.1"
 
 #ifdef DEV_466_RED
     #define NODE_NAME "466-red"
@@ -66,16 +66,6 @@
     #define NODE_TYPE       MONITOR_ROUND
     #define BATTERY_PORT    1
     #define BATTERY_DEVIDER 2
-    #define SCREEN_RES_HOR  240
-    #define SCREEN_RES_VER  240
-    #define UI_H_DIR        "Ui_240/ui.h"
-    #define UI_EVENTS_H_DIR "Ui_240/ui_events.h" 
-#endif
-
-#ifdef MODULE_MONITOR_240_C3
-    #include "scr_tft240round_c3.h"
-    #define NODE_NAME       "MM1"
-    #define NODE_TYPE       MONITOR_ROUND
     #define SCREEN_RES_HOR  240
     #define SCREEN_RES_VER  240
     #define UI_H_DIR        "Ui_240/ui.h"

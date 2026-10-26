@@ -146,7 +146,7 @@ void ui_ScrSettings_screen_init(void)
     lv_obj_set_style_pad_bottom(ui_Container1, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_row(ui_Container1, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_column(ui_Container1, 20, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_Container1, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_Container1, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_BtnSet1 = lv_btn_create(ui_Container1);
     lv_obj_set_width(ui_BtnSet1, lv_pct(40));

@@ -99,7 +99,7 @@ void ui_ScrMenu_screen_init(void)
     lv_label_set_text(ui_LblMenuVersion, "V 3.41");
     lv_obj_set_style_text_color(ui_LblMenuVersion, lv_color_hex(0xAD0808), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_LblMenuVersion, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_LblMenuVersion, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LblMenuVersion, MY_FONT1, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Container4 = lv_obj_create(ui_ScrMenu);
     lv_obj_remove_style_all(ui_Container4);

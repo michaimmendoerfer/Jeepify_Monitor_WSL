@@ -2,7 +2,7 @@
 #include "main.h"
 #include "CompButton.h"
 
-// Version 4.24
+// Version 4.25
 
 #define VALUE_V_MIN     9
 #define VALUE_V_MAX     15
@@ -502,8 +502,8 @@ void CompSensor::Update()
 {
     lv_obj_set_pos(_Button, _x, _y);
     
-    testvalue++;
-    if (testvalue > 20) testvalue = 0;
+    //testvalue++;
+    //if (testvalue > 20) testvalue = 0;
 
 	if ((PeerOf(_Periph)->GetName() == NULL) or (!_PeerVisible))
 	{
@@ -533,12 +533,10 @@ void CompSensor::Update()
         lv_color_t bg;
         float value;
 
-        if (_Periph->GetPrimary() == PRIM_AMP)
+        if (Screen[ActiveMultiScreen].GetPrimToShow(_Pos) == PRIM_AMP)
         {
             value = _Periph->GetValue(V_AMP);
-            printf("CompSensor::Update: value = %.2f - testvalue = %.2f\n\r", value, testvalue);
-
-            value = testvalue; // for testing only
+            //value = testvalue; // for testing only
 
             if      (value<10)  nk = 2;
             else if (value<100) nk = 1;
@@ -556,7 +554,7 @@ void CompSensor::Update()
             lv_arc_set_range(_Arc, VALUE_A_MIN*10, VALUE_A_MAX*10);
             lv_arc_set_value(_Arc, value*10);
         }
-        else if (_Periph->GetPrimary() == PRIM_VOLT)
+        else if (Screen[ActiveMultiScreen].GetPrimToShow(_Pos) == PRIM_VOLT)
         {
             float value = _Periph->GetValue(V_VOLT);
         
@@ -576,7 +574,7 @@ void CompSensor::Update()
             lv_arc_set_range(_Arc, VALUE_V_MIN*10, VALUE_V_MAX*10);
             lv_arc_set_value(_Arc, value*10);
         }
-        else if (_Periph->GetPrimary() == PRIM_WATT)
+        else if (Screen[ActiveMultiScreen].GetPrimToShow(_Pos) == PRIM_WATT)
         {
             float value = _Periph->GetValue(V_VOLT) * _Periph->GetValue(V_AMP);
         

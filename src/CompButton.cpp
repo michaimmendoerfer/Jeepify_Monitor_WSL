@@ -511,7 +511,7 @@ void CompSensor::Update()
 	}
 	else
 	{
-	    lv_label_set_text_fmt(_LblPeer, "%.6s", PeerOf(_Periph)->GetName());
+	    lv_label_set_text_fmt(_LblPeer, "%.8s", PeerOf(_Periph)->GetName());
      	lv_obj_clear_flag(_LblPeer, LV_OBJ_FLAG_HIDDEN);
 	}
 
@@ -521,7 +521,7 @@ void CompSensor::Update()
     }
     else 
     {
-	lv_label_set_text_fmt(_LblPeriph, "%.6s", _Periph->GetName());
+	lv_label_set_text_fmt(_LblPeriph, "%.8s", _Periph->GetName());
 	lv_obj_clear_flag(_LblPeriph, LV_OBJ_FLAG_HIDDEN);
     
     }

@@ -522,8 +522,11 @@ void Ui_Multi_Clicked(lv_event_t * e)
         Ui_Multi_Prev(e);
 	}
 	else if (event_code == LV_EVENT_CLICKED) {
+		
+		MultiPosToChange = atoi(lv_label_get_text(lv_obj_get_child(target, 4)));
 		PeriphClass *Periph = FindPeriphById(atoi(lv_label_get_text(lv_obj_get_child(target, 3))));
-		if (Periph->IsSwitch())
+		
+		if (Screen[ActiveMultiScreen].GetPrimToShow(MultiPosToChange) == PRIM_SWITCH)
 		{
 			Periph->SetChanged(true);
 			
@@ -532,7 +535,7 @@ void Ui_Multi_Clicked(lv_event_t * e)
 			
 			ToggleSwitch(Periph);
 		}
-		else if (Periph->IsSensor())
+		else //if (Periph->IsPrimarySensor())
 		{
 			ActivePeriphSensor = Periph;
 			ActivePeriphShown  = ActivePeriphSensor;

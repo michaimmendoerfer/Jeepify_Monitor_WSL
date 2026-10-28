@@ -229,7 +229,15 @@ void Ui_Set_SavePeers(lv_event_t * e)
 {
     SavePeers();
 	Module.SetChanged(false);
-	if (Module.GetDebugMode()) ShowMessageBox("Saving...", "complete", 1000, 200);
+	char buf1[10]  = "";
+	char buf2[100] = "free entries: ";
+
+	preferences.begin("JeepifyPeers", true);
+    	itoa(preferences.freeEntries(), buf1, 10);  
+    preferences.end();
+	strcat(buf2, buf1);
+	
+	if (Module.GetDebugMode()) ShowMessageBox("Saving complete...", buf2, 1000, 200);
 }
 void SettingsUpdateTimer(lv_timer_t * timer)
 {

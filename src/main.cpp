@@ -36,7 +36,7 @@ MyLinkedList<ReceivedMessagesStruct*> ReceivedMessagesList = MyLinkedList<Receiv
 PeerClass Module;
 KnobStruct Knob;
 
-String jsondataBuf;
+char jsondataBuf[ESP_MAX_LEN+1];
 
 uint32_t TSPing          = 0;
 
@@ -72,8 +72,11 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
 {
     if (incomingData == NULL || len <= 0) return;
 
-    // 1. JSON direkt aus dem sicheren Byte-Array einlesen
     JsonDocument doc;
+    
+    strncpy(jsondataBuf, (const char*)incomingData, min(len, (int)sizeof(jsondataBuf) - 1));
+    jsondataBuf[min(len, (int)sizeof(jsondataBuf) - 1)] = '\0';
+
     DeserializationError error = deserializeJson(doc, incomingData, len);
 
     if (error) {
@@ -81,45 +84,13 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
         return;
     }
 
-    // 2. Debug-Ausgabe ohne String-Objekt (mittels Breitenbegrenzung ".*s")
-    // "%.*s" gibt exakt 'len' Zeichen aus, auch ohne Nullterminierung im Puffer!
-    Serial.printf("Len: %d: %.*s\n\r", len, len, (const char*)incomingData);
-    DEBUG3("RAW: OnDataRecv: %.*s\n\r", len, (const char*)incomingData);
+    DEBUG3("(%d)-RAW: OnDataRecv: %s\n\r", len, (const char*)incomingData);
 
-    // --- VERSION UND MAX PAYLOAD AUSLESEN ---
-    uint32_t version = 0;
-    if (esp_now_get_version(&version) == ESP_OK) {
-        Serial.println("--- ESP-NOW Status ---");
-        Serial.printf("ESP-NOW Version: %u.0\n", version);
-        
-        if (version >= 2) {
-            Serial.println("Max. Payload:    1470 Bytes (v2.0 aktiv!)");
-        } else {
-            Serial.println("Max. Payload:    250 Bytes (v1.0 aktiv)");
-        }
-        DEBUG3("MAX_DATA_LENGTH: %d -----------------------", ESP_NOW_MAX_DATA_LEN);
-    } else {
-        Serial.println("Konnte ESP-NOW Version nicht auslesen.");
-    }
-
-
-
-    // Wenn Sie die Rohdaten global zwischenspeichern müssen (vorher: jsondataBuf = jsondata):
-    // Nutzen Sie ein globales char-Array statt eines Strings:
-    // strncpy(globalerBuffer, (const char*)incomingData, min(len, (int)sizeof(globalerBuffer) - 1));
-    // globalerBuffer[min(len, (int)sizeof(globalerBuffer) - 1)] = '\0';
-
-    // Ihr restlicher Code...
     PeerClass *P;
-    char Buf[50] = {}; // Hinweis: "char Buf = {};" im Vorcode war ein Syntaxfehler für Arrays
+    char Buf[50] = {}; 
     bool SaveNeeded = false;
     bool NewPeer    = false;
     char buf[100];
-
-    
-    jsondataBuf = String((const char*)incomingData);
-
-    DEBUG3 ("RAW: OnDataRecv: %s\n\r", jsondataBuf.c_str());
 
     if (!error) // erfolgreich JSON
     {
@@ -152,7 +123,7 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
             DEBUG3 ("Message an unbekannten Empfänger\n\r");
             return;
         }
-            DEBUG2 ("%s\n\rwird verarbeitet - Order:%d\n\r", jsondataBuf.c_str(), _Order);
+            DEBUG2 ("%s\n\rwird verarbeitet - Order:%d\n\r", jsondataBuf, _Order);
 
             //already recevied?
         if (ReceivedMessagesList.size() > 0)
@@ -173,6 +144,7 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
         RMItem->TS = _TS;
         RMItem->SaveTime = millis();
         ReceivedMessagesList.add(RMItem);
+
         DEBUG3 ("%d.Message registriert\n\r", ReceivedMessagesList.size());
             
         P = FindPeerByMAC(_From);
@@ -315,6 +287,32 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
                     }
                 }
                 break;
+            case SEND_CMD_RETURN_PARAMS:
+                if (P)
+                {
+                    for (int Si=0; Si<MAX_PERIPHERALS; Si++) 
+                    {
+                        //DEBUG3 ("Check values of: %s\n\r", ArrPeriph[Si]);
+                        
+                        if (doc[ArrPeriph[Si]].is<JsonVariant>())
+                        {
+                            strcpy(buf, doc[ArrPeriph[Si]]);
+                            P->SetPeriphNullwert (Si, atof(strtok(buf, ";")));
+                            P->SetPeriphVperAmp  (Si, atof(strtok(NULL, ";")));
+                            DEBUG3 ("%s->%s \n\rNullwert: %.2f\n\rVperAmp:%.2f\n\r", 
+                                P->GetName(), P->GetPeriphName(Si), P->GetPeriphNullwert(Si), P->GetPeriphVperAmp(Si));
+
+                            for (int i=0; i<4; i++)
+                            {
+                                P->SetPeriphAlarmLow (Si, i, atof(strtok(NULL, ";")));
+                                P->SetPeriphAlarmHigh(Si, i, atof(strtok(NULL, ";")));
+                                DEBUG3 ("Alarm 0 (low/high): %.2f/.2f", 
+                                P->GetPeriphAlarmLow(Si,i), P->GetPeriphAlarmHigh(Si,i));
+                            }
+                        }
+                    }
+                }
+                break;
     
             case SEND_CMD_CONFIRM:
                 if (P) // and (doc[SEND_CMD_JSON_CONFIRM].is<JsonVariant>()))
@@ -339,13 +337,6 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
         {
             savePeersRequested = true;
         }
-    }
-    else // Error bei JSON
-    {        
-        Serial.print(F("deserializeJson() failed: ")); 
-        Serial.println(error.f_str());
-        Serial.printf("jsondata was: %s\n\r", jsondataBuf);
-        return;
     }
 }
 
@@ -871,17 +862,17 @@ void SendCommand(PeerClass *P, int Cmd, String Value) {
 #pragma endregion Send-Things
 #pragma region System-Screens
 void PrepareJSON() {
-    if (jsondataBuf != "") 
+    if (jsondataBuf[0] != '\0') 
     { 
         JsonDocument doc;
         
         DeserializationError error = deserializeJson(doc, jsondataBuf);
         if (!error) {
             if (doc["Node"] != NODE_NAME) { 
-                lv_textarea_set_placeholder_text(ui_TxtJSON1, jsondataBuf.c_str());
+                lv_textarea_set_placeholder_text(ui_TxtJSON1, jsondataBuf);
             }
         }
-        jsondataBuf = ""; 
+        jsondataBuf[0] = '\0'; 
     }
 }
 /*void TopUpdateTimer(lv_timer_t * timer)

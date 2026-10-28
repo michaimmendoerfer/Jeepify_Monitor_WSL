@@ -103,7 +103,7 @@ String processor(const String& var)
     if (var == "PeriphName")  if (ActiveWebPeriph) return ActiveWebPeriph->GetName();
     if (var == "Nullwert")    if (ActiveWebPeriph) { dtostrf(ActiveWebPeriph->GetNullwert(), 0, 3, Buf); return String(Buf); }
     if (var == "VperAmp")     if (ActiveWebPeriph) { dtostrf(ActiveWebPeriph->GetVperAmp(), 0, 3, Buf); return String(Buf); }
-    if (var == "VCorr")         if (ActiveWebPeriph) return String(ActiveWebPeriph->GetVCorr());
+    if (var == "VCorr")       if (ActiveWebPeriph) return String(ActiveWebPeriph->GetVCorr());
     
     if (var == "AnzPeers")    return String(PeerList.size()+1);
     if (var == "AnzPeriphs")  return String(PeriphList.size());
@@ -292,7 +292,13 @@ void InitWebServer()
         });
     server.on("/periph", HTTP_GET, [](AsyncWebServerRequest *request){
         Serial.println("schicke periph.html");
-        if (ActiveWebPeriph) request->send(200, "text/html", periph_html, processor);
+        if (ActiveWebPeriph) 
+        {
+            char buf[10];
+            itoa(ActiveWebPeriph->GetPos(), buf, 10);
+            SendCommand(ActiveWebPeer, SEND_CMD_SEND_PARAMS, buf);
+            request->send(200, "text/html", periph_html, processor);
+        }
         });
     server.on("/status", HTTP_GET, [](AsyncWebServerRequest *request){
         Serial.println("schicke peerstatus.html");

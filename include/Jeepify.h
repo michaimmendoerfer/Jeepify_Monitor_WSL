@@ -1,6 +1,6 @@
 #ifndef JEEPIFY_H
 #define JEEPIFY_H
-// Version 3.44
+// Version 3.46
 
 #include <Arduino.h>
 
@@ -47,6 +47,8 @@
 #define SEND_CMD_UPDATE_VIN       41
 #define SEND_CMD_UPDATE_VPERAMP   42
 #define SEND_CMD_UPDATE_NULLWERT  43
+#define SEND_CMD_SEND_PARAMS      44
+#define SEND_CMD_RETURN_PARAMS    45
 #define SEND_CMD_RESET            50
 #define SEND_CMD_RESTART          51
 #define SEND_CMD_PAIR_ME          60

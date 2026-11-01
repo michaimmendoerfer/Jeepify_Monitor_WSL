@@ -1,4 +1,4 @@
-// Ui_All 4.24 - pico
+// Ui_All 4.24 - picoUi
 
 #include <Arduino.h>
 #include "main.h"

@@ -68,7 +68,7 @@ bool   ToggleSwitch(PeriphClass *Periph);
 void   SendCommand(PeerClass *P, int Cmd, String Value="");
 void   SendPairingConfirm(PeerClass *Peer);
 void   SendStatus();
-
+void   RequestParams(PeriphClass *_Periph);
 void   ShowMessageBox(const char * Titel, const char *Txt, int delay, int opa=255);
 void   TopUpdateTimer(lv_timer_t * timer);
 

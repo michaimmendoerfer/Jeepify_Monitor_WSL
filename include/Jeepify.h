@@ -1,6 +1,6 @@
 #ifndef JEEPIFY_H
 #define JEEPIFY_H
-// Version 3.46
+// Version 3.48
 
 #include <Arduino.h>
 
@@ -20,6 +20,10 @@
 #define SEND_CMD_JSON_TO           "RCV"
 #define SEND_CMD_JSON_ORDER        "O"
 #define SEND_CMD_JSON_VALUE        "V"
+#define SEND_CMD_JSON_NULLWERT     "NW"
+#define SEND_CMD_JSON_VPERAMP      "VPA"
+#define SEND_CMD_JSON_ALARM_LOW    "AL"
+#define SEND_CMD_JSON_ALARM_HIGH   "AH"
 #define SEND_CMD_JSON_PEER_NAME    "PeerName"
 #define SEND_CMD_JSON_PERIPH_NAME  "PeriphName"
 #define SEND_CMD_JSON_PERIPH_POS   "PeriphPos"
@@ -90,13 +94,13 @@
 
 #define P_IS_SWITCH         1       //bit 0
 #define P_IS_VOLT           2       //bit 1
-#define P_IS_AMP            4       //bit 2
+#define P_IS_AMP            4       //bit 2 
 #define P_IS_SENSOR         8       //bit 3
 #define P_IS_LATCH          16      //bit 4
-#define P_IS_INPUT          32      //bit 5
-#define P_IS_OUTPUT         64      //bit 6
-#define P_IS_BIDIRECT       128     //bit 7
-#define P_IS_REVERSED       256     //bit 8
+#define P_IS_INPUT          32      //bit 5 z.B. Laderegler von LiMA 
+#define P_IS_OUTPUT         64      //bit 6 z.B. Kühlschrank
+#define P_IS_BIDIRECT       128     //bit 7 AMP-Wert darf auch negativ sein
+#define P_IS_REVERSED       256     //bit 8 z.B. falsch angechlossen 
 #define P_IS_PRIMARY_SWITCH 512     //bit 9
 #define P_IS_PRIMARY_SENSOR 1024    //bit 10
 
@@ -120,6 +124,7 @@
 #define PAIR_INTERVAL     30000
 #define SLEEP_INTERVAL    5000
 #define REPOST_TIMEOUT    3000
+#define ALARM_INTERVAL    10000
 
 // Round-Monitor Touch
 const int I2C_SDA  = 4;

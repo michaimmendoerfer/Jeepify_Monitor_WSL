@@ -306,8 +306,8 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
                             {
                                 P->SetPeriphAlarmLow (Si, i, atof(strtok(NULL, ";")));
                                 P->SetPeriphAlarmHigh(Si, i, atof(strtok(NULL, ";")));
-                                DEBUG3 ("Alarm 0 (low/high): %.2f/.2f", 
-                                P->GetPeriphAlarmLow(Si,i), P->GetPeriphAlarmHigh(Si,i));
+                                DEBUG3 ("Alarm (%d) (low/high): %.2f/%.2f\n\r", 
+                                i, P->GetPeriphAlarmLow(Si,i), P->GetPeriphAlarmHigh(Si,i));
                             }
                         }
                     }
@@ -851,6 +851,23 @@ void SendCommand(PeerClass *P, int Cmd, String Value) {
     doc[SEND_CMD_JSON_ORDER]     = Cmd;
     if (Value != "") 
         doc[SEND_CMD_JSON_VALUE] = Value;
+    
+    serializeJson(doc, jsondata);  
+    
+    TSMsgSnd = millis();
+    esp_now_send(broadcastAddressAll, (uint8_t *) jsondata.c_str(), jsondata.length());  //Sending "jsondata"  
+    DEBUG3 ("%s", jsondata.c_str());
+}
+void RequestParams(PeriphClass *_Periph) {
+    JsonDocument doc; String jsondata; 
+    char mac[13];
+
+    doc[SEND_CMD_JSON_FROM]       = MacByteToChar(mac, Module.GetBroadcastAddress());
+    doc[SEND_CMD_JSON_TO]         = MacByteToChar(mac, PeerOf(_Periph)->GetBroadcastAddress());
+    doc[SEND_CMD_JSON_TS]         = millis();
+    doc[SEND_CMD_JSON_TTL]        = SEND_CMD_MSG_TTL;
+    doc[SEND_CMD_JSON_ORDER]      = SEND_CMD_SEND_PARAMS;
+    doc[SEND_CMD_JSON_PERIPH_POS] = _Periph->GetPos();
     
     serializeJson(doc, jsondata);  
     

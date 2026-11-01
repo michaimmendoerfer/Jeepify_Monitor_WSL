@@ -294,9 +294,8 @@ void InitWebServer()
         Serial.println("schicke periph.html");
         if (ActiveWebPeriph) 
         {
-            char buf[10];
-            itoa(ActiveWebPeriph->GetPos(), buf, 10);
-            SendCommand(ActiveWebPeer, SEND_CMD_SEND_PARAMS, buf);
+            RequestParams(ActiveWebPeriph);
+            delay(500);
             request->send(200, "text/html", periph_html, processor);
         }
         });

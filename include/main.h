@@ -11,13 +11,14 @@
 #include "LinkedList.h"
 #include <lvgl.h>
 #include "Module.h"
-#include UI_H_DIR
-#include UI_EVENTS_H_DIR
+//#include UI_H_DIR
+//#include UI_EVENTS_H_DIR
+#include "picoUI/ui.h"
 #include <nvs_flash.h>
 #include <Preferences.h>
 #include "webserver.h"
 #include "MyFonts.h"
-#include "CustomScreens.h"
+//#include "CustomScreens.h"
 
 
 #define DEBUG_LEVEL 3

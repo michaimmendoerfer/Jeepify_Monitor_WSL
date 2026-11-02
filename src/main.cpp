@@ -342,7 +342,6 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
 
 void setup() 
 {
-    //delay(2000);
     Serial.begin(115200);
     
     scr_lvgl_init();
@@ -388,7 +387,6 @@ void setup()
   
     static uint32_t user_data = 10;
     lv_timer_t * TimerPing    = lv_timer_create(SendPing, PING_INTERVAL,  &user_data);
-    lv_timer_t * TimerLong  = lv_timer_create(SendBig, 5000,  &user_data);
     lv_timer_t * TimerGarbage = lv_timer_create(GarbageMessages, PING_INTERVAL,  &user_data);
 
     #ifdef MON_HAS_PERIPH
@@ -400,29 +398,32 @@ void setup()
     DEBUG3("buf=%s\n\r", buf);
     if (strcmp(buf, "Menu") == 0) 
     {
-        _ui_screen_change(&ui_ScrMenu, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMenu_screen_init);
+        loadScreen(SCREEN_ID_SCR_START);
+        //_ui_screen_change(&ui_ScrMenu, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMenu_screen_init);
     }
     else if (strcmp(buf, "JSON") == 0) 
     {
-        _ui_screen_change(&ui_ScrJSON, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrJSON_screen_init);
+        loadScreen(SCREEN_ID_SCR_JSON);
+        //_ui_screen_change(&ui_ScrJSON, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrJSON_screen_init);
     }
     else if (strcmp(buf, "Nicey") == 0)
     {
-        _ui_screen_change(&ui_ScrMultiGauge, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMultiGauge_screen_init);
+        //loadScreen(SCREEN_ID_SCR_MULTI_GAUGE);
+        //_ui_screen_change(&ui_ScrMultiGauge, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMultiGauge_screen_init);
     }
     else if (strncmp(buf, "Multi: ", 7) == 0)
     {
         char ScreenName[50];
         memcpy(ScreenName, buf+7, strlen(buf)-7);
         ScreenName[strlen(buf)-7] = 0;
-        DEBUG3("MultiScreenName=%s\n\r", ScreenName);
-
+        
         for (int i=0; i<MULTI_SCREENS; i++) 
         {
             if (strcmp(ScreenName, Screen[i].GetName()) == 0)
             {
                 ActiveMultiScreen = i;
-                _ui_screen_change(&ui_ScrMulti, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMulti_screen_init);
+                loadScreen(SCREEN_ID_SCR_MULTI);
+                //_ui_screen_change(&ui_ScrMulti, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMulti_screen_init);
                 break;
             }
         }
@@ -448,10 +449,11 @@ void setup()
             if (strcmp(PeriphName, Periph->GetName()) == 0)
                 if (strcmp(PeerName, FindPeerById(Periph->GetPeerId())->GetName()) == 0)
                 {
-                    ActivePeriphSensor = Periph;
-                    ActivePeriphShown  = ActivePeriphSensor;
+                    //ActivePeriphSensor = Periph;
+                    //ActivePeriphShown  = ActivePeriphSensor;
                     ActivePeer   = PeerOf(Periph);
-                    _ui_screen_change(&ui_ScrSingle, MY_ANIM, 500, 0, &ui_ScrSingle_screen_init);
+                    //loadScreen(SCREEN_ID_SCR_SINGLE);
+                    //_ui_screen_change(&ui_ScrSingle, MY_ANIM, 500, 0, &ui_ScrSingle_screen_init);
                     break;
                 }
         }
@@ -543,7 +545,7 @@ void loop()
     }
     
     // --- ZENTRALES KNOB-EVENT-HANDLING ---
-    if (Knob.Clicked) 
+    /*if (Knob.Clicked) 
     {
         Knob.LastClicked = Knob.Clicked;
         
@@ -606,7 +608,7 @@ void loop()
         // ERST HIER, nachdem alle Event-Wege durchlaufen wurden, wird genullt!
         Knob.Clicked = 0; 
     }
-
+    */
     PrepareJSON(); 
     lv_timer_handler(); 
     //delay(5);
@@ -748,47 +750,6 @@ void SendPing(lv_timer_t * timer) {
         }
     }
 }
-void SendBig(lv_timer_t * timer)
-{
-    JsonDocument doc; String jsondata;
-    char mac[13];
-
-    PeerClass *P;
-    
-    MacByteToChar(mac, Module.GetBroadcastAddress());
-    doc[SEND_CMD_JSON_FROM]  = mac;
-    doc[SEND_CMD_JSON_TO]    = broadCastAddressAllC;
-    doc[SEND_CMD_JSON_TS]    = millis();
-    doc[SEND_CMD_JSON_TTL]   = SEND_CMD_MSG_TTL;
-    doc[SEND_CMD_JSON_ORDER] = SEND_CMD_STAY_ALIVE;
-
-    
-// 3. Übergroßes Paket (Sprengt die 250-Byte V1-Grenze absichtlich)
-    
-            doc["O"] = "V2_TEST";
-            
-            // Wir füllen das JSON künstlich mit einer langen Zeichenkette auf (~400 Bytes),
-            // um ein echtes V2-Paket zu erzeugen.
-            String longString = "";
-            for(int i = 0; i < 40; i++) {
-                longString += "Daten_Block_" + String(i) + "_";
-            }
-            doc["daten_strom"] = longString;
-            
-            Serial.print("Sende übergroßes Paket... ");
-
-            serializeJson(doc, jsondata);
-        
-        // Nachricht via ESP-NOW absenden
-        DEBUG3("Länge des JSON-Pakets: %d Bytes\n\r", jsondata.length());
-        esp_err_t result = esp_now_send(broadcastAddressAll, (uint8_t *)jsondata.c_str(), jsondata.length());
-        
-        if (result == ESP_OK) {
-            DEBUG3 ("Erfolgreich gesendet! Länge: %d Bytes\n\r", jsondata.length());
-        } else {
-            Serial.println("Fehler beim Senden");
-        }
-}
 void SendPairingConfirm(PeerClass *P) {
     JsonDocument doc; String jsondata; 
 
@@ -886,7 +847,8 @@ void PrepareJSON() {
         DeserializationError error = deserializeJson(doc, jsondataBuf);
         if (!error) {
             if (doc["Node"] != NODE_NAME) { 
-                lv_textarea_set_placeholder_text(ui_TxtJSON1, jsondataBuf);
+                //lv_textarea_set_placeholder_text(ui_TxtJSON1, jsondataBuf);
+                lv_textarea_set_placeholder_text(objects.txt_json_1, jsondataBuf);
             }
         }
         jsondataBuf[0] = '\0'; 
@@ -1019,7 +981,8 @@ void CalibVolt() {
     doc[SEND_CMD_JSON_TO]    = MacByteToChar(mac, ActivePeer->GetBroadcastAddress());
     doc[SEND_CMD_JSON_TS]    = millis();
     doc[SEND_CMD_JSON_ORDER] = SEND_CMD_VOLTAGE_CALIB;
-    doc[SEND_CMD_JSON_VALUE] = lv_textarea_get_text(ui_TxtVolt);
+    //doc[SEND_CMD_JSON_VALUE] = lv_textarea_get_text(ui_TxtVolt);
+    doc[SEND_CMD_JSON_VALUE] = lv_textarea_get_text(objects.lbl_volt_volt_value);
     doc[SEND_CMD_JSON_TTL]   = SEND_CMD_MSG_TTL;
     
     serializeJson(doc, jsondata);  

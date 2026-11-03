@@ -9,7 +9,7 @@ extern "C" {
 #endif
 
 typedef struct _objects_t {
-    lv_obj_t *screen_1;
+    lv_obj_t *scr_simple;
     lv_obj_t *scr_components;
     lv_obj_t *scr_preferences;
     lv_obj_t *scr_json;
@@ -25,6 +25,7 @@ typedef struct _objects_t {
     lv_obj_t *btn_start_multi;
     lv_obj_t *rubicon;
     lv_obj_t *lbl_start_version;
+    lv_obj_t *rectangle;
     lv_obj_t *btn_multi_1;
     lv_obj_t *btn_multi_2;
     lv_obj_t *btn_multi_3;
@@ -52,7 +53,7 @@ typedef struct _objects_t {
     lv_obj_t *lbl_peer_scrname;
     lv_obj_t *lbl_eichen_1;
     lv_obj_t *lbl_eichen_scrname;
-    lv_obj_t *btn_eichen;
+    lv_obj_t *btn_eichen_eichen;
     lv_obj_t *arc_1;
     lv_obj_t *lbl_volt_scrname;
     lv_obj_t *lbl_volt_volt_value;
@@ -64,10 +65,12 @@ typedef struct _objects_t {
     lv_obj_t *label_1;
     lv_obj_t *label_2;
     lv_obj_t *arc_2;
+    lv_obj_t *wattmeter_360;
     lv_obj_t *btn_start_single_label;
     lv_obj_t *btn_start_switch_label;
     lv_obj_t *btn_start_settings_label;
     lv_obj_t *btn_start_multi_label;
+    lv_obj_t *rectangle_label;
     lv_obj_t *btn_multi_1_label;
     lv_obj_t *btn_multi_2_label;
     lv_obj_t *btn_multi_3_label;
@@ -88,14 +91,14 @@ typedef struct _objects_t {
     lv_obj_t *btn_peer_volt_label;
     lv_obj_t *btn_peer_sleep_label;
     lv_obj_t *btn_peer_reset_label;
-    lv_obj_t *btn_eichen_label;
+    lv_obj_t *btn_eichen_eichen_label;
     lv_obj_t *btn_volt_save_label;
 } objects_t;
 
 extern objects_t objects;
 
 enum ScreensEnum {
-    SCREEN_ID_SCREEN_1 = 1,
+    SCREEN_ID_SCR_SIMPLE = 1,
     SCREEN_ID_SCR_COMPONENTS = 2,
     SCREEN_ID_SCR_PREFERENCES = 3,
     SCREEN_ID_SCR_JSON = 4,
@@ -107,9 +110,9 @@ enum ScreensEnum {
     SCREEN_ID_SCR_START = 10,
 };
 
-void create_screen_screen_1();
-void tick_screen_screen_1();
-void delete_screen_screen_1();
+void create_screen_scr_simple();
+void tick_screen_scr_simple();
+void delete_screen_scr_simple();
 void create_screen_scr_components();
 void tick_screen_scr_components();
 void delete_screen_scr_components();

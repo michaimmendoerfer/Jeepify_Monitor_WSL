@@ -2,18 +2,18 @@
 #include "images.h"
 
 #include "images/rubicon.c"
+#include "images/wattmeter_360.c"
 #include "images/jeepifybackground_png.c"
 #include "images/menubtn1_png.c"
 #include "images/menubtn2.c"
 #include "images/menubtn4.c"
 #include "images/menubtn3.c"
-#include "images/wattmeter_360.c"
 const ext_img_desc_t images[7] = {
     { "rubicon", &rubicon },
+    { "wattmeter_360", &wattmeter_360 },
     { "jeepifybackground_png", &jeepifybackground_png },
     { "menubtn1_png", &menubtn1_png },
     { "menubtn2", &menubtn2 },
     { "menubtn4", &menubtn4 },
-    { "menubtn3", &menubtn3 },
-    { "wattmeter_360", &wattmeter_360 }
+    { "menubtn3", &menubtn3 }
 };

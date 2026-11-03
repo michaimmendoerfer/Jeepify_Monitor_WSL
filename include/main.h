@@ -18,6 +18,7 @@
 #include <Preferences.h>
 #include "webserver.h"
 #include "MyFonts.h"
+#include "picoUI/custom_functions.h"
 //#include "CustomScreens.h"
 
 

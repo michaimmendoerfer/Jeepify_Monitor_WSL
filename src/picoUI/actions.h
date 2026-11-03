@@ -8,20 +8,29 @@
 extern "C" {
 #endif
 
+void btn_peer_system_clicked_cb(lv_event_t * e);
 void btn_start_settings_clicked_cb(lv_event_t * e);
-void btn_set_startscreen_clicked_cb(lv_event_t * e);
+void btn_peer_volt_clicked_cb(lv_event_t * e);
+void btn_eichen_eichen_clicked_cb(lv_event_t * e);
+void scr_eichen_screen_loaded_cb(lv_event_t * e);
+void scr_eichen_gesture_cb(lv_event_t * e);
 void arc_1_value_changed_cb(lv_event_t * e);
-void btn_set_peers_clicked_cb(lv_event_t * e);
-void btn_set_reset_clicked_cb(lv_event_t * e);
 void btn_start_switch_clicked_cb(lv_event_t * e);
 void btn_set_restart_clicked_cb(lv_event_t * e);
+void btn_peer_restart_clicked_cb(lv_event_t * e);
 void btn_peer_sleep_clicked_cb(lv_event_t * e);
 void btn_set_pair_clicked_cb(lv_event_t * e);
 void btn_peer_pair_clicked_cb(lv_event_t * e);
 void btn_set_json_clicked_cb(lv_event_t * e);
+void btn_peer_eichen_clicked_cb(lv_event_t * e);
+void scr_peer_screen_loaded_cb(lv_event_t * e);
+void scr_peer_screen_unloaded_cb(lv_event_t * e);
+void scr_peer_gesture_cb(lv_event_t * e);
 void scr_json_gesture_cb(lv_event_t * e);
+void scr_json_screen_loaded_cb(lv_event_t * e);
 void btn_start_single_clicked_cb(lv_event_t * e);
-void btn_set_websvr_clicked_cb(lv_event_t * e);
+void btn_peer_reset_clicked_cb(lv_event_t * e);
+void btn_peer_delete_clicked_cb(lv_event_t * e);
 void pp_anim_stop_timelines_for_deleted_tree(lv_obj_t * root);
 
 #ifdef __cplusplus

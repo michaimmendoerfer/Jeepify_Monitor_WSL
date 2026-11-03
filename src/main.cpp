@@ -51,6 +51,9 @@ volatile uint32_t TSPair    = 0;
 volatile uint32_t TSConfirm = 0;
 
 int ActiveMultiScreen;
+PeriphClass *ActivePeriphSensor;
+PeriphClass *ActivePeriphSwitch;
+PeriphClass *ActivePeriphShown;
 
 // Flags für asynchrone MessageBox-Aufrufe aus dem WiFi-Callback
 volatile bool msgBoxPending = false;
@@ -62,8 +65,6 @@ int msgBoxOpa = 200;
 volatile bool saveandrestartRequested = false;
 volatile bool savePeersRequested = false;
 volatile bool saveModuleRequested = false;
-
-void SendBig(lv_timer_t * timer);
 
 #pragma endregion Globals
 
@@ -88,8 +89,7 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
 
     PeerClass *P;
     char Buf[50] = {}; 
-    bool SaveNeeded = false;
-    bool NewPeer    = false;
+    //bool NewPeer    = false;
     char buf[100];
 
     if (!error) // erfolgreich JSON
@@ -123,9 +123,7 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
             DEBUG3 ("Message an unbekannten Empfänger\n\r");
             return;
         }
-            DEBUG2 ("%s\n\rwird verarbeitet - Order:%d\n\r", jsondataBuf, _Order);
-
-            //already recevied?
+        //already recevied?
         if (ReceivedMessagesList.size() > 0)
         { 
             for (int i=ReceivedMessagesList.size()-1; i>=0; i--)
@@ -151,20 +149,12 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
         
         if (P)
         {
-            Serial.printf("bekannter Peer: %s\n\r", P->GetName());
-            
             if ((Module.GetDebugMode()) and (millis() - P->GetTSLastSeen() > OFFLINE_INTERVAL)) 
             {
                 RequestMessageBox("Peer online", P->GetName(), 1000, 200);
             }
-            
+            P->SetdBm(info->rx_ctrl->rssi); 
             P->SetTSLastSeen(millis());
-        
-            #ifdef MODULE_MONITOR_240
-                P->SetdBm(0); 
-            #else
-                P->SetdBm(info->rx_ctrl->rssi); 
-            #endif
         }
 
         TSMsgRcv = millis();
@@ -184,8 +174,8 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
                         Serial.println("neuen Peer erstellen");
                         P = new PeerClass();
                         PeerList.add(P);
-                        SaveNeeded = true;
-                        NewPeer    = true;
+                        savePeersRequested = true;
+                        //NewPeer    = true;
                         Module.SetPairMode(false); TSPair = 0;
                         P->Setup(_PeerName, _Type, _PeerVersion, _From, (bool) bitRead(_Status, 1), (bool) bitRead(_Status, 0), (bool) bitRead(_Status, 2), (bool) bitRead(_Status, 3));                    
 
@@ -207,7 +197,7 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
                                 
                                 P->SetPeriphChanged(Si, true);
                                 PeriphList.add(P->GetPeriphPtr(Si));
-                                SaveNeeded = true;
+                                savePeersRequested = true;
                                 DEBUG2 ("%s->Periph[%d].Name is now: %s\n\r", P->GetName(), Si, P->GetPeriphName(Si));
                             }
                         }
@@ -230,19 +220,16 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
                     if (doc[SEND_CMD_JSON_PEER_NAME].is<JsonVariant>())
                     {
                         const char *_PeerName    = doc[SEND_CMD_JSON_PEER_NAME];
-                        Serial.printf("PeerName: %s - ", _PeerName);
                         if (strcmp(_PeerName, P->GetName())) 
                         {
                             P->SetName(_PeerName);
-                            SaveNeeded = true;
+                            savePeersRequested = true;
                             DEBUG2 ("PeerName changed to: %s\n\r", P->GetName());
                         }
                     }    
                     
                     for (int Si=0; Si<MAX_PERIPHERALS; Si++) 
                     {
-                        //DEBUG3 ("Check values of: %s\n\r", ArrPeriph[Si]);
-                        
                         if (doc[ArrPeriph[Si]].is<JsonVariant>())
                         {
                             strcpy(buf, doc[ArrPeriph[Si]]);
@@ -257,7 +244,7 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
                             if (strcmp(_PeriphName, P->GetPeriphName(Si))) 
                             {
                                 P->SetPeriphName(Si, _PeriphName);
-                                SaveNeeded = true;
+                                savePeersRequested = true;
                             }
                             
                             P->SetPeriphOldValue(Si, P->GetPeriphValue(Si, 0), 0);// überflüssig?
@@ -292,8 +279,6 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
                 {
                     for (int Si=0; Si<MAX_PERIPHERALS; Si++) 
                     {
-                        //DEBUG3 ("Check values of: %s\n\r", ArrPeriph[Si]);
-                        
                         if (doc[ArrPeriph[Si]].is<JsonVariant>())
                         {
                             strcpy(buf, doc[ArrPeriph[Si]]);
@@ -332,11 +317,6 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
                 }
                 break;
         } 
-        
-        if (SaveNeeded)
-        {
-            savePeersRequested = true;
-        }
     }
 }
 
@@ -395,7 +375,6 @@ void setup()
 
     ui_init();
     
-    DEBUG3("buf=%s\n\r", buf);
     if (strcmp(buf, "Menu") == 0) 
     {
         loadScreen(SCREEN_ID_SCR_START);
@@ -446,16 +425,16 @@ void setup()
         {
             PeriphClass *Periph = PeriphList.get(i);
             if (Periph)
-            if (strcmp(PeriphName, Periph->GetName()) == 0)
-                if (strcmp(PeerName, FindPeerById(Periph->GetPeerId())->GetName()) == 0)
-                {
-                    //ActivePeriphSensor = Periph;
-                    //ActivePeriphShown  = ActivePeriphSensor;
-                    ActivePeer   = PeerOf(Periph);
-                    //loadScreen(SCREEN_ID_SCR_SINGLE);
-                    //_ui_screen_change(&ui_ScrSingle, MY_ANIM, 500, 0, &ui_ScrSingle_screen_init);
-                    break;
-                }
+                if (strcmp(PeriphName, Periph->GetName()) == 0)
+                    if (strcmp(PeerName, FindPeerById(Periph->GetPeerId())->GetName()) == 0)
+                    {
+                        //ActivePeriphSensor = Periph;
+                        ActivePeriphShown  = ActivePeriphSensor;
+                        ActivePeer   = PeerOf(Periph);
+                        //loadScreen(SCREEN_ID_SCR_SINGLE);
+                        //_ui_screen_change(&ui_ScrSingle, MY_ANIM, 500, 0, &ui_ScrSingle_screen_init);
+                        break;
+                    }
         }
     }
 }
@@ -545,22 +524,22 @@ void loop()
     }
     
     // --- ZENTRALES KNOB-EVENT-HANDLING ---
-    /*if (Knob.Clicked) 
+    if (Knob.Clicked) 
     {
         Knob.LastClicked = Knob.Clicked;
         
         // Welcher Bildschirm ist gerade aktiv?
         lv_obj_t * active_screen = lv_scr_act();
 
-        if (active_screen == ui_ScrPeer) 
+        if (active_screen == objects.scr_peer) 
         {
-            // Reaktion für den Peer-Screen
             if (Knob.Diff < 0) {
-                Ui_Peer_Last(NULL);
+                Scr_Peer_Prev();
             } else {
-                Ui_Peer_Next(NULL);
+                Scr_Peer_Next();
             }
         }
+        /*
         else if (active_screen == ui_ScrPeers) 
         {
             // Reaktion für die Roller-Auswahl
@@ -604,11 +583,10 @@ void loop()
                 Ui_Single_Next(NULL);
             }
         }
-
+        */
         // ERST HIER, nachdem alle Event-Wege durchlaufen wurden, wird genullt!
         Knob.Clicked = 0; 
     }
-    */
     PrepareJSON(); 
     lv_timer_handler(); 
     //delay(5);

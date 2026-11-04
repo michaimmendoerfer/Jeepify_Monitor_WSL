@@ -17,14 +17,19 @@ typedef struct _ext_img_desc_t {
 } ext_img_desc_t;
 #endif
 
-extern const lv_img_dsc_t rubicon;
-extern const lv_img_dsc_t wattmeter_360;
-extern const lv_img_dsc_t jeepifybackground_png;
+extern const lv_img_dsc_t meter_scale_v;
 extern const lv_img_dsc_t menubtn1_png;
 extern const lv_img_dsc_t menubtn2;
-extern const lv_img_dsc_t menubtn4;
 extern const lv_img_dsc_t menubtn3;
-extern const ext_img_desc_t images[7];
+extern const lv_img_dsc_t meter_scale_base;
+extern const lv_img_dsc_t rubicon;
+extern const lv_img_dsc_t zeiger;
+extern const lv_img_dsc_t menubtn4;
+extern const lv_img_dsc_t meter_scale_a;
+extern const lv_img_dsc_t icon_wlan;
+extern const lv_img_dsc_t jeepifybackground_png;
+extern const lv_img_dsc_t meter_scale_w;
+extern const ext_img_desc_t images[12];
 
 
 #ifdef __cplusplus

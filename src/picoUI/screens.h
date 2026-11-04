@@ -9,8 +9,8 @@ extern "C" {
 #endif
 
 typedef struct _objects_t {
+    lv_obj_t *scr_top;
     lv_obj_t *scr_simple;
-    lv_obj_t *scr_components;
     lv_obj_t *scr_preferences;
     lv_obj_t *scr_json;
     lv_obj_t *scr_volt;
@@ -54,18 +54,18 @@ typedef struct _objects_t {
     lv_obj_t *lbl_eichen_1;
     lv_obj_t *lbl_eichen_scrname;
     lv_obj_t *btn_eichen_eichen;
-    lv_obj_t *arc_1;
+    lv_obj_t *arc_volt;
     lv_obj_t *lbl_volt_scrname;
     lv_obj_t *lbl_volt_volt_value;
     lv_obj_t *btn_volt_save;
     lv_obj_t *txt_json_1;
     lv_obj_t *container_1;
     lv_obj_t *switch_1;
-    lv_obj_t *container_2;
-    lv_obj_t *label_1;
-    lv_obj_t *label_2;
-    lv_obj_t *arc_2;
-    lv_obj_t *wattmeter_360;
+    lv_obj_t *img_simple_base;
+    lv_obj_t *img_simple_top;
+    lv_obj_t *btn_top_next;
+    lv_obj_t *btn_top_prev;
+    lv_obj_t *img_top_wifi;
     lv_obj_t *btn_start_single_label;
     lv_obj_t *btn_start_switch_label;
     lv_obj_t *btn_start_settings_label;
@@ -93,13 +93,15 @@ typedef struct _objects_t {
     lv_obj_t *btn_peer_reset_label;
     lv_obj_t *btn_eichen_eichen_label;
     lv_obj_t *btn_volt_save_label;
+    lv_obj_t *btn_top_next_label;
+    lv_obj_t *btn_top_prev_label;
 } objects_t;
 
 extern objects_t objects;
 
 enum ScreensEnum {
-    SCREEN_ID_SCR_SIMPLE = 1,
-    SCREEN_ID_SCR_COMPONENTS = 2,
+    SCREEN_ID_SCR_TOP = 1,
+    SCREEN_ID_SCR_SIMPLE = 2,
     SCREEN_ID_SCR_PREFERENCES = 3,
     SCREEN_ID_SCR_JSON = 4,
     SCREEN_ID_SCR_VOLT = 5,
@@ -110,12 +112,12 @@ enum ScreensEnum {
     SCREEN_ID_SCR_START = 10,
 };
 
+void create_screen_scr_top();
+void tick_screen_scr_top();
+void delete_screen_scr_top();
 void create_screen_scr_simple();
 void tick_screen_scr_simple();
 void delete_screen_scr_simple();
-void create_screen_scr_components();
-void tick_screen_scr_components();
-void delete_screen_scr_components();
 void create_screen_scr_preferences();
 void tick_screen_scr_preferences();
 void delete_screen_scr_preferences();

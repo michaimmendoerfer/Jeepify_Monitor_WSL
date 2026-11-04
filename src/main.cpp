@@ -949,7 +949,7 @@ bool TogglePairMode() {
   
   return Module.GetPairMode();
 }
-void CalibVolt() {
+void CalibVolt(float volt) {
     JsonDocument doc; String jsondata;
 
     DEBUG3 ("CalibVolt aufgerufen\n\r");
@@ -959,8 +959,7 @@ void CalibVolt() {
     doc[SEND_CMD_JSON_TO]    = MacByteToChar(mac, ActivePeer->GetBroadcastAddress());
     doc[SEND_CMD_JSON_TS]    = millis();
     doc[SEND_CMD_JSON_ORDER] = SEND_CMD_VOLTAGE_CALIB;
-    //doc[SEND_CMD_JSON_VALUE] = lv_textarea_get_text(ui_TxtVolt);
-    doc[SEND_CMD_JSON_VALUE] = lv_textarea_get_text(objects.lbl_volt_volt_value);
+    doc[SEND_CMD_JSON_VALUE] = volt;
     doc[SEND_CMD_JSON_TTL]   = SEND_CMD_MSG_TTL;
     
     serializeJson(doc, jsondata);  

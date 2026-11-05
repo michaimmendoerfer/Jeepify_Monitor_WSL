@@ -3,6 +3,7 @@
 #include "screens.h"
 #include "colors.h"
 #include "ui.h"
+#include "picoUI/custom_functions.h"
 
 // Animation timeline helpers
 void pp_anim_stop_timelines_for_deleted_tree(lv_obj_t * root) {
@@ -44,7 +45,7 @@ void btn_eichen_eichen_clicked_cb(lv_event_t * e) {
 
 // Event callback for btn_multi_1 on clicked
 void btn_multi_1_clicked_cb(lv_event_t * e) {
-    Btn_Multi_1_clicked();
+    //Btn_Multi_1_clicked();
 }
 
 
@@ -69,6 +70,18 @@ void scr_eichen_gesture_cb(lv_event_t * e) {
 // Event callback for scr_eichen on screen-unloaded
 void scr_eichen_screen_unloaded_cb(lv_event_t * e) {
     Scr_Eichen_unloaded();
+}
+
+
+// Event callback for scr_peerchoice on screen-loaded
+void scr_peerchoice_screen_loaded_cb(lv_event_t * e) {
+    Scr_PeerChoice_loaded();
+}
+
+
+// Event callback for scr_peerchoice on screen-unloaded
+void scr_peerchoice_screen_unloaded_cb(lv_event_t * e) {
+    Scr_PeerChoice_unloaded();
 }
 
 
@@ -136,6 +149,12 @@ void btn_set_json_clicked_cb(lv_event_t * e) {
 }
 
 
+// Event callback for btn_peerchoice_open on clicked
+void btn_peerchoice_open_clicked_cb(lv_event_t * e) {
+    //Btn_PeerChoice_Open_clicked();
+}
+
+
 // Event callback for btn_peer_eichen on clicked
 void btn_peer_eichen_clicked_cb(lv_event_t * e) {
     Btn_Peer_Eichen_clicked();
@@ -181,6 +200,18 @@ void scr_json_gesture_cb(lv_event_t * e) {
 // Event callback for scr_json on screen-loaded
 void scr_json_screen_loaded_cb(lv_event_t * e) {
     Scr_JSON_loaded();
+}
+
+
+// Event callback for scr_periphchoice on screen-loaded
+void scr_periphchoice_screen_loaded_cb(lv_event_t * e) {
+    Scr_PeriphChoice_loaded();
+}
+
+
+// Event callback for scr_periphchoice on screen-unloaded
+void scr_periphchoice_screen_unloaded_cb(lv_event_t * e) {
+    Scr_PeriphChoice_unloaded();
 }
 
 

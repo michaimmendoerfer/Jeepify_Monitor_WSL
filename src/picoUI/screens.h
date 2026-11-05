@@ -9,6 +9,8 @@ extern "C" {
 #endif
 
 typedef struct _objects_t {
+    lv_obj_t *scr_peerchoice;
+    lv_obj_t *scr_periphchoice;
     lv_obj_t *scr_top;
     lv_obj_t *scr_simple;
     lv_obj_t *scr_preferences;
@@ -23,14 +25,14 @@ typedef struct _objects_t {
     lv_obj_t *btn_start_switch;
     lv_obj_t *btn_start_settings;
     lv_obj_t *btn_start_multi;
-    lv_obj_t *rubicon;
+    lv_obj_t *img_start_rubicon;
     lv_obj_t *lbl_start_version;
-    lv_obj_t *rectangle;
-    lv_obj_t *btn_multi_1;
-    lv_obj_t *btn_multi_2;
-    lv_obj_t *btn_multi_3;
-    lv_obj_t *btn_multi_4;
     lv_obj_t *lbl_multi_scrname;
+    lv_obj_t *cnt_multi;
+    lv_obj_t *btn_multi_4;
+    lv_obj_t *btn_multi_3;
+    lv_obj_t *btn_multi_2;
+    lv_obj_t *btn_multi_1;
     lv_obj_t *cnt_set;
     lv_obj_t *btn_set_save;
     lv_obj_t *btn_set_json;
@@ -66,15 +68,22 @@ typedef struct _objects_t {
     lv_obj_t *btn_top_next;
     lv_obj_t *btn_top_prev;
     lv_obj_t *img_top_wifi;
+    lv_obj_t *lbl_periphchoice_scrname;
+    lv_obj_t *img_periphchoice;
+    lv_obj_t *lbl_periphchoice_type;
+    lv_obj_t *lbl_periphchoice_online;
+    lv_obj_t *lbl_periphchoice_periphname;
+    lv_obj_t *lbl_peerchoice_scrname;
+    lv_obj_t *spin_peerchoice_peers;
+    lv_obj_t *btn_peerchoice_open;
     lv_obj_t *btn_start_single_label;
     lv_obj_t *btn_start_switch_label;
     lv_obj_t *btn_start_settings_label;
     lv_obj_t *btn_start_multi_label;
-    lv_obj_t *rectangle_label;
-    lv_obj_t *btn_multi_1_label;
-    lv_obj_t *btn_multi_2_label;
-    lv_obj_t *btn_multi_3_label;
     lv_obj_t *btn_multi_4_label;
+    lv_obj_t *btn_multi_3_label;
+    lv_obj_t *btn_multi_2_label;
+    lv_obj_t *btn_multi_1_label;
     lv_obj_t *btn_set_save_label;
     lv_obj_t *btn_set_json_label;
     lv_obj_t *btn_set_pair_label;
@@ -95,23 +104,32 @@ typedef struct _objects_t {
     lv_obj_t *btn_volt_save_label;
     lv_obj_t *btn_top_next_label;
     lv_obj_t *btn_top_prev_label;
+    lv_obj_t *btn_peerchoice_open_label;
 } objects_t;
 
 extern objects_t objects;
 
 enum ScreensEnum {
-    SCREEN_ID_SCR_TOP = 1,
-    SCREEN_ID_SCR_SIMPLE = 2,
-    SCREEN_ID_SCR_PREFERENCES = 3,
-    SCREEN_ID_SCR_JSON = 4,
-    SCREEN_ID_SCR_VOLT = 5,
-    SCREEN_ID_SCR_EICHEN = 6,
-    SCREEN_ID_SCR_PEER = 7,
-    SCREEN_ID_SCR_SETTINGS = 8,
-    SCREEN_ID_SCR_MULTI = 9,
-    SCREEN_ID_SCR_START = 10,
+    SCREEN_ID_SCR_PEERCHOICE = 1,
+    SCREEN_ID_SCR_PERIPHCHOICE = 2,
+    SCREEN_ID_SCR_TOP = 3,
+    SCREEN_ID_SCR_SIMPLE = 4,
+    SCREEN_ID_SCR_PREFERENCES = 5,
+    SCREEN_ID_SCR_JSON = 6,
+    SCREEN_ID_SCR_VOLT = 7,
+    SCREEN_ID_SCR_EICHEN = 8,
+    SCREEN_ID_SCR_PEER = 9,
+    SCREEN_ID_SCR_SETTINGS = 10,
+    SCREEN_ID_SCR_MULTI = 11,
+    SCREEN_ID_SCR_START = 12,
 };
 
+void create_screen_scr_peerchoice();
+void tick_screen_scr_peerchoice();
+void delete_screen_scr_peerchoice();
+void create_screen_scr_periphchoice();
+void tick_screen_scr_periphchoice();
+void delete_screen_scr_periphchoice();
 void create_screen_scr_top();
 void tick_screen_scr_top();
 void delete_screen_scr_top();

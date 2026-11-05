@@ -11,6 +11,7 @@
 #include "LinkedList.h"
 #include "Jeepify.h"
 #include "MyFonts.h"
+#include "picoUI/images.h"
 
 #ifdef DEV_240_KLEIN
     #define IMG_BTN1_RELEASED     &kipp_1_off_45
@@ -28,32 +29,32 @@
     #define HEIGHT_BTN2           120
 #endif
 #if defined DEV_360_SILVER || defined DEV_360_KNOB
-    #define IMG_BTN1_RELEASED     &kipp_2_off_70
-    #define IMG_BTN1_PRESSED      &kipp_2_neutral_70
-    #define IMG_BTN1_CHK_PRESSED  &kipp_2_neutral_70
-    #define IMG_BTN1_CHK_RELEASED &kipp_2_on_70
+    #define IMG_BTN1_RELEASED     &kipp_1_off_70
+    #define IMG_BTN1_PRESSED      &kipp_1_neutral_70
+    #define IMG_BTN1_CHK_PRESSED  &kipp_1_neutral_70
+    #define IMG_BTN1_CHK_RELEASED &kipp_1_on_70
     #define WIDTH_BTN1            70
     #define HEIGHT_BTN1           120
     
-    #define IMG_BTN2_RELEASED     &kipp_2_off_120
-    #define IMG_BTN2_PRESSED      &kipp_2_neutral_120
-    #define IMG_BTN2_CHK_PRESSED  &kipp_2_neutral_120
-    #define IMG_BTN2_CHK_RELEASED &kipp_2_on_120
+    #define IMG_BTN2_RELEASED     &kipp_1_off_120
+    #define IMG_BTN2_PRESSED      &kipp_1_neutral_120
+    #define IMG_BTN2_CHK_PRESSED  &kipp_1_neutral_120
+    #define IMG_BTN2_CHK_RELEASED &kipp_1_on_120
     #define WIDTH_BTN2            120
     #define HEIGHT_BTN2           205
 #endif
 #ifdef DEV_466_RED  
-    #define IMG_BTN1_RELEASED     &kipp_2_off_70
-    #define IMG_BTN1_PRESSED      &kipp_2_neutral_70
-    #define IMG_BTN1_CHK_PRESSED  &kipp_2_neutral_70
-    #define IMG_BTN1_CHK_RELEASED  &kipp_2_on_70
+    #define IMG_BTN1_RELEASED     &kipp_1_off_70
+    #define IMG_BTN1_PRESSED      &kipp_1_neutral_70
+    #define IMG_BTN1_CHK_PRESSED  &kipp_1_neutral_70
+    #define IMG_BTN1_CHK_RELEASED  &kipp_1_on_70
     #define WIDTH_BTN1            70
     #define HEIGHT_BTN1           120
     
-    #define IMG_BTN2_RELEASED     &kipp_2_off_120
-    #define IMG_BTN2_PRESSED      &kipp_2_neutral_120
-    #define IMG_BTN2_CHK_PRESSED  &kipp_2_neutral_120
-    #define IMG_BTN2_CHK_RELEASED &kipp_2_on_120
+    #define IMG_BTN2_RELEASED     &kipp_1_off_120
+    #define IMG_BTN2_PRESSED      &kipp_1_neutral_120
+    #define IMG_BTN2_CHK_PRESSED  &kipp_1_neutral_120
+    #define IMG_BTN2_CHK_RELEASED &kipp_1_on_120
     #define WIDTH_BTN2            120
     #define HEIGHT_BTN2           205
 #endif

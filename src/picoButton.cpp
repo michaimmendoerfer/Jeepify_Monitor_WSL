@@ -99,13 +99,7 @@ void CompThing::ChartUpdate()
 }
 void CompThing::SetStyle(lv_obj_t *obj)
 {
-    ui_object_set_themeable_style_property(obj, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxt);
-    ui_object_set_themeable_style_property(obj, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
     lv_obj_set_style_radius(obj, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
-    ui_object_set_themeable_style_property(obj, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_COLOR, _ui_theme_color_BtnBg);
-    ui_object_set_themeable_style_property(obj, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BG_OPA, _ui_theme_alpha_BtnBg);
-    ui_object_set_themeable_style_property(obj, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BORDER_COLOR, _ui_theme_color_BtnBorder);
-    ui_object_set_themeable_style_property(obj, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BORDER_OPA, _ui_theme_alpha_BtnBorder);
     lv_obj_set_style_border_width(obj, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_left(obj, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_right(obj, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -661,7 +655,7 @@ void CompMeter::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, P
     lv_obj_move_background(ui_ImgMeter2);
           
     ui_ImgZeiger = lv_img_create(comp_parent);
-    lv_img_set_src(ui_ImgZeiger, &ui_img_zeiger_png);
+    lv_img_set_src(ui_ImgZeiger, Img_Zei);
     newSize = 256*SCREEN_RES_HOR/360;
     lv_img_set_zoom(ui_ImgZeiger,     newSize);
     lv_obj_set_width(ui_ImgZeiger, LV_SIZE_CONTENT);   /// 1
@@ -703,9 +697,7 @@ void CompMeter::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, P
     lv_obj_set_align(_LblPeer, LV_ALIGN_CENTER);
     SetPeerPos(0, lv_pct(-35));
     lv_obj_set_style_text_font(_LblPeer, MY_FONT2, LV_PART_MAIN | LV_STATE_DEFAULT);
-    ui_object_set_themeable_style_property(_LblPeer, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxtInaktive);
-    //ui_object_set_themeable_style_property(_LblPeer, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
-
+    
     _LblPeriph = lv_label_create(comp_parent);
     lv_obj_set_width(_LblPeriph, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(_LblPeriph, LV_SIZE_CONTENT);    /// 1
@@ -732,9 +724,6 @@ void CompMeter::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, P
     lv_obj_set_align(_LblValue, LV_ALIGN_CENTER);
     SetValuePos(0, lv_pct(5));
     lv_obj_set_style_text_font(_LblValue, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);
-    ui_object_set_themeable_style_property(_LblValue, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR, _ui_theme_color_BtnTxtInaktive);
-    ui_object_set_themeable_style_property(_LblValue, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA, _ui_theme_alpha_BtnTxt);
-
 
     lv_obj_move_foreground(ui_ImgZeiger);
 }

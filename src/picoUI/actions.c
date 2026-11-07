@@ -45,7 +45,7 @@ void btn_eichen_eichen_clicked_cb(lv_event_t * e) {
 
 // Event callback for btn_multi_1 on clicked
 void btn_multi_1_clicked_cb(lv_event_t * e) {
-    //Btn_Multi_1_clicked();
+    Btn_Multi_1_clicked();
 }
 
 
@@ -73,6 +73,18 @@ void scr_eichen_screen_unloaded_cb(lv_event_t * e) {
 }
 
 
+// Event callback for btn_set_peers on clicked
+void btn_set_peers_clicked_cb(lv_event_t * e) {
+    Btn_Settings_Peers_clicked();
+}
+
+
+// Event callback for btn_set_reset on clicked
+void btn_set_reset_clicked_cb(lv_event_t * e) {
+    Btn_Settings_Reset_clicked();
+}
+
+
 // Event callback for scr_peerchoice on screen-loaded
 void scr_peerchoice_screen_loaded_cb(lv_event_t * e) {
     Scr_PeerChoice_loaded();
@@ -85,15 +97,21 @@ void scr_peerchoice_screen_unloaded_cb(lv_event_t * e) {
 }
 
 
+// Event callback for btn_set_save on clicked
+void btn_set_save_clicked_cb(lv_event_t * e) {
+    Btn_Settings_Save_clicked();
+}
+
+
 // Event callback for btn_start_switch on clicked
 void btn_start_switch_clicked_cb(lv_event_t * e) {
-    /* Export warning: unresolved change-screen target */
+    Btn_Start_2_clicked();
 }
 
 
 // Event callback for btn_set_restart on clicked
 void btn_set_restart_clicked_cb(lv_event_t * e) {
-    lv_scr_load_anim(objects.scr_multi, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+    Btn_Settings_Restart_clicked();
 }
 
 
@@ -117,7 +135,7 @@ void arc_volt_value_changed_cb(lv_event_t * e) {
 
 // Event callback for btn_set_pair on clicked
 void btn_set_pair_clicked_cb(lv_event_t * e) {
-    lv_scr_load_anim(objects.scr_multi, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+    Btn_Settings_Pair_clicked();
 }
 
 
@@ -141,17 +159,13 @@ void scr_start_screen_unloaded_cb(lv_event_t * e) {
 
 // Event callback for btn_set_json on clicked
 void btn_set_json_clicked_cb(lv_event_t * e) {
-    if (lv_obj_has_state(objects.btn_set_save, LV_STATE_CHECKED)) {
-        lv_obj_clear_state(objects.btn_set_save, LV_STATE_CHECKED);
-    } else {
-        lv_obj_add_state(objects.btn_set_save, LV_STATE_CHECKED);
-    }
+    lv_scr_load_anim(objects.scr_json, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }
 
 
 // Event callback for btn_peerchoice_open on clicked
 void btn_peerchoice_open_clicked_cb(lv_event_t * e) {
-    //Btn_PeerChoice_Open_clicked();
+    Btn_PeerChoice_Open_clicked();
 }
 
 
@@ -217,7 +231,7 @@ void scr_periphchoice_screen_unloaded_cb(lv_event_t * e) {
 
 // Event callback for btn_start_single on clicked
 void btn_start_single_clicked_cb(lv_event_t * e) {
-    /* Export warning: unresolved change-screen target */
+    Btn_Start_1_clicked();
 }
 
 
@@ -242,6 +256,18 @@ void scr_settings_screen_loaded_cb(lv_event_t * e) {
 // Event callback for scr_settings on screen-unloaded
 void scr_settings_screen_unloaded_cb(lv_event_t * e) {
     Scr_Settings_unloaded();
+}
+
+
+// Event callback for btn_set_websvr on clicked
+void btn_set_websvr_clicked_cb(lv_event_t * e) {
+    Btn_Settings_WebSvr_clicked();
+}
+
+
+// Event callback for btn_start_multi on clicked
+void btn_start_multi_clicked_cb(lv_event_t * e) {
+    lv_scr_load_anim(objects.scr_multi, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }
 
 

@@ -632,66 +632,62 @@ void CompMeter::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, P
     _Y_Value =  0;
     uint16_t newSize = 256*SCREEN_RES_HOR/360; //+5
     
-    ui_ImgMeter2 = lv_img_create(comp_parent);
     if (_Periph->GetPrimary() == PRIM_VOLT)
     { 
-        lv_img_set_src(ui_ImgMeter2, &ui_img_voltmeter_360_png);
+        lv_img_set_src(objects.img_simple_top, &meter_scale_v);
     }
     else if (_Periph->GetPrimary() == PRIM_AMP)
     { 
-        lv_img_set_src(ui_ImgMeter2, &ui_img_ampmeter_360_png);
+        lv_img_set_src(objects.img_simple_top, &meter_scale_a);
     }
     else if (_Periph->GetPrimary() == PRIM_WATT)
     { 
-        lv_img_set_src(ui_ImgMeter2, &ui_img_wattmeter_360_png);
+        lv_img_set_src(objects.img_simple_top, &meter_scale_w);
     }
-    lv_img_set_zoom(ui_ImgMeter2,     newSize);
-    lv_obj_set_width(ui_ImgMeter2, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_ImgMeter2, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_ImgMeter2, LV_ALIGN_CENTER);
-    lv_obj_set_x(ui_ImgMeter2, lv_pct(1));
-    lv_obj_add_flag(ui_ImgMeter2, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_ImgMeter2, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_SCROLL_ELASTIC | LV_OBJ_FLAG_SCROLL_MOMENTUM | LV_OBJ_FLAG_SCROLL_CHAIN);     /// Flags
-    lv_obj_move_background(ui_ImgMeter2);
+    lv_img_set_zoom(objects.img_simple_top,     newSize);
+    lv_obj_set_width(objects.img_simple_top, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(objects.img_simple_top, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(objects.img_simple_top, LV_ALIGN_CENTER);
+    lv_obj_set_pos(objects.img_simple_top, 0, 0);
+    //lv_obj_add_flag(ui_ImgMeter2, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(objects.img_simple_top, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_SCROLL_ELASTIC | LV_OBJ_FLAG_SCROLL_MOMENTUM | LV_OBJ_FLAG_SCROLL_CHAIN);     /// Flags
+    lv_obj_move_background(objects.img_simple_top);
           
-    ui_ImgZeiger = lv_img_create(comp_parent);
-    lv_img_set_src(ui_ImgZeiger, Img_Zei);
-    newSize = 256*SCREEN_RES_HOR/360;
-    lv_img_set_zoom(ui_ImgZeiger,     newSize);
-    lv_obj_set_width(ui_ImgZeiger, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_ImgZeiger, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_ImgZeiger, LV_ALIGN_CENTER);
-    lv_obj_set_x(ui_ImgZeiger, 0);
+    lv_img_set_zoom(objects.img_simple_zeiger, newSize);
+    lv_obj_set_width(objects.img_simple_zeiger, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(objects.img_simple_zeiger, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_align(objects.img_simple_zeiger, LV_ALIGN_CENTER);
+    lv_obj_set_x(objects.img_simple_zeiger, 0);
     
     int pivotY;
 
     switch (SCREEN_RES_VER)
     {
         case 240:
-            lv_obj_set_y(ui_ImgZeiger, lv_pct(-17)); 
+            lv_obj_set_y(objects.img_simple_zeiger, lv_pct(-17)); 
             break;
         case 360:
-            lv_obj_set_y(ui_ImgZeiger, lv_pct(-4));    
+            lv_obj_set_y(objects.img_simple_zeiger, lv_pct(-4));    
             break;
         case 466:
-            lv_obj_set_y(ui_ImgZeiger, lv_pct(2));    
+            lv_obj_set_y(objects.img_simple_zeiger, lv_pct(2));    
             break;
         default:
-            lv_obj_set_y(ui_ImgZeiger, lv_pct(-4));    
+            lv_obj_set_y(objects.img_simple_zeiger, lv_pct(-4));    
             break;
     }   
 
-    lv_img_set_pivot(ui_ImgZeiger, 5, 150); 
-    lv_obj_add_flag(ui_ImgZeiger, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_ImgZeiger, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_img_set_angle(ui_ImgZeiger, 0);
+    lv_img_set_pivot(objects.img_simple_zeiger, 5, 150); 
+    lv_obj_add_flag(objects.img_simple_zeiger, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(objects.img_simple_zeiger, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_img_set_angle(objects.img_simple_zeiger, 0);
 	
 	if (_Periph->GetPrimary() == PRIM_VOLT)
 	{	
         if (_GraphVisible) ChartInit(SCREEN_RES_HOR/2, SCREEN_RES_VER*0.7, SCREEN_RES_HOR/3, SCREEN_RES_VER/15, RECORDED_VALUES);
     }
 
-    _LblPeer = lv_label_create(comp_parent);
+    /*_LblPeer = lv_label_create(comp_parent);
     lv_obj_set_width(_LblPeer, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(_LblPeer, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(_LblPeer, LV_ALIGN_CENTER);
@@ -724,34 +720,34 @@ void CompMeter::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, P
     lv_obj_set_align(_LblValue, LV_ALIGN_CENTER);
     SetValuePos(0, lv_pct(5));
     lv_obj_set_style_text_font(_LblValue, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    lv_obj_move_foreground(ui_ImgZeiger);
+    */
+    lv_obj_move_foreground(objects.img_simple_zeiger);
 }
 void CompMeter::Update() 
 {    
     uint16_t newSize = 256*SCREEN_RES_HOR/360+5;
     
-    lv_obj_set_pos(_LblPeer,   _X_Peer,   _Y_Peer);
-    lv_obj_set_pos(_LblPeriph, _X_Periph, _Y_Periph);
+    //lv_obj_set_pos(_LblPeer,   _X_Peer,   _Y_Peer);
+    //lv_obj_set_pos(_LblPeriph, _X_Periph, _Y_Periph);
     
 	if ((PeerOf(_Periph)->GetName() == NULL) or (!_PeerVisible))
 	{
-	    lv_obj_add_flag(_LblPeer, LV_OBJ_FLAG_HIDDEN);
+	    lv_obj_add_flag(objects.lbl_simple_peername, LV_OBJ_FLAG_HIDDEN);
 	}
 	else
 	{
-        lv_label_set_text_fmt(_LblPeer, "%.6s (%d dBm)", PeerOf(_Periph)->GetName(), PeerOf(_Periph)->GetdBm());
-        lv_obj_clear_flag(_LblPeer, LV_OBJ_FLAG_HIDDEN);
+        lv_label_set_text_fmt(objects.lbl_simple_peername, "%.6s (%d dBm)", PeerOf(_Periph)->GetName(), PeerOf(_Periph)->GetdBm());
+        lv_obj_clear_flag(objects.lbl_simple_peername, LV_OBJ_FLAG_HIDDEN);
 	}
     
     if ((_Periph->GetName() == NULL) or (!_PeriphVisible)) 
     {
-		lv_obj_add_flag(_LblPeriph, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(objects.lbl_simple_periphname, LV_OBJ_FLAG_HIDDEN);
     }
     else 
     {
-		lv_label_set_text_fmt(_LblPeriph, "%.6s", _Periph->GetName());
-		lv_obj_clear_flag(_LblPeriph, LV_OBJ_FLAG_HIDDEN);
+		lv_label_set_text_fmt(objects.lbl_simple_periphname, "%.6s", _Periph->GetName());
+		lv_obj_clear_flag(objects.lbl_simple_periphname, LV_OBJ_FLAG_HIDDEN);
     
     }
 
@@ -776,7 +772,7 @@ void CompMeter::Update()
                         Angle = -Range+value*Tick;
                         break;
     }
-    lv_img_set_angle(ui_ImgZeiger, Angle);
+    lv_img_set_angle(objects.img_simple_zeiger, Angle);
     
 	if (_ValueVisible) 
 	{
@@ -808,7 +804,7 @@ void CompMeter::Update()
             if (value > 200) lv_obj_set_pos(_LblValue,  lv_pct(-_X_Value), lv_pct(_Y_Value));
             else             lv_obj_set_pos(_LblValue,   lv_pct(_X_Value), lv_pct(_Y_Value));
         }
-        lv_label_set_text(_LblValue, buf);
+        lv_label_set_text(objects.lbl_simple_value, buf);
         
         if (Angle < 0)  
         {

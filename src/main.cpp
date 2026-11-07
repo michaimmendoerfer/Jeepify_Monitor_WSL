@@ -374,8 +374,9 @@ void setup()
         lv_timer_t * TimerPeriph = lv_timer_create(SendStatus, PING_INTERVAL,  &user_data);
     #endif
 
-    ui_init();
-    
+    create_screens();
+    loadScreen(SCREEN_ID_SCR_START);
+
     if (strcmp(buf, "Menu") == 0) 
     {
         loadScreen(SCREEN_ID_SCR_START);

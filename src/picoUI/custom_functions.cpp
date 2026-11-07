@@ -14,6 +14,7 @@ int ActiveRollerId;
 int MaxRollerItems;
 int Scr_Peers_Mode;
 
+
 CompThing   *CompThingArray[4] = {NULL, NULL, NULL, NULL};
 
 #pragma region Scr_PeerChoice
@@ -135,6 +136,10 @@ void Scr_PeerChoice_unloaded()
 	if (Timer_Scr_PeerChoice) lv_timer_del(Timer_Scr_PeerChoice);
 	Timer_Scr_PeerChoice = NULL;
 }
+void Btn_PeerChoice_Open_clicked()
+{
+
+}
 #pragma endregion Scr_PeerChoice
 #pragma region Scr_PeriphChoice
 lv_timer_t *Timer_Scr_PeriphChoice = NULL;
@@ -238,7 +243,7 @@ void Scr_PeriphChoice_Next(lv_event_t * e)
 	Scr_PeriphChoice_FillScreen();
 
 }
-void Scr_PeriphChoice_Last(lv_event_t * e)
+void Scr_PeriphChoice_Prev(lv_event_t * e)
 {
 	if (!ActivePeriph) return;
 	
@@ -309,6 +314,26 @@ void Scr_Start_loaded()
 void Scr_Start_unloaded()
 {
 }
+void Btn_Start_1_clicked()
+{
+	if (!ActivePeriphSensor) ActivePeriphSensor = FindNextPeriph(NULL, NULL, P_IS_PRIMARY_SENSOR, CIRCULAR, FUCKLINE);
+	if (ActivePeriphSensor) 
+	{	
+		DEBUG3("PeriphName = %s\n\r", ActivePeriphSensor->GetName());
+		ActivePeriphShown = ActivePeriphSensor;
+		lv_scr_load_anim(objects.scr_simple, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+	}
+}
+void Btn_Start_2_clicked()
+{
+	if (!ActivePeriphSwitch) ActivePeriphSwitch = FindNextPeriph(NULL, NULL, P_IS_PRIMARY_SWITCH, CIRCULAR, FUCKLINE);
+	if (ActivePeriphSwitch) 
+	{
+		ActivePeriphShown = ActivePeriphSwitch;
+		Serial.printf("Menu - 2 - ActivePeriphShown is %s\n\r", ActivePeriphShown->GetName());
+		lv_scr_load_anim(objects.scr_simple, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+	}
+}
 #pragma endregion Scr_Start
 #pragma region Scr_JSON
 void Scr_JSON_loaded()
@@ -344,7 +369,9 @@ lv_timer_t *Timer_Scr_Peer = NULL;
 
 void Scr_Peer_loaded()
 {
-    static uint32_t user_data = 10;
+    lv_label_set_recolor(objects.lbl_peer_scrname, true);
+	
+	static uint32_t user_data = 10;
 	
 	if (Timer_Scr_Peer) 
 	{
@@ -356,7 +383,6 @@ void Scr_Peer_loaded()
 	}
 
 	if (!ActivePeer) ActivePeer = FindNextPeer(NULL, MODULE_ALL, CIRCULAR);
-	lv_label_set_recolor(objects.lbl_peer_scrname, true);
 }
 void Scr_Peer_unloaded()
 {
@@ -367,6 +393,7 @@ void Scr_Peer_Timer_update(lv_timer_t * timer)
 {
     if (ActivePeer) 
     {
+		Serial.printf("Scr_Peer_Timer_update: ActivePeer is %s\n\r", ActivePeer->GetName());
 		char buf[50];
 		if ((ActivePeer->GetTSLastSeen() == 0) or (millis()- ActivePeer->GetTSLastSeen() > OFFLINE_INTERVAL))
 		{
@@ -534,7 +561,26 @@ void Scr_Settings_unloaded()
     if (Timer_Scr_Settings) lv_timer_del(Timer_Scr_Settings);
 	Timer_Scr_Settings = NULL;
 }   
-void Btn_Set_Save_clicked()
+void Btn_Settings_Restart_clicked()
+{
+	ESP.restart();
+}	
+void Btn_Settings_Reset_clicked()
+{
+}	
+void Btn_Settings_Peers_clicked()
+{
+	 lv_scr_load_anim(objects.scr_peer, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+}	
+void Btn_Settings_Pair_clicked()
+{
+	TogglePairMode();
+}	
+void Btn_Settings_WebSvr_clicked()
+{
+	ToggleWebServer();
+}	
+void Btn_Settings_Save_clicked()
 {
     SavePeers();
 	Module.SetChanged(false);
@@ -699,5 +745,9 @@ void Scr_Multi_Prev(lv_event_t * e)
 	ActiveMultiScreen--;
 	if (ActiveMultiScreen == -1) ActiveMultiScreen = MULTI_SCREENS-1;
 	Scr_Multi_FillScreen();
+}
+void Btn_Multi_1_clicked(void)
+{
+	
 }
 #pragma endregion Scr_Multi

@@ -109,6 +109,7 @@ extern PeerClass Module;
 extern int ActiveMultiScreen;
 extern PeriphClass *ActivePeriphShown;
 extern PeriphClass *ActivePeriphSensor;
+extern PeriphClass *ActivePeriphSwitch;
 extern const char *_Version;
 extern bool WebServerActive;
 extern Preferences preferences;

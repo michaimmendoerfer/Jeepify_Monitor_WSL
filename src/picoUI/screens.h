@@ -65,6 +65,10 @@ typedef struct _objects_t {
     lv_obj_t *switch_1;
     lv_obj_t *img_simple_base;
     lv_obj_t *img_simple_top;
+    lv_obj_t *lbl_simple_peername;
+    lv_obj_t *lbl_simple_periphname;
+    lv_obj_t *img_simple_zeiger;
+    lv_obj_t *lbl_simple_value;
     lv_obj_t *btn_top_next;
     lv_obj_t *btn_top_prev;
     lv_obj_t *img_top_wifi;

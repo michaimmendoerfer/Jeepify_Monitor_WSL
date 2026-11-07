@@ -37,24 +37,33 @@ void Scr_Multi_FillScreen();
 void Scr_Multi_Clicked(lv_event_t * e);
 void Scr_Multi_Next(lv_event_t * e);
 void Scr_Multi_Prev(lv_event_t * e);
+void Btn_Multi_1_clicked(void);
 void Scr_Multi_Timer_update(lv_timer_t *timer);
 
 void Scr_Settings_loaded();
 void Scr_Settings_unloaded();
 void Scr_Settings_Timer_update(lv_timer_t *timer);
-void Btn_Set_Save_clicked();    
+void Btn_Settings_Restart_clicked();
+void Btn_Settings_Reset_clicked();
+void Btn_Settings_Peers_clicked();
+void Btn_Settings_Pair_clicked();
+void Btn_Settings_WebSvr_clicked();
+void Btn_Settings_Save_clicked();
 
 void Scr_JSON_loaded();
 void Scr_JSON_unloaded();
 
 void Scr_Start_loaded();
 void Scr_Start_unloaded();
+void Btn_Start_1_clicked();
+void Btn_Start_2_clicked();
 
 void Scr_Simple_loaded();
 void Scr_Simple_unloaded();
 
 void Scr_PeerChoice_loaded();
 void Scr_PeerChoice_unloaded();
+void Btn_PeerChoice_Open_clicked();
 void Scr_PeerChoice_Timer_update(lv_timer_t *timer);
     
 void Scr_PeriphChoice_loaded();
@@ -63,8 +72,8 @@ void Scr_PeriphChoice_Timer_update(lv_timer_t *timer);
 void Scr_PeriphChoice_Click(lv_event_t * e);
 void Scr_PeriphChoice_FillScreen();
 void Scr_PeriphChoice_Return();
-void Scr_PeriphChoice_Next();
-void Scr_PeriphChoice_Prev();
+void Scr_PeriphChoice_Next(lv_event_t * e);
+void Scr_PeriphChoice_Prev(lv_event_t * e);
 
 
 extern char jsondataBuf[ESP_MAX_LEN+1];

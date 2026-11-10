@@ -8,6 +8,10 @@
 extern "C" {
 #endif
 
+void Scr_Top_Gesture(lv_event_t * e);
+void Btn_Top_Prev_clicked();
+void Btn_Top_Next_clicked();
+
 void Scr_Peer_loaded();
 void Scr_Peer_unloaded();
 void Scr_Peer_Timer_update(lv_timer_t * timer);
@@ -57,9 +61,16 @@ void Scr_Start_loaded();
 void Scr_Start_unloaded();
 void Btn_Start_1_clicked();
 void Btn_Start_2_clicked();
-
+    
 void Scr_Simple_loaded();
 void Scr_Simple_unloaded();
+void Scr_Simple_Timer_update(lv_timer_t * timer);
+void Scr_Simple_FillScreen();
+void Scr_Simple_ClearScreen();
+void Btn_Simple_Prev_clicked();
+void Btn_Simple_Next_clicked();
+void Btn_Simple_Up_clicked();
+void Scr_Simple_Clicked(lv_event_t * e);
 
 void Scr_PeerChoice_loaded();
 void Scr_PeerChoice_unloaded();

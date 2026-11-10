@@ -37,6 +37,7 @@ void Ui_Single_ClearScreen()
 		lv_obj_del(ui_TimeArc);
 		ui_TimeArc = NULL;
 	}
+	
 
 }
 void Ui_Single_FillScreen()

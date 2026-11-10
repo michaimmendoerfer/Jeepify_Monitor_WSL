@@ -25,6 +25,12 @@ void btn_start_settings_clicked_cb(lv_event_t * e) {
 }
 
 
+// Event callback for scr_top on gesture
+void scr_top_gesture_cb(lv_event_t * e) {
+    Scr_Top_Gesture();
+}
+
+
 // Event callback for btn_peer_volt on clicked
 void btn_peer_volt_clicked_cb(lv_event_t * e) {
     Btn_Peer_Volt_clicked();
@@ -37,9 +43,27 @@ void btn_volt_save_clicked_cb(lv_event_t * e) {
 }
 
 
+// Event callback for btn_simple_prev on clicked
+void btn_simple_prev_clicked_cb(lv_event_t * e) {
+    Btn_Simple_Prev_clicked();
+}
+
+
+// Event callback for btn_peer_prev on clicked
+void btn_peer_prev_clicked_cb(lv_event_t * e) {
+    Btn_Top_Prev_clicked();
+}
+
+
 // Event callback for btn_eichen_eichen on clicked
 void btn_eichen_eichen_clicked_cb(lv_event_t * e) {
     Btn_Eichen_Eichen_clicked();
+}
+
+
+// Event callback for btn_simple_next on clicked
+void btn_simple_next_clicked_cb(lv_event_t * e) {
+    Btn_Simple_Next_clicked();
 }
 
 
@@ -63,7 +87,7 @@ void scr_eichen_screen_loaded_cb(lv_event_t * e) {
 
 // Event callback for scr_eichen on gesture
 void scr_eichen_gesture_cb(lv_event_t * e) {
-    lv_scr_load_anim(objects.scr_peer, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+    Scr_Eichen_Gesture(e);
 }
 
 
@@ -94,6 +118,18 @@ void scr_peerchoice_screen_loaded_cb(lv_event_t * e) {
 // Event callback for scr_peerchoice on screen-unloaded
 void scr_peerchoice_screen_unloaded_cb(lv_event_t * e) {
     Scr_PeerChoice_unloaded();
+}
+
+
+// Event callback for scr_peerchoice on gesture
+void scr_peerchoice_gesture_cb(lv_event_t * e) {
+    Scr_PeerChoice_Gesture(e);
+}
+
+
+// Event callback for btn_peerchoice_next on clicked
+void btn_peerchoice_next_clicked_cb(lv_event_t * e) {
+    Btn_PeerChoic_clicked();
 }
 
 
@@ -133,15 +169,51 @@ void arc_volt_value_changed_cb(lv_event_t * e) {
 }
 
 
+// Event callback for btn_multi_next on clicked
+void btn_multi_next_clicked_cb(lv_event_t * e) {
+    Btn_Multi_Next_clicked();
+}
+
+
 // Event callback for btn_set_pair on clicked
 void btn_set_pair_clicked_cb(lv_event_t * e) {
     Btn_Settings_Pair_clicked();
 }
 
 
+// Event callback for btn_peerchoice_prev on clicked
+void btn_peerchoice_prev_clicked_cb(lv_event_t * e) {
+    Btn_PeriphChoic_clicked();
+}
+
+
 // Event callback for btn_peer_pair on clicked
 void btn_peer_pair_clicked_cb(lv_event_t * e) {
     /* Export warning: invalid Call Function name */
+}
+
+
+// Event callback for btn_top_next on clicked
+void btn_top_next_clicked_cb(lv_event_t * e) {
+    Btn_Top_Next_clicked();
+}
+
+
+// Event callback for btn_peerchoice_up on clicked
+void btn_peerchoice_up_clicked_cb(lv_event_t * e) {
+    Btn_PeerChoice_Up_clicked();
+}
+
+
+// Event callback for btn_peer_next on clicked
+void btn_peer_next_clicked_cb(lv_event_t * e) {
+    Btn_Peer_Next_clicked();
+}
+
+
+// Event callback for btn_peer_up on clicked
+void btn_peer_up_clicked_cb(lv_event_t * e) {
+    Btn_Peer_Up_clicked();
 }
 
 
@@ -157,6 +229,18 @@ void scr_start_screen_unloaded_cb(lv_event_t * e) {
 }
 
 
+// Event callback for scr_start on gesture
+void scr_start_gesture_cb(lv_event_t * e) {
+    Scr_Start_Gesture(e);
+}
+
+
+// Event callback for btn_top_prev on clicked
+void btn_top_prev_clicked_cb(lv_event_t * e) {
+    Btn_Top_Prev_clicked();
+}
+
+
 // Event callback for btn_set_json on clicked
 void btn_set_json_clicked_cb(lv_event_t * e) {
     lv_scr_load_anim(objects.scr_json, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
@@ -166,6 +250,12 @@ void btn_set_json_clicked_cb(lv_event_t * e) {
 // Event callback for btn_peerchoice_open on clicked
 void btn_peerchoice_open_clicked_cb(lv_event_t * e) {
     Btn_PeerChoice_Open_clicked();
+}
+
+
+// Event callback for btn_multi_up on clicked
+void btn_multi_up_clicked_cb(lv_event_t * e) {
+    Btn_Multi_Up_clicked();
 }
 
 
@@ -189,7 +279,7 @@ void scr_peer_screen_unloaded_cb(lv_event_t * e) {
 
 // Event callback for scr_peer on gesture
 void scr_peer_gesture_cb(lv_event_t * e) {
-    /* Play animation: no segments */
+    Scr_Peer_Gesture(e);
 }
 
 
@@ -205,15 +295,33 @@ void scr_simple_screen_unloaded_cb(lv_event_t * e) {
 }
 
 
+// Event callback for scr_simple on gesture
+void scr_simple_gesture_cb(lv_event_t * e) {
+    Scr_Simple_Gesture(e);
+}
+
+
+// Event callback for btn_simple_up on clicked
+void btn_simple_up_clicked_cb(lv_event_t * e) {
+    Btn_Simple_Up_clicked();
+}
+
+
 // Event callback for scr_json on gesture
 void scr_json_gesture_cb(lv_event_t * e) {
-    lv_scr_load_anim(objects.scr_start, LV_SCR_LOAD_ANIM_NONE, 500, 0, false);
+    Scr_JSON_Gesture(e);
 }
 
 
 // Event callback for scr_json on screen-loaded
 void scr_json_screen_loaded_cb(lv_event_t * e) {
     Scr_JSON_loaded();
+}
+
+
+// Event callback for btn_periphchoice_next on clicked
+void btn_periphchoice_next_clicked_cb(lv_event_t * e) {
+    Btn_PeriphChoic_clicked();
 }
 
 
@@ -229,6 +337,12 @@ void scr_periphchoice_screen_unloaded_cb(lv_event_t * e) {
 }
 
 
+// Event callback for scr_periphchoice on gesture
+void scr_periphchoice_gesture_cb(lv_event_t * e) {
+    Scr_PeriphChoice_Gesture(e);
+}
+
+
 // Event callback for btn_start_single on clicked
 void btn_start_single_clicked_cb(lv_event_t * e) {
     Btn_Start_1_clicked();
@@ -241,9 +355,15 @@ void btn_peer_reset_clicked_cb(lv_event_t * e) {
 }
 
 
+// Event callback for btn_periphchoice_up on clicked
+void btn_periphchoice_up_clicked_cb(lv_event_t * e) {
+    Btn_PeriphChoice_Up_clicked();
+}
+
+
 // Event callback for scr_settings on gesture
 void scr_settings_gesture_cb(lv_event_t * e) {
-    lv_scr_load_anim(objects.scr_start, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+    Scr_Settings_Gesture(e);
 }
 
 
@@ -259,6 +379,12 @@ void scr_settings_screen_unloaded_cb(lv_event_t * e) {
 }
 
 
+// Event callback for btn_periphchoice_prev on clicked
+void btn_periphchoice_prev_clicked_cb(lv_event_t * e) {
+    Btn_PeriphChoic_clicked();
+}
+
+
 // Event callback for btn_set_websvr on clicked
 void btn_set_websvr_clicked_cb(lv_event_t * e) {
     Btn_Settings_WebSvr_clicked();
@@ -271,9 +397,15 @@ void btn_start_multi_clicked_cb(lv_event_t * e) {
 }
 
 
-// Event callback for btn_peer_delete on clicked
-void btn_peer_delete_clicked_cb(lv_event_t * e) {
+// Event callback for btn_peer_delete on long-pressed
+void btn_peer_delete_long_pressed_cb(lv_event_t * e) {
     Btn_Peer_Delete_clicked();
+}
+
+
+// Event callback for btn_multi_prev on clicked
+void btn_multi_prev_clicked_cb(lv_event_t * e) {
+    Btn_Top_Prev_clicked();
 }
 
 
@@ -292,5 +424,11 @@ void scr_volt_screen_loaded_cb(lv_event_t * e) {
 // Event callback for scr_volt on screen-unloaded
 void scr_volt_screen_unloaded_cb(lv_event_t * e) {
     Scr_Volt_unloaded();
+}
+
+
+// Event callback for scr_volt on gesture
+void scr_volt_gesture_cb(lv_event_t * e) {
+    Scr_Volt_Gesture(e);
 }
 

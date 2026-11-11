@@ -189,8 +189,7 @@ void Btn_PeriphChoice_Up_clicked(lv_event_t * e)
 {
 	Scr_PeriphChoice_Return();
 }
-
-void Scr_PeriphChoice_Click(lv_event_t * e)
+void Btn_PeriphChoice_clicked(lv_event_t * e)
 {		
 	if (ActiveScreen == &MultiGaugeScreen)
 	{
@@ -268,10 +267,14 @@ void Scr_JSON_loaded()
 void Scr_JSON_unloaded()
 {
 }   
+void Scr_JSON_Gesture(lv_event_t * e)
+{
+	lv_scr_load_anim(objects.scr_start, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+}
 #pragma endregion Scr_JSON
 #pragma region Scr_Simple
 lv_timer_t *Timer_Scr_Simple = NULL;
-uint32_t TSLastClick = 0;
+uint32_t TSLastClickSimple = -1;
 
 void Scr_Simple_loaded()
 {
@@ -298,6 +301,13 @@ void Scr_Simple_loaded()
 }
 void Scr_Simple_Timer_update(lv_timer_t * timer)
 {
+	if (millis() - TSLastClickSimple > 1000)
+	{
+		lv_obj_add_flag(objects.btn_simple_prev, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(objects.btn_simple_next, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(objects.btn_simple_up,   LV_OBJ_FLAG_HIDDEN);
+		TSLastClickSimple = -1;
+	}
 	if (CompThingArray[0]) 
 	{
 		CompThingArray[0]->Update();
@@ -321,12 +331,6 @@ void Scr_Simple_Timer_update(lv_timer_t * timer)
 		}
 		
 		lv_arc_set_value(objects.arc_simple, TimeDiff / 100);
-	}
-	if (millis() - TSLastClick > 1000)
-	{
-		lv_obj_add_flag(objects.btn_simple_prev, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_add_flag(objects.btn_simple_next, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_add_flag(objects.btn_simple_up,   LV_OBJ_FLAG_HIDDEN);
 	}
 }
 void Scr_Simple_unloaded()
@@ -362,6 +366,13 @@ void Scr_Simple_ClearScreen()
 		delete CompThingArray[0];
 		CompThingArray[0] = NULL;
 	}
+}
+void Scr_Simple_pressed(lv_event_t * e)
+{
+	lv_obj_clear_flag(objects.btn_simple_prev, LV_OBJ_FLAG_HIDDEN);
+	lv_obj_clear_flag(objects.btn_simple_next, LV_OBJ_FLAG_HIDDEN);
+	lv_obj_clear_flag(objects.btn_simple_up,   LV_OBJ_FLAG_HIDDEN);
+	TSLastClickSimple = millis();
 }
 void Btn_Simple_Prev_clicked()
 {
@@ -414,11 +425,6 @@ void Btn_Simple_Up_clicked()
 }
 void Scr_Simple_clicked(lv_event_t * e)
 {
-	lv_obj_clear_flag(objects.btn_simple_prev, LV_OBJ_FLAG_HIDDEN);
-	lv_obj_clear_flag(objects.btn_simple_next, LV_OBJ_FLAG_HIDDEN);
-	lv_obj_clear_flag(objects.btn_simple_up,   LV_OBJ_FLAG_HIDDEN);
-	TSLastClick = millis();
-
 	lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * target = lv_event_get_target(e);
 	PeriphClass *Periph;
@@ -478,6 +484,7 @@ void Scr_Simple_clicked(lv_event_t * e)
 #pragma endregion Scr_Simple
 #pragma region Scr_Peer
 lv_timer_t *Timer_Scr_Peer = NULL;
+uint32_t TSLastClickPeer = -1;
 
 void Scr_Peer_loaded()
 {
@@ -503,7 +510,14 @@ void Scr_Peer_unloaded()
 }
 void Scr_Peer_Timer_update(lv_timer_t * timer)
 {
-    if (ActivePeer) 
+    if ((TSLastClickPeer != -1) && (millis() - TSLastClickPeer > 1000))
+	{
+		lv_obj_add_flag(objects.btn_multi_prev, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(objects.btn_multi_next, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(objects.btn_multi_up,   LV_OBJ_FLAG_HIDDEN);
+		TSLastClickPeer = -1;
+	}	
+	if (ActivePeer) 
     {
 		Serial.printf("Scr_Peer_Timer_update: ActivePeer is %s\n\r", ActivePeer->GetName());
 		char buf[50];
@@ -541,15 +555,26 @@ void Scr_Peer_Timer_update(lv_timer_t * timer)
 	}
 
 }
-void Scr_Peer_Next()
+void Scr_Peer_pressed(lv_event_t * e)
+{
+	lv_obj_clear_flag(objects.btn_peer_prev, LV_OBJ_FLAG_HIDDEN);
+	lv_obj_clear_flag(objects.btn_peer_next, LV_OBJ_FLAG_HIDDEN);
+	lv_obj_clear_flag(objects.btn_peer_up,   LV_OBJ_FLAG_HIDDEN);
+	TSLastClickPeer = millis();
+}
+void Btn_Peer_Next_clicked()
 {
 	ActivePeer = FindNextPeer(ActivePeer, MODULE_ALL, CIRCULAR); 
 	if (ActivePeer) Scr_Peer_Timer_update(NULL);
 }
-void Scr_Peer_Prev()
+void Btn_Peer_Prev_clicked()
 {
 	ActivePeer = FindPrevPeer(ActivePeer, MODULE_ALL, CIRCULAR); 
 	if (ActivePeer) Scr_Peer_Timer_update(NULL);
+}
+void Btn_Peer_Up_clicked()
+{
+	lv_scr_load_anim(objects.scr_settings, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }
 void Btn_Peer_System_clicked()
 {
@@ -585,6 +610,25 @@ void Btn_Peer_Delete_clicked()
     ActivePeer = NULL;
     lv_scr_load_anim(objects.scr_start, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }
+void Scr_Peer_Gesture(lv_event_t * e)
+{
+	lv_event_code_t event_code = lv_event_get_code(e);
+	lv_obj_t * target = lv_event_get_target(e);  
+	
+	if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) {
+        lv_indev_wait_release(lv_indev_get_act());
+        Btn_Peer_Next_clicked();
+    }
+    else if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT) {
+        lv_indev_wait_release(lv_indev_get_act());
+        Btn_Peer_Prev_clicked();
+	}
+	else if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP) {
+        lv_indev_wait_release(lv_indev_get_act());
+        Btn_Peer_Up_clicked();
+	}
+}
+
 #pragma endregion Scr_Peer
 #pragma region Scr_Eichen
 void Scr_Eichen_loaded()
@@ -631,6 +675,10 @@ void Btn_Volt_Save_clicked()
 }
 void Scr_Volt_unloaded()
 {
+}
+void Scr_Volt_Gesture(lv_event_t * e)
+{
+	lv_scr_load_anim(objects.scr_peer, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }
 #pragma endregion Scr_Volt
 #pragma region Scr_Settings
@@ -713,6 +761,10 @@ void Btn_Settings_Save_clicked()
 	
 	if (Module.GetDebugMode()) ShowMessageBox("Saving complete...", buf2, 1000, 200);
 }
+void Scr_Settings_Gesture(lv_event_t * e)
+{
+	lv_scr_load_anim(objects.scr_start, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+}
 #pragma endregion Scr_Settings
 #pragma region Scr_Multi
 lv_timer_t *Timer_Scr_Multi = NULL;
@@ -730,9 +782,11 @@ void Scr_Multi_Timer_update(lv_timer_t *timer)
 		lv_obj_add_flag(objects.btn_multi_up,   LV_OBJ_FLAG_HIDDEN);
 		TSLastClickMulti = -1;
 	}	
+	if (TSLastClickMulti != -1) DEBUG3("millis() - TSLastClickMulti = %u\n\r", millis() - TSLastClickMulti);
 }
 void Scr_Multi_pressed(lv_event_t * e)
 {
+	DEBUG3("Scr_Multi_pressed fires\n\r");
 	TSLastClickMulti = millis();
 	lv_obj_clear_flag(objects.btn_multi_prev, LV_OBJ_FLAG_HIDDEN);
 	lv_obj_clear_flag(objects.btn_multi_next, LV_OBJ_FLAG_HIDDEN);
@@ -767,9 +821,10 @@ void Scr_Multi_FillScreen()
 		}
 
 		PeriphClass *Periph =  Screen[ActiveMultiScreen].GetPeriph(Pos);
-		
 		if (Periph)
 		{
+			DEBUG3("Pos: %u, PeriphName:%s\n\r", Pos, Periph->GetName());
+		
 			lv_obj_add_flag(lv_obj_get_child(objects.cnt_multi, Pos), LV_OBJ_FLAG_HIDDEN);
 			
 			if (CompThingArray[Pos]) 
@@ -780,8 +835,9 @@ void Scr_Multi_FillScreen()
 
 			if (Screen[ActiveMultiScreen].GetPrimToShow(Pos) == PRIM_SWITCH)
 			{
+				DEBUG3("erstelle: Setup x:%u, y:%u, Pos:%u\n\r", x, y, Pos);
 				CompThingArray[Pos] = new CompButton;
-				CompThingArray[Pos]->Setup(objects.scr_multi, x, y, Pos, 1, Periph, Scr_Multi_Clicked);
+				CompThingArray[Pos]->Setup(objects.scr_multi, x, y, Pos, 1, Periph, Scr_Multi_clicked);
 				CompThingArray[Pos]->Update();
 			}
 			else if (Screen[ActiveMultiScreen].GetPrimToShow(Pos) == PRIM_VOLT or
@@ -789,7 +845,7 @@ void Scr_Multi_FillScreen()
 				     Screen[ActiveMultiScreen].GetPrimToShow(Pos) == PRIM_WATT)
 			{	
 				CompThingArray[Pos] = new CompSensor;
-				CompThingArray[Pos]->Setup(objects.scr_multi, x, y, Pos, 1, Periph, Scr_Multi_Clicked);
+				CompThingArray[Pos]->Setup(objects.scr_multi, x, y, Pos, 1, Periph, Scr_Multi_clicked);
 				CompThingArray[Pos]->Update();
 			}
 		}
@@ -797,10 +853,12 @@ void Scr_Multi_FillScreen()
 		{
 			lv_obj_clear_flag(lv_obj_get_child(objects.cnt_multi, Pos), LV_OBJ_FLAG_HIDDEN);
 			CompThingArray[Pos] = NULL;
+			DEBUG3("Pos: %u, no Periph\n\r", Pos);
+		
 		}
 	}
 }
-void Scr_Multi_Loaded(lv_event_t * e)
+void Scr_Multi_loaded(lv_event_t * e)
 {
 	static uint32_t user_data = 10;
 	
@@ -815,8 +873,9 @@ void Scr_Multi_Loaded(lv_event_t * e)
 		Timer_Scr_Multi = lv_timer_create(Scr_Multi_Timer_update, 100,  &user_data);
 	}
 	ActiveScreen = &Screen[ActiveMultiScreen];
+	TSLastClickMulti = millis();
 }
-void Scr_Multi_Unloaded(lv_event_t * e)
+void Scr_Multi_unloaded(lv_event_t * e)
 {
 	Scr_Multi_ClearScreen();
 
@@ -842,8 +901,8 @@ void Btn_Multi_Up_clicked(lv_event_t * e)
 {
 	lv_scr_load_anim(objects.scr_start, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }
-void Btn_Multi_All_clicked(int Pos)
-{
+void Btn_Multi_Change_Pos(int Pos)
+{	
 	if (PeriphList.size() > 0) 
 	{
 		MultiPosToChange = Pos;
@@ -851,10 +910,10 @@ void Btn_Multi_All_clicked(int Pos)
 		lv_scr_load_anim(objects.scr_periphchoice, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 	}
 }
-void Btn_Multi1_clicked(lv_event_t * e) { Btn_Multi_All_clicked(0); }
-void Btn_Multi2_clicked(lv_event_t * e) { Btn_Multi_All_clicked(1); }
-void Btn_Multi3_clicked(lv_event_t * e) { Btn_Multi_All_clicked(2); }
-void Btn_Multi4_clicked(lv_event_t * e) { Btn_Multi_All_clicked(3); }	
+void Btn_Multi1_clicked(lv_event_t * e) { Btn_Multi_Change_Pos(0); }
+void Btn_Multi2_clicked(lv_event_t * e) { Btn_Multi_Change_Pos(1); }
+void Btn_Multi3_clicked(lv_event_t * e) { Btn_Multi_Change_Pos(2); }
+void Btn_Multi4_clicked(lv_event_t * e) { Btn_Multi_Change_Pos(3); }	
 void Scr_Multi_Gesture(lv_event_t * e)
 {
 	lv_event_code_t event_code = lv_event_get_code(e);
@@ -873,18 +932,18 @@ void Scr_Multi_Gesture(lv_event_t * e)
         lv_scr_load_anim(objects.scr_start, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 	}
 }
-void Scr_Multi_Clicked(lv_event_t * e) //Handler für picoButtons und picoMeter
+void Scr_Multi_clicked(lv_event_t * e) //Handler für picoButtons und picoMeter
 {
 	lv_event_code_t event_code = lv_event_get_code(e);
-	lv_obj_t * target = lv_event_get_target(e);  
-	PeriphClass *Periph = NULL;
+	lv_obj_t * target          = lv_event_get_target(e); 
+	CompThing *TargetCompThing = (CompThing *) lv_obj_get_user_data(target);
+	PeriphClass *Periph        = NULL;
 
-	if (target)
-	{
-		uint32_t Pos = (uint32_t)(uintptr_t)lv_obj_get_user_data(target);
-		MultiPosToChange = Pos; //Type???
-		Periph = Screen[ActiveMultiScreen].GetPeriph(MultiPosToChange);
-	}
+	if (!TargetCompThing) return;
+
+	Periph = TargetCompThing->GetPeriph();
+	MultiPosToChange = TargetCompThing->GetPos();
+	DEBUG3("Scr_Multi_clicked: Periph=%s, Pos=%d\n\r", Periph->GetName(), MultiPosToChange);
 	
 	if (event_code == LV_EVENT_CLICKED) {
 		if (Screen[ActiveMultiScreen].GetPrimToShow(MultiPosToChange) == PRIM_SWITCH)
@@ -907,7 +966,7 @@ void Scr_Multi_Clicked(lv_event_t * e) //Handler für picoButtons und picoMeter
     }	
 	else if (event_code == LV_EVENT_LONG_PRESSED)
 	{
-		Btn_Multi_All_clicked(MultiPosToChange);
+		Btn_Multi_Change_Pos(MultiPosToChange);
     }
 }
 #pragma endregion Scr_Multi

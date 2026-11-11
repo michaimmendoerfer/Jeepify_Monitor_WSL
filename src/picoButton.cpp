@@ -289,7 +289,8 @@ void CompButton::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, 
     lv_label_set_text_fmt(_LblPos, "%d", _Pos);
     lv_obj_set_style_text_color(_LblPos, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
     
-    lv_obj_add_event_cb(_Button, _event_cb, LV_EVENT_ALL, NULL);  	
+    lv_obj_add_event_cb(_Button, _event_cb, LV_EVENT_CLICKED, NULL); 
+    lv_obj_add_event_cb(_Button, _event_cb, LV_EVENT_LONG_PRESSED, NULL);  ;  	
 }
 void CompButton::Update()
 {
@@ -426,9 +427,8 @@ void CompSensor::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, 
     lv_obj_set_style_shadow_spread(_Button, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_shadow_ofs_x(_Button, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_shadow_ofs_y(_Button, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-  
-    uint32_t userdata = Pos;
-    lv_obj_set_user_data(_Button, (void*)(uintptr_t)userdata);
+    
+    lv_obj_set_user_data(_Button, this);
 
     _LblPeer = lv_label_create(_Button);
     lv_obj_set_width(_LblPeer, LV_SIZE_CONTENT);   /// 1
@@ -497,7 +497,8 @@ void CompSensor::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, 
 
     if (_GraphVisible) ChartInit(x, y+_Height*0.25, _Width*0.7, _Height*0.3, RECORDED_VALUES);
         
-    lv_obj_add_event_cb(_Button, _event_cb, LV_EVENT_ALL, NULL);  
+    lv_obj_add_event_cb(_Button, _event_cb, LV_EVENT_CLICKED, NULL); 
+    lv_obj_add_event_cb(_Button, _event_cb, LV_EVENT_LONG_PRESSED, NULL);  
 }
 void CompSensor::Update()
 {

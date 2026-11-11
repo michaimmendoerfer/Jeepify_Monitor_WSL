@@ -42,6 +42,7 @@ void scr_start_screen_unloaded_cb(lv_event_t * e);
 void scr_start_gesture_cb(lv_event_t * e);
 void btn_top_prev_clicked_cb(lv_event_t * e);
 void btn_set_json_clicked_cb(lv_event_t * e);
+void img_periphchoice_clicked_cb(lv_event_t * e);
 void btn_multi_up_clicked_cb(lv_event_t * e);
 void btn_peer_eichen_clicked_cb(lv_event_t * e);
 void scr_peer_screen_loaded_cb(lv_event_t * e);

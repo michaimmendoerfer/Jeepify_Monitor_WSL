@@ -28,10 +28,10 @@ typedef struct _objects_t {
     lv_obj_t *lbl_start_version;
     lv_obj_t *lbl_multi_scrname;
     lv_obj_t *cnt_multi;
-    lv_obj_t *btn_multi_4;
-    lv_obj_t *btn_multi_3;
-    lv_obj_t *btn_multi_2;
     lv_obj_t *btn_multi_1;
+    lv_obj_t *btn_multi_2;
+    lv_obj_t *btn_multi_3;
+    lv_obj_t *btn_multi_4;
     lv_obj_t *btn_multi_next;
     lv_obj_t *btn_multi_prev;
     lv_obj_t *btn_multi_up;
@@ -97,10 +97,10 @@ typedef struct _objects_t {
     lv_obj_t *btn_start_switch_label;
     lv_obj_t *btn_start_settings_label;
     lv_obj_t *btn_start_multi_label;
-    lv_obj_t *btn_multi_4_label;
-    lv_obj_t *btn_multi_3_label;
-    lv_obj_t *btn_multi_2_label;
     lv_obj_t *btn_multi_1_label;
+    lv_obj_t *btn_multi_2_label;
+    lv_obj_t *btn_multi_3_label;
+    lv_obj_t *btn_multi_4_label;
     lv_obj_t *btn_multi_next_label;
     lv_obj_t *btn_multi_prev_label;
     lv_obj_t *btn_multi_up_label;

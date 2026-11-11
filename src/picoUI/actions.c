@@ -5,7 +5,6 @@
 #include "ui.h"
 #include "picoUI/custom_functions.h"
 
-
 // Animation timeline helpers
 void pp_anim_stop_timelines_for_deleted_tree(lv_obj_t * root) {
     (void)root;
@@ -148,7 +147,7 @@ void arc_volt_value_changed_cb(lv_event_t * e) {
 
 // Event callback for btn_multi_next on clicked
 void btn_multi_next_clicked_cb(lv_event_t * e) {
-    Btn_Multi_Next_clicked();
+    Btn_Multi_Next_clicked(e);
 }
 
 
@@ -215,6 +214,12 @@ void btn_top_prev_clicked_cb(lv_event_t * e) {
 // Event callback for btn_set_json on clicked
 void btn_set_json_clicked_cb(lv_event_t * e) {
     lv_scr_load_anim(objects.scr_json, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+}
+
+
+// Event callback for img_periphchoice on clicked
+void img_periphchoice_clicked_cb(lv_event_t * e) {
+    Btn_PeriphChoice_clicked(e);
 }
 
 
@@ -376,7 +381,7 @@ void btn_peer_delete_long_pressed_cb(lv_event_t * e) {
 
 // Event callback for btn_multi_prev on clicked
 void btn_multi_prev_clicked_cb(lv_event_t * e) {
-    Btn_Top_Prev_clicked();
+    Btn_Top_Prev_clicked(e);
 }
 
 
@@ -394,13 +399,13 @@ void scr_multi_pressed_cb(lv_event_t * e) {
 
 // Event callback for scr_multi on screen-loaded
 void scr_multi_screen_loaded_cb(lv_event_t * e) {
-    Scr_Multi_loaded();
+    Scr_Multi_loaded(e);
 }
 
 
 // Event callback for scr_multi on screen-unloaded
 void scr_multi_screen_unloaded_cb(lv_event_t * e) {
-    Scr_Multi_unloaded();
+    Scr_Multi_unloaded(e);
 }
 
 

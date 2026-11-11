@@ -29,6 +29,7 @@ void Btn_Peer_Delete_clicked();
 void Scr_Eichen_loaded();
 void Scr_Eichen_unloaded();
 void Btn_Eichen_Eichen_clicked();
+void Scr_Eichen_Gesture(lv_event_t * e);
 
 void Scr_Volt_loaded();
 void Scr_Volt_unloaded();
@@ -38,11 +39,19 @@ void Btn_Volt_Save_clicked();
 void Scr_Multi_Unloaded(lv_event_t * e);
 void Scr_Multi_Loaded(lv_event_t * e);
 void Scr_Multi_FillScreen();
-void Scr_Multi_Clicked(lv_event_t * e);
-void Scr_Multi_Next(lv_event_t * e);
-void Scr_Multi_Prev(lv_event_t * e);
-void Btn_Multi_1_clicked(void);
+void Scr_Multi_ClearScreen();
+void Btn_Multi_Next_clicked(lv_event_t * e);
+void Btn_Multi_Prev_clicked(lv_event_t * e);
+void Btn_Multi_Up_clicked(lv_event_t * e);
 void Scr_Multi_Timer_update(lv_timer_t *timer);
+void Btn_Multi_All_clicked(int Pos);
+void Btn_Multi1_clicked(lv_event_t * e);
+void Btn_Multi2_clicked(lv_event_t * e);
+void Btn_Multi3_clicked(lv_event_t * e);
+void Btn_Multi4_clicked(lv_event_t * e);
+void Scr_Multi_Gesture(lv_event_t * e);
+void Scr_Multi_Clicked(lv_event_t * e);
+
 
 void Scr_Settings_loaded();
 void Scr_Settings_unloaded();
@@ -61,30 +70,28 @@ void Scr_Start_loaded();
 void Scr_Start_unloaded();
 void Btn_Start_1_clicked();
 void Btn_Start_2_clicked();
-    
+void Scr_Start_Gesture(lv_event_t * e);
+
 void Scr_Simple_loaded();
 void Scr_Simple_unloaded();
-void Scr_Simple_Timer_update(lv_timer_t * timer);
 void Scr_Simple_FillScreen();
 void Scr_Simple_ClearScreen();
 void Btn_Simple_Prev_clicked();
 void Btn_Simple_Next_clicked();
+void Scr_Simple_Timer_update(lv_timer_t * timer);
 void Btn_Simple_Up_clicked();
-void Scr_Simple_Clicked(lv_event_t * e);
+void Scr_Simple_clicked(lv_event_t * e);
 
-void Scr_PeerChoice_loaded();
-void Scr_PeerChoice_unloaded();
-void Btn_PeerChoice_Open_clicked();
-void Scr_PeerChoice_Timer_update(lv_timer_t *timer);
-    
 void Scr_PeriphChoice_loaded();
 void Scr_PeriphChoice_unloaded();
 void Scr_PeriphChoice_Timer_update(lv_timer_t *timer);
 void Scr_PeriphChoice_Click(lv_event_t * e);
 void Scr_PeriphChoice_FillScreen();
 void Scr_PeriphChoice_Return();
-void Scr_PeriphChoice_Next(lv_event_t * e);
-void Scr_PeriphChoice_Prev(lv_event_t * e);
+void Btn_PeriphChoice_Next_clicked(lv_event_t * e);
+void Btn_PeriphChoice_Prev_clicked(lv_event_t * e);
+void Btn_PeriphChoice_Up_clicked(lv_event_t * e);
+void Scr_PeriphChoice_Gesture(lv_event_t * e);
 
 
 extern char jsondataBuf[ESP_MAX_LEN+1];

@@ -20,6 +20,7 @@
 extern lv_obj_t *ui_LblMenuBatt;
 float testvalue;
 
+#pragma region CompThing
 CompThing::CompThing()
 {
     _PeerVisible      = true;
@@ -107,7 +108,9 @@ void CompThing::SetStyle(lv_obj_t *obj)
     lv_obj_set_style_pad_bottom(obj, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_align(obj, LV_ALIGN_CENTER);	
 }
+#pragma endregion CompThing
 
+#pragma region CompButton
 CompButton::CompButton()
 {
     _ClassType = 1;
@@ -128,7 +131,6 @@ CompButton::~CompButton()
     #ifdef BATTERY_PORT
 		lv_obj_clear_flag(ui_LblMenuBatt, LV_OBJ_FLAG_HIDDEN);
 	#endif
-    //if (_Button)     { Serial.println("~CompButton: Delete _Button"); lv_obj_del(_Button);    _Button     = NULL; }
 }
 void CompButton::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, PeriphClass *Periph, lv_event_cb_t event_cb)
 {
@@ -373,7 +375,9 @@ void CompButton::Update()
         lv_obj_add_flag(_LblValue, LV_OBJ_FLAG_HIDDEN);
     }  
 }
+#pragma endregion CompButton
 
+#pragma region CompSensor
 CompSensor::CompSensor()
 {
     _ClassType = 2;
@@ -422,6 +426,9 @@ void CompSensor::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, 
     lv_obj_set_style_shadow_spread(_Button, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_shadow_ofs_x(_Button, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_shadow_ofs_y(_Button, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+  
+    uint32_t userdata = Pos;
+    lv_obj_set_user_data(_Button, (void*)(uintptr_t)userdata);
 
     _LblPeer = lv_label_create(_Button);
     lv_obj_set_width(_LblPeer, LV_SIZE_CONTENT);   /// 1
@@ -496,8 +503,8 @@ void CompSensor::Update()
 {
     lv_obj_set_pos(_Button, _x, _y);
     
-    //testvalue++;
-    //if (testvalue > 20) testvalue = 0;
+    testvalue++;
+    if (testvalue > 20) testvalue = 0;
 
 	if ((PeerOf(_Periph)->GetName() == NULL) or (!_PeerVisible))
 	{
@@ -530,7 +537,7 @@ void CompSensor::Update()
         if (Screen[ActiveMultiScreen].GetPrimToShow(_Pos) == PRIM_AMP)
         {
             value = _Periph->GetValue(V_AMP);
-            //value = testvalue; // for testing only
+            value = testvalue; // for testing only
 
             if      (value<10)  nk = 2;
             else if (value<100) nk = 1;
@@ -598,7 +605,9 @@ void CompSensor::Update()
     }  
     if (_GraphVisible) ChartUpdate();
 }
+#pragma endregion CompSensor
 
+#pragma region CompMeter
 CompMeter::CompMeter() 
 {
     _PeerVisible = true;
@@ -824,3 +833,4 @@ void CompMeter::Update()
 
     if (_GraphVisible) ChartUpdate();
 }
+#pragma endregion CompMeter

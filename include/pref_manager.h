@@ -26,8 +26,7 @@ class MultiMonitorClass {
         bool         _Used;
         void        *_Component [PERIPH_PER_SCREEN];
         int          _PrimToShow[PERIPH_PER_SCREEN];  // what to show PRIM_SWITCH, PRIM_VOLT, PRIM_AMP, PRIM_WATT
-        //lv_obj_t    *_Component[PERIPH_PER_SCREEN];
-    
+        
     public:
         MultiMonitorClass();
         char *Export();

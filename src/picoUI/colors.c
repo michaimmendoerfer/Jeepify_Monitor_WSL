@@ -6,7 +6,9 @@ const uint32_t asset_ad0808 = 0xad0808;
 
 // Common colors
 const uint32_t common_000000 = 0x000000;
+const uint32_t common_2196f3 = 0x2196f3;
 const uint32_t common_3d3d3d = 0x3d3d3d;
+const uint32_t common_4ac408 = 0x4ac408;
 const uint32_t common_9a0101 = 0x9a0101;
 const uint32_t common_b21515 = 0xb21515;
 const uint32_t common_dc1010 = 0xdc1010;

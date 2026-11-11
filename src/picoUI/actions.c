@@ -5,6 +5,7 @@
 #include "ui.h"
 #include "picoUI/custom_functions.h"
 
+
 // Animation timeline helpers
 void pp_anim_stop_timelines_for_deleted_tree(lv_obj_t * root) {
     (void)root;
@@ -19,6 +20,12 @@ void btn_peer_system_clicked_cb(lv_event_t * e) {
 }
 
 
+// Event callback for btn_multi_2 on clicked
+void btn_multi_2_clicked_cb(lv_event_t * e) {
+    Btn_Multi2_clicked(e);
+}
+
+
 // Event callback for btn_start_settings on clicked
 void btn_start_settings_clicked_cb(lv_event_t * e) {
     lv_scr_load_anim(objects.scr_settings, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
@@ -27,7 +34,7 @@ void btn_start_settings_clicked_cb(lv_event_t * e) {
 
 // Event callback for scr_top on gesture
 void scr_top_gesture_cb(lv_event_t * e) {
-    Scr_Top_Gesture();
+    Scr_Top_Gesture(e);
 }
 
 
@@ -39,7 +46,7 @@ void btn_peer_volt_clicked_cb(lv_event_t * e) {
 
 // Event callback for btn_volt_save on clicked
 void btn_volt_save_clicked_cb(lv_event_t * e) {
-    /* Export warning: invalid Call Function name */
+    Btn_Volt_Save_clicked();
 }
 
 
@@ -69,13 +76,7 @@ void btn_simple_next_clicked_cb(lv_event_t * e) {
 
 // Event callback for btn_multi_1 on clicked
 void btn_multi_1_clicked_cb(lv_event_t * e) {
-    Btn_Multi_1_clicked();
-}
-
-
-// Event callback for btn_multi_1 on long-pressed
-void btn_multi_1_long_pressed_cb(lv_event_t * e) {
-    /* Export warning: invalid Call Function name */
+    Btn_Multi1_clicked(e);
 }
 
 
@@ -106,30 +107,6 @@ void btn_set_peers_clicked_cb(lv_event_t * e) {
 // Event callback for btn_set_reset on clicked
 void btn_set_reset_clicked_cb(lv_event_t * e) {
     Btn_Settings_Reset_clicked();
-}
-
-
-// Event callback for scr_peerchoice on screen-loaded
-void scr_peerchoice_screen_loaded_cb(lv_event_t * e) {
-    Scr_PeerChoice_loaded();
-}
-
-
-// Event callback for scr_peerchoice on screen-unloaded
-void scr_peerchoice_screen_unloaded_cb(lv_event_t * e) {
-    Scr_PeerChoice_unloaded();
-}
-
-
-// Event callback for scr_peerchoice on gesture
-void scr_peerchoice_gesture_cb(lv_event_t * e) {
-    Scr_PeerChoice_Gesture(e);
-}
-
-
-// Event callback for btn_peerchoice_next on clicked
-void btn_peerchoice_next_clicked_cb(lv_event_t * e) {
-    Btn_PeerChoic_clicked();
 }
 
 
@@ -181,12 +158,6 @@ void btn_set_pair_clicked_cb(lv_event_t * e) {
 }
 
 
-// Event callback for btn_peerchoice_prev on clicked
-void btn_peerchoice_prev_clicked_cb(lv_event_t * e) {
-    Btn_PeriphChoic_clicked();
-}
-
-
 // Event callback for btn_peer_pair on clicked
 void btn_peer_pair_clicked_cb(lv_event_t * e) {
     /* Export warning: invalid Call Function name */
@@ -199,9 +170,9 @@ void btn_top_next_clicked_cb(lv_event_t * e) {
 }
 
 
-// Event callback for btn_peerchoice_up on clicked
-void btn_peerchoice_up_clicked_cb(lv_event_t * e) {
-    Btn_PeerChoice_Up_clicked();
+// Event callback for btn_multi_3 on clicked
+void btn_multi_3_clicked_cb(lv_event_t * e) {
+    Btn_Multi3_clicked(e);
 }
 
 
@@ -247,15 +218,9 @@ void btn_set_json_clicked_cb(lv_event_t * e) {
 }
 
 
-// Event callback for btn_peerchoice_open on clicked
-void btn_peerchoice_open_clicked_cb(lv_event_t * e) {
-    Btn_PeerChoice_Open_clicked();
-}
-
-
 // Event callback for btn_multi_up on clicked
 void btn_multi_up_clicked_cb(lv_event_t * e) {
-    Btn_Multi_Up_clicked();
+    Btn_Multi_Up_clicked(e);
 }
 
 
@@ -295,9 +260,9 @@ void scr_simple_screen_unloaded_cb(lv_event_t * e) {
 }
 
 
-// Event callback for scr_simple on gesture
-void scr_simple_gesture_cb(lv_event_t * e) {
-    Scr_Simple_Gesture(e);
+// Event callback for scr_simple on clicked
+void scr_simple_clicked_cb(lv_event_t * e) {
+    Scr_Simple_clicked(e);
 }
 
 
@@ -321,7 +286,7 @@ void scr_json_screen_loaded_cb(lv_event_t * e) {
 
 // Event callback for btn_periphchoice_next on clicked
 void btn_periphchoice_next_clicked_cb(lv_event_t * e) {
-    Btn_PeriphChoic_clicked();
+    Btn_PeriphChoice_Next_clicked(e);
 }
 
 
@@ -357,7 +322,7 @@ void btn_peer_reset_clicked_cb(lv_event_t * e) {
 
 // Event callback for btn_periphchoice_up on clicked
 void btn_periphchoice_up_clicked_cb(lv_event_t * e) {
-    Btn_PeriphChoice_Up_clicked();
+    Btn_PeriphChoice_Up_clicked(e);
 }
 
 
@@ -381,7 +346,13 @@ void scr_settings_screen_unloaded_cb(lv_event_t * e) {
 
 // Event callback for btn_periphchoice_prev on clicked
 void btn_periphchoice_prev_clicked_cb(lv_event_t * e) {
-    Btn_PeriphChoic_clicked();
+    Btn_PeriphChoice_Prev_clicked(e);
+}
+
+
+// Event callback for btn_multi_4 on clicked
+void btn_multi_4_clicked_cb(lv_event_t * e) {
+    Btn_Multi4_clicked(e);
 }
 
 
@@ -411,7 +382,25 @@ void btn_multi_prev_clicked_cb(lv_event_t * e) {
 
 // Event callback for scr_multi on gesture
 void scr_multi_gesture_cb(lv_event_t * e) {
-    lv_scr_load_anim(objects.scr_start, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+    Scr_Multi_Gesture(e);
+}
+
+
+// Event callback for scr_multi on pressed
+void scr_multi_pressed_cb(lv_event_t * e) {
+    Scr_Multi_pressed(e);
+}
+
+
+// Event callback for scr_multi on screen-loaded
+void scr_multi_screen_loaded_cb(lv_event_t * e) {
+    Scr_Multi_loaded();
+}
+
+
+// Event callback for scr_multi on screen-unloaded
+void scr_multi_screen_unloaded_cb(lv_event_t * e) {
+    Scr_Multi_unloaded();
 }
 
 

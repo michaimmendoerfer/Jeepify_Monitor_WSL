@@ -13,7 +13,9 @@ extern const uint32_t asset_ad0808;
 
 // Common colors
 extern const uint32_t common_000000;
+extern const uint32_t common_2196f3;
 extern const uint32_t common_3d3d3d;
+extern const uint32_t common_4ac408;
 extern const uint32_t common_9a0101;
 extern const uint32_t common_b21515;
 extern const uint32_t common_dc1010;

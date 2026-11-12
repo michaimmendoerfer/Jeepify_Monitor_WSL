@@ -54,6 +54,7 @@ void scr_simple_clicked_cb(lv_event_t * e);
 void btn_simple_up_clicked_cb(lv_event_t * e);
 void scr_json_gesture_cb(lv_event_t * e);
 void scr_json_screen_loaded_cb(lv_event_t * e);
+void btn_top_up_clicked_cb(lv_event_t * e);
 void btn_periphchoice_next_clicked_cb(lv_event_t * e);
 void scr_periphchoice_screen_loaded_cb(lv_event_t * e);
 void scr_periphchoice_screen_unloaded_cb(lv_event_t * e);

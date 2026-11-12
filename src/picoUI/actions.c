@@ -15,7 +15,7 @@ void pp_anim_stop_timelines_for_deleted_tree(lv_obj_t * root) {
 
 // Event callback for btn_peer_system on clicked
 void btn_peer_system_clicked_cb(lv_event_t * e) {
-    Btn_Peer_System_clicked();
+    Btn_Peer_System_clicked(e);
 }
 
 
@@ -39,7 +39,7 @@ void scr_top_gesture_cb(lv_event_t * e) {
 
 // Event callback for btn_peer_volt on clicked
 void btn_peer_volt_clicked_cb(lv_event_t * e) {
-    Btn_Peer_Volt_clicked();
+    Btn_Peer_Volt_clicked(e);
 }
 
 
@@ -57,7 +57,7 @@ void btn_simple_prev_clicked_cb(lv_event_t * e) {
 
 // Event callback for btn_peer_prev on clicked
 void btn_peer_prev_clicked_cb(lv_event_t * e) {
-    Btn_Top_Prev_clicked();
+    Btn_Top_Prev_clicked(e);
 }
 
 
@@ -123,19 +123,19 @@ void btn_start_switch_clicked_cb(lv_event_t * e) {
 
 // Event callback for btn_set_restart on clicked
 void btn_set_restart_clicked_cb(lv_event_t * e) {
-    Btn_Settings_Restart_clicked();
+    Btn_Settings_Restart_clicked(e);
 }
 
 
 // Event callback for btn_peer_restart on clicked
 void btn_peer_restart_clicked_cb(lv_event_t * e) {
-    Btn_Peer_Restart_clicked();
+    Btn_Peer_Restart_clicked(e);
 }
 
 
 // Event callback for btn_peer_sleep on clicked
 void btn_peer_sleep_clicked_cb(lv_event_t * e) {
-    Btn_Peer_Sleep_clicked();
+    Btn_Peer_Sleep_clicked(e);
 }
 
 
@@ -159,7 +159,7 @@ void btn_set_pair_clicked_cb(lv_event_t * e) {
 
 // Event callback for btn_peer_pair on clicked
 void btn_peer_pair_clicked_cb(lv_event_t * e) {
-    /* Export warning: invalid Call Function name */
+    Btn_Peer_Pair_clicked(e);
 }
 
 
@@ -177,13 +177,13 @@ void btn_multi_3_clicked_cb(lv_event_t * e) {
 
 // Event callback for btn_peer_next on clicked
 void btn_peer_next_clicked_cb(lv_event_t * e) {
-    Btn_Peer_Next_clicked();
+    Btn_Peer_Next_clicked(e);
 }
 
 
 // Event callback for btn_peer_up on clicked
 void btn_peer_up_clicked_cb(lv_event_t * e) {
-    Btn_Peer_Up_clicked();
+    Btn_Peer_Up_clicked(e);
 }
 
 
@@ -207,7 +207,7 @@ void scr_start_gesture_cb(lv_event_t * e) {
 
 // Event callback for btn_top_prev on clicked
 void btn_top_prev_clicked_cb(lv_event_t * e) {
-    Btn_Top_Prev_clicked();
+    Btn_Top_Prev_clicked(e);
 }
 
 
@@ -231,7 +231,7 @@ void btn_multi_up_clicked_cb(lv_event_t * e) {
 
 // Event callback for btn_peer_eichen on clicked
 void btn_peer_eichen_clicked_cb(lv_event_t * e) {
-    Btn_Peer_Eichen_clicked();
+    Btn_Peer_Eichen_clicked(e);
 }
 
 
@@ -289,6 +289,12 @@ void scr_json_screen_loaded_cb(lv_event_t * e) {
 }
 
 
+// Event callback for btn_top_up on clicked
+void btn_top_up_clicked_cb(lv_event_t * e) {
+    Btn_Top_Up_clicked(e);
+}
+
+
 // Event callback for btn_periphchoice_next on clicked
 void btn_periphchoice_next_clicked_cb(lv_event_t * e) {
     Btn_PeriphChoice_Next_clicked(e);
@@ -321,7 +327,7 @@ void btn_start_single_clicked_cb(lv_event_t * e) {
 
 // Event callback for btn_peer_reset on clicked
 void btn_peer_reset_clicked_cb(lv_event_t * e) {
-    Btn_Peer_Reset_clicked();
+    Btn_Peer_Reset_clicked(e);
 }
 
 
@@ -375,7 +381,7 @@ void btn_start_multi_clicked_cb(lv_event_t * e) {
 
 // Event callback for btn_peer_delete on long-pressed
 void btn_peer_delete_long_pressed_cb(lv_event_t * e) {
-    Btn_Peer_Delete_clicked();
+    Btn_Peer_Delete_clicked(e);
 }
 
 

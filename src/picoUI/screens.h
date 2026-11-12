@@ -81,6 +81,7 @@ typedef struct _objects_t {
     lv_obj_t *btn_simple_up;
     lv_obj_t *img_simple_zeiger;
     lv_obj_t *arc_simple;
+    lv_obj_t *btn_top_up;
     lv_obj_t *btn_top_next;
     lv_obj_t *btn_top_prev;
     lv_obj_t *img_top_wifi;
@@ -128,6 +129,7 @@ typedef struct _objects_t {
     lv_obj_t *btn_simple_next_label;
     lv_obj_t *btn_simple_prev_label;
     lv_obj_t *btn_simple_up_label;
+    lv_obj_t *btn_top_up_label;
     lv_obj_t *btn_top_next_label;
     lv_obj_t *btn_top_prev_label;
     lv_obj_t *btn_periphchoice_next_label;

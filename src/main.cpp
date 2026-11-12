@@ -536,9 +536,9 @@ void loop()
         if (active_screen == objects.scr_peer) 
         {
             if (Knob.Diff < 0) {
-                Btn_Peer_Prev_clicked();
+                Btn_Peer_Prev_clicked(NULL);
             } else {
-                Btn_Peer_Next_clicked();
+                Btn_Peer_Next_clicked(NULL);
             }
         }
         /*

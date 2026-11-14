@@ -182,8 +182,8 @@ class CompSensor : public CompThing {
 
 class CompMeter : public CompThing {
 	private:
-        lv_obj_t *ui_ImgMeter2;
-        lv_obj_t *ui_ImgZeiger;
+        //lv_obj_t *ui_ImgMeter2;
+        //lv_obj_t *ui_ImgZeiger;
 
 	public:
 		CompMeter();

@@ -31,9 +31,21 @@ void btn_start_settings_clicked_cb(lv_event_t * e) {
 }
 
 
-// Event callback for scr_top on gesture
-void scr_top_gesture_cb(lv_event_t * e) {
-    Scr_Top_Gesture(e);
+// Event callback for scr_switch on screen-loaded
+void scr_switch_screen_loaded_cb(lv_event_t * e) {
+    Scr_Meter_loaded(e);
+}
+
+
+// Event callback for scr_switch on screen-unloaded
+void scr_switch_screen_unloaded_cb(lv_event_t * e) {
+    Scr_Meter_unloaded(e);
+}
+
+
+// Event callback for scr_switch on clicked
+void scr_switch_clicked_cb(lv_event_t * e) {
+    Scr_Meter_clicked(e);
 }
 
 
@@ -43,33 +55,27 @@ void btn_peer_volt_clicked_cb(lv_event_t * e) {
 }
 
 
-// Event callback for btn_volt_save on clicked
-void btn_volt_save_clicked_cb(lv_event_t * e) {
-    Btn_Volt_Save_clicked();
+// Event callback for btn_meter_prev on clicked
+void btn_meter_prev_clicked_cb(lv_event_t * e) {
+    Btn_Meter_Prev_clicked(e);
 }
 
 
-// Event callback for btn_simple_prev on clicked
-void btn_simple_prev_clicked_cb(lv_event_t * e) {
-    Btn_Simple_Prev_clicked();
+// Event callback for btn_volt_save on clicked
+void btn_volt_save_clicked_cb(lv_event_t * e) {
+    Btn_Volt_Save_clicked(e);
 }
 
 
 // Event callback for btn_peer_prev on clicked
 void btn_peer_prev_clicked_cb(lv_event_t * e) {
-    Btn_Top_Prev_clicked(e);
+    Btn_Peer_Prev_clicked(e);
 }
 
 
 // Event callback for btn_eichen_eichen on clicked
 void btn_eichen_eichen_clicked_cb(lv_event_t * e) {
-    Btn_Eichen_Eichen_clicked();
-}
-
-
-// Event callback for btn_simple_next on clicked
-void btn_simple_next_clicked_cb(lv_event_t * e) {
-    Btn_Simple_Next_clicked();
+    Btn_Eichen_Eichen_clicked(e);
 }
 
 
@@ -81,7 +87,7 @@ void btn_multi_1_clicked_cb(lv_event_t * e) {
 
 // Event callback for scr_eichen on screen-loaded
 void scr_eichen_screen_loaded_cb(lv_event_t * e) {
-    Scr_Eichen_loaded();
+    Scr_Eichen_loaded(e);
 }
 
 
@@ -93,31 +99,31 @@ void scr_eichen_gesture_cb(lv_event_t * e) {
 
 // Event callback for scr_eichen on screen-unloaded
 void scr_eichen_screen_unloaded_cb(lv_event_t * e) {
-    Scr_Eichen_unloaded();
+    Scr_Eichen_unloaded(e);
 }
 
 
 // Event callback for btn_set_peers on clicked
 void btn_set_peers_clicked_cb(lv_event_t * e) {
-    Btn_Settings_Peers_clicked();
+    Btn_Settings_Peers_clicked(e);
 }
 
 
 // Event callback for btn_set_reset on clicked
 void btn_set_reset_clicked_cb(lv_event_t * e) {
-    Btn_Settings_Reset_clicked();
+    Btn_Settings_Reset_clicked(e);
 }
 
 
 // Event callback for btn_set_save on clicked
 void btn_set_save_clicked_cb(lv_event_t * e) {
-    Btn_Settings_Save_clicked();
+    Btn_Settings_Save_clicked(e);
 }
 
 
 // Event callback for btn_start_switch on clicked
 void btn_start_switch_clicked_cb(lv_event_t * e) {
-    Btn_Start_2_clicked();
+    Btn_Start_2_clicked(e);
 }
 
 
@@ -141,7 +147,7 @@ void btn_peer_sleep_clicked_cb(lv_event_t * e) {
 
 // Event callback for arc_volt on value-changed
 void arc_volt_value_changed_cb(lv_event_t * e) {
-    Arc_Volt_change();
+    Arc_Volt_change(e);
 }
 
 
@@ -153,7 +159,7 @@ void btn_multi_next_clicked_cb(lv_event_t * e) {
 
 // Event callback for btn_set_pair on clicked
 void btn_set_pair_clicked_cb(lv_event_t * e) {
-    Btn_Settings_Pair_clicked();
+    Btn_Settings_Pair_clicked(e);
 }
 
 
@@ -163,15 +169,21 @@ void btn_peer_pair_clicked_cb(lv_event_t * e) {
 }
 
 
-// Event callback for btn_top_next on clicked
-void btn_top_next_clicked_cb(lv_event_t * e) {
-    Btn_Top_Next_clicked();
-}
-
-
 // Event callback for btn_multi_3 on clicked
 void btn_multi_3_clicked_cb(lv_event_t * e) {
     Btn_Multi3_clicked(e);
+}
+
+
+// Event callback for btn_switch_up on clicked
+void btn_switch_up_clicked_cb(lv_event_t * e) {
+    Btn_Switch_Up_clicked(e);
+}
+
+
+// Event callback for btn_switch_next on clicked
+void btn_switch_next_clicked_cb(lv_event_t * e) {
+    Btn_Meter_Next_clicked(e);
 }
 
 
@@ -189,25 +201,19 @@ void btn_peer_up_clicked_cb(lv_event_t * e) {
 
 // Event callback for scr_start on screen-loaded
 void scr_start_screen_loaded_cb(lv_event_t * e) {
-    Scr_Start_loaded();
+    Scr_Start_loaded(e);
 }
 
 
 // Event callback for scr_start on screen-unloaded
 void scr_start_screen_unloaded_cb(lv_event_t * e) {
-    Scr_Start_unloaded();
+    Scr_Start_unloaded(e);
 }
 
 
 // Event callback for scr_start on gesture
 void scr_start_gesture_cb(lv_event_t * e) {
     Scr_Start_Gesture(e);
-}
-
-
-// Event callback for btn_top_prev on clicked
-void btn_top_prev_clicked_cb(lv_event_t * e) {
-    Btn_Top_Prev_clicked(e);
 }
 
 
@@ -237,43 +243,19 @@ void btn_peer_eichen_clicked_cb(lv_event_t * e) {
 
 // Event callback for scr_peer on screen-loaded
 void scr_peer_screen_loaded_cb(lv_event_t * e) {
-    Scr_Peer_loaded();
+    Scr_Peer_loaded(e);
 }
 
 
 // Event callback for scr_peer on screen-unloaded
 void scr_peer_screen_unloaded_cb(lv_event_t * e) {
-    Scr_Peer_unloaded();
+    Scr_Peer_unloaded(e);
 }
 
 
 // Event callback for scr_peer on gesture
 void scr_peer_gesture_cb(lv_event_t * e) {
     Scr_Peer_Gesture(e);
-}
-
-
-// Event callback for scr_simple on screen-loaded
-void scr_simple_screen_loaded_cb(lv_event_t * e) {
-    Scr_Simple_loaded();
-}
-
-
-// Event callback for scr_simple on screen-unloaded
-void scr_simple_screen_unloaded_cb(lv_event_t * e) {
-    Scr_Simple_unloaded();
-}
-
-
-// Event callback for scr_simple on clicked
-void scr_simple_clicked_cb(lv_event_t * e) {
-    Scr_Simple_clicked(e);
-}
-
-
-// Event callback for btn_simple_up on clicked
-void btn_simple_up_clicked_cb(lv_event_t * e) {
-    Btn_Simple_Up_clicked();
 }
 
 
@@ -285,13 +267,43 @@ void scr_json_gesture_cb(lv_event_t * e) {
 
 // Event callback for scr_json on screen-loaded
 void scr_json_screen_loaded_cb(lv_event_t * e) {
-    Scr_JSON_loaded();
+    Scr_JSON_loaded(e);
 }
 
 
-// Event callback for btn_top_up on clicked
-void btn_top_up_clicked_cb(lv_event_t * e) {
-    Btn_Top_Up_clicked(e);
+// Event callback for scr_meter on screen-loaded
+void scr_meter_screen_loaded_cb(lv_event_t * e) {
+    Scr_Meter_loaded(e);
+}
+
+
+// Event callback for scr_meter on screen-unloaded
+void scr_meter_screen_unloaded_cb(lv_event_t * e) {
+    Scr_Meter_unloaded(e);
+}
+
+
+// Event callback for scr_meter on clicked
+void scr_meter_clicked_cb(lv_event_t * e) {
+    Scr_Meter_clicked(e);
+}
+
+
+// Event callback for scr_meter on long-pressed
+void scr_meter_long_pressed_cb(lv_event_t * e) {
+    Scr_Meter_long_clicked(e);
+}
+
+
+// Event callback for scr_meter on gesture
+void scr_meter_gesture_cb(lv_event_t * e) {
+    Scr_Meter_Gesture(e);
+}
+
+
+// Event callback for scr_meter on pressed
+void scr_meter_pressed_cb(lv_event_t * e) {
+    Scr_Meter_pressed(e);
 }
 
 
@@ -303,13 +315,13 @@ void btn_periphchoice_next_clicked_cb(lv_event_t * e) {
 
 // Event callback for scr_periphchoice on screen-loaded
 void scr_periphchoice_screen_loaded_cb(lv_event_t * e) {
-    Scr_PeriphChoice_loaded();
+    Scr_PeriphChoice_loaded(e);
 }
 
 
 // Event callback for scr_periphchoice on screen-unloaded
 void scr_periphchoice_screen_unloaded_cb(lv_event_t * e) {
-    Scr_PeriphChoice_unloaded();
+    Scr_PeriphChoice_unloaded(e);
 }
 
 
@@ -319,9 +331,21 @@ void scr_periphchoice_gesture_cb(lv_event_t * e) {
 }
 
 
+// Event callback for btn_meter_next on clicked
+void btn_meter_next_clicked_cb(lv_event_t * e) {
+    Btn_Meter_Next_clicked(e);
+}
+
+
+// Event callback for btn_meter_up on clicked
+void btn_meter_up_clicked_cb(lv_event_t * e) {
+    Btn_Meter_Up_clicked(e);
+}
+
+
 // Event callback for btn_start_single on clicked
 void btn_start_single_clicked_cb(lv_event_t * e) {
-    Btn_Start_1_clicked();
+    Btn_Start_1_clicked(e);
 }
 
 
@@ -345,13 +369,13 @@ void scr_settings_gesture_cb(lv_event_t * e) {
 
 // Event callback for scr_settings on screen-loaded
 void scr_settings_screen_loaded_cb(lv_event_t * e) {
-    Scr_Settings_loaded();
+    Scr_Settings_loaded(e);
 }
 
 
 // Event callback for scr_settings on screen-unloaded
 void scr_settings_screen_unloaded_cb(lv_event_t * e) {
-    Scr_Settings_unloaded();
+    Scr_Settings_unloaded(e);
 }
 
 
@@ -369,7 +393,7 @@ void btn_multi_4_clicked_cb(lv_event_t * e) {
 
 // Event callback for btn_set_websvr on clicked
 void btn_set_websvr_clicked_cb(lv_event_t * e) {
-    Btn_Settings_WebSvr_clicked();
+    Btn_Settings_WebSvr_clicked(e);
 }
 
 
@@ -387,7 +411,13 @@ void btn_peer_delete_long_pressed_cb(lv_event_t * e) {
 
 // Event callback for btn_multi_prev on clicked
 void btn_multi_prev_clicked_cb(lv_event_t * e) {
-    Btn_Top_Prev_clicked(e);
+    Btn_Multi_Prev_clicked(e);
+}
+
+
+// Event callback for btn_switch_prev on clicked
+void btn_switch_prev_clicked_cb(lv_event_t * e) {
+    Btn_Switch_Prev_clicked(e);
 }
 
 
@@ -417,13 +447,13 @@ void scr_multi_screen_unloaded_cb(lv_event_t * e) {
 
 // Event callback for scr_volt on screen-loaded
 void scr_volt_screen_loaded_cb(lv_event_t * e) {
-    Scr_Volt_loaded();
+    Scr_Volt_loaded(e);
 }
 
 
 // Event callback for scr_volt on screen-unloaded
 void scr_volt_screen_unloaded_cb(lv_event_t * e) {
-    Scr_Volt_unloaded();
+    Scr_Volt_unloaded(e);
 }
 
 

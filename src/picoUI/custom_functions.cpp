@@ -8,7 +8,6 @@
 #include "custom_functions.h"
 #include <ArduinoJson.h>
 
-
 uint8_t MultiPosToChange;
 MultiMonitorClass *ActiveScreen;
 
@@ -54,58 +53,7 @@ CompThing   *CompThingArray[4] = {NULL, NULL, NULL, NULL};
                 }
             }
         }
-        {
-            // btn_top_next
-            lv_obj_t *obj = lv_btn_create(parent_obj);
-            objects.btn_top_next = obj;
-            lv_obj_set_pos(obj, LV_PCT(87), LV_PCT(45));
-            lv_obj_set_size(obj, LV_PCT(10), LV_PCT(10));
-            lv_obj_set_style_bg_color(obj, lv_color_hex(common_9a0101), LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_bg_opa(obj, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_border_side(obj, 15, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_border_color(obj, lv_color_hex(common_ffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_border_width(obj, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_radius(obj, 15, LV_PART_MAIN | LV_STATE_CHECKED);
-            lv_obj_set_style_radius(obj, 15, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_bg_color(obj, lv_color_hex(common_ff0000), LV_PART_MAIN | LV_STATE_CHECKED);
-            lv_obj_set_style_bg_opa(obj, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_CHECKED);
-            {
-                lv_obj_t *parent_obj = obj;
-                {
-                    // btn_top_next_label
-                    lv_obj_t *obj = lv_label_create(parent_obj);
-                    objects.btn_top_next_label = obj;
-                    lv_label_set_text(obj, ">");
-                    lv_obj_center(obj);
-                }
-            }
-        }
-        {
-            // btn_top_prev
-            lv_obj_t *obj = lv_btn_create(parent_obj);
-            objects.btn_top_prev = obj;
-            lv_obj_set_pos(obj, LV_PCT(3), LV_PCT(45));
-            lv_obj_set_size(obj, LV_PCT(10), LV_PCT(10));
-            lv_obj_set_style_bg_color(obj, lv_color_hex(common_9a0101), LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_bg_opa(obj, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_border_side(obj, 15, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_border_color(obj, lv_color_hex(common_ffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_border_width(obj, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_radius(obj, 15, LV_PART_MAIN | LV_STATE_CHECKED);
-            lv_obj_set_style_radius(obj, 15, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_bg_color(obj, lv_color_hex(common_ff0000), LV_PART_MAIN | LV_STATE_CHECKED);
-            lv_obj_set_style_bg_opa(obj, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_CHECKED);
-            {
-                lv_obj_t *parent_obj = obj;
-                {
-                    // btn_top_prev_label
-                    lv_obj_t *obj = lv_label_create(parent_obj);
-                    objects.btn_top_prev_label = obj;
-                    lv_label_set_text(obj, "<");
-                    lv_obj_center(obj);
-                }
-            }
-        }
+        
         {
             // img_top_wifi
             lv_obj_t *obj = lv_img_create(parent_obj);
@@ -121,16 +69,6 @@ CompThing   *CompThingArray[4] = {NULL, NULL, NULL, NULL};
         }
     }
 
-    // Event callback registrations
-    lv_obj_add_flag(objects.scr_top, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.scr_top, scr_top_gesture_cb, LV_EVENT_GESTURE, NULL);
-    lv_obj_add_flag(objects.btn_top_up, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.btn_top_up, btn_top_up_clicked_cb, LV_EVENT_CLICKED, NULL);
-    lv_obj_add_flag(objects.btn_top_next, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.btn_top_next, btn_top_next_clicked_cb, LV_EVENT_CLICKED, NULL);
-    lv_obj_add_flag(objects.btn_top_prev, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.btn_top_prev, btn_top_prev_clicked_cb, LV_EVENT_CLICKED, NULL);
-
     tick_screen_scr_top();
 }
 
@@ -139,44 +77,17 @@ void tick_screen_scr_top() {
 */
 #pragma endregion Scr_Navi
 #pragma region Scr_Top
-
-void Scr_Top_Gesture(lv_event_t * e)
-{
-	lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP) {
-        lv_indev_wait_release(lv_indev_get_act());
-		Serial.println("Scr_Top_Gesture: LV_DIR_TOP");
-        lv_scr_load_anim(objects.scr_start, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
-    }
-}
-void Btn_Top_Prev_clicked()
-{
-	Serial.println("Btn_Top_Prev_clicked");
-	Knob.Clicked = 1;
-	Knob.Diff = -1;
-}
-void Btn_Top_Next_clicked()
-{
-	Serial.println("Btn_Top_Next_clicked");
-	Knob.Clicked = 1;
-	Knob.Diff = 1;
-}
-void Btn_Top_Up_clicked(lv_event_t * e)
-{
-	Serial.println("Btn_Top_Up_clicked");
-}
 #pragma endregion Scr_Top
 #pragma region Scr_PeriphChoice
 lv_timer_t *Timer_Scr_PeriphChoice = NULL;
-void Scr_PeriphChoice_loaded()
+void Scr_PeriphChoice_loaded(lv_event_t * e)
 {
     static uint32_t user_data = 10;
 	
 	if (!ActivePeriph) ActivePeriph = FindNextPeriph(NULL, NULL, SENS_TYPE_ALL, CIRCULAR);
 	ActivePeriph->SetPrimHelper(ActivePeriph->GetPrimary());
 
-	Scr_PeriphChoice_FillScreen();
+	Scr_PeriphChoice_FillScreen(e);
 
 	if (Timer_Scr_PeriphChoice) 
 	{
@@ -187,19 +98,19 @@ void Scr_PeriphChoice_loaded()
 		Timer_Scr_PeriphChoice = lv_timer_create(Scr_PeriphChoice_Timer_update, 100,  &user_data);
 	}
 }
-void Scr_PeriphChoice_unloaded()
+void Scr_PeriphChoice_unloaded(lv_event_t * e)
 {
     if (Timer_Scr_PeriphChoice) lv_timer_del(Timer_Scr_PeriphChoice);
 	Timer_Scr_PeriphChoice = NULL;
 }
-void Scr_PeriphChoice_Return()
+void Scr_PeriphChoice_Return(lv_event_t * e)
 {
 	//if (ActiveScreen == &MultiGaugeScreen)
 		//_ui_screen_change(&ui_ScrMultiGauge, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMultiGauge_screen_init);
 	//else
 		lv_scr_load_anim(objects.scr_multi, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }
-void Scr_PeriphChoice_FillScreen()
+void Scr_PeriphChoice_FillScreen(lv_event_t * e)
 {
 	PeerClass *P;
 	if (!ActivePeriph) ActivePeriph = FindNextPeriph(NULL, NULL, SENS_TYPE_ALL, CIRCULAR);
@@ -266,7 +177,7 @@ void Btn_PeriphChoice_Next_clicked(lv_event_t * e)
 			DEBUG3("new: StartPrim: %d, ActivePeriph: %s, ActivePeriph->GetPrimary()=%d\n\r", StartPrim, ActivePeriph->GetName(), ActivePeriph->GetPrimary());
 		}
 	}
-	Scr_PeriphChoice_FillScreen();
+	Scr_PeriphChoice_FillScreen(e);
 
 }
 void Btn_PeriphChoice_Prev_clicked(lv_event_t * e)
@@ -307,11 +218,11 @@ void Btn_PeriphChoice_Prev_clicked(lv_event_t * e)
 
 		}
 	}
-	Scr_PeriphChoice_FillScreen();
+	Scr_PeriphChoice_FillScreen(e);
 }
 void Btn_PeriphChoice_Up_clicked(lv_event_t * e)
 {
-	Scr_PeriphChoice_Return();
+	Scr_PeriphChoice_Return(e);
 }
 void Btn_PeriphChoice_clicked(lv_event_t * e)
 {		
@@ -327,9 +238,8 @@ void Btn_PeriphChoice_clicked(lv_event_t * e)
 		Screen[ActiveMultiScreen].SetPrimToShow(MultiPosToChange, ActivePeriph->GetPrimHelper());
 	}	
 	
-	Scr_PeriphChoice_Return();
+	Scr_PeriphChoice_Return(e);
 }
-
 void Scr_PeriphChoice_Timer_update(lv_timer_t * timer)
 {
 	
@@ -340,31 +250,31 @@ void Scr_PeriphChoice_Gesture(lv_event_t * e)
 }
 #pragma endregion Scr_PeriphChoice
 #pragma region Scr_Start
-void Scr_Start_loaded()
+void Scr_Start_loaded(lv_event_t * e)
 {
 	//InitNavigation();
 }
-void Scr_Start_unloaded()
+void Scr_Start_unloaded(lv_event_t * e)
 {
 }
-void Btn_Start_1_clicked()
+void Btn_Start_1_clicked(lv_event_t * e)
 {
 	if (!ActivePeriphSensor) ActivePeriphSensor = FindNextPeriph(NULL, NULL, P_IS_PRIMARY_SENSOR, CIRCULAR, FUCKLINE);
 	if (ActivePeriphSensor) 
 	{	
 		DEBUG3("PeriphName = %s\n\r", ActivePeriphSensor->GetName());
 		ActivePeriphShown = ActivePeriphSensor;
-		lv_scr_load_anim(objects.scr_simple, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+		lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 	}
 }
-void Btn_Start_2_clicked()
+void Btn_Start_2_clicked(lv_event_t * e)
 {
 	if (!ActivePeriphSwitch) ActivePeriphSwitch = FindNextPeriph(NULL, NULL, P_IS_PRIMARY_SWITCH, CIRCULAR, FUCKLINE);
 	if (ActivePeriphSwitch) 
 	{
 		ActivePeriphShown = ActivePeriphSwitch;
 		Serial.printf("Menu - 2 - ActivePeriphShown is %s\n\r", ActivePeriphShown->GetName());
-		lv_scr_load_anim(objects.scr_simple, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+		lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 	}
 }
 void Scr_Start_Gesture(lv_event_t * e)
@@ -372,8 +282,238 @@ void Scr_Start_Gesture(lv_event_t * e)
 
 }
 #pragma endregion Scr_Start
+#pragma region Scr_Meter
+lv_timer_t *Timer_Scr_Meter = NULL;
+uint32_t TSLastClickMeter = -1;
+
+void Scr_Meter_loaded(lv_event_t * e)
+{
+	if (ActivePeriphSensor)
+	{
+		uint16_t newSize = 256*SCREEN_RES_HOR/360; //+5
+    
+		if (ActivePeriphSensor->GetPrimary() == PRIM_VOLT)      lv_img_set_src(objects.img_meter_top, &meter_scale_v);
+		else if (ActivePeriphSensor->GetPrimary() == PRIM_AMP)  lv_img_set_src(objects.img_meter_top, &meter_scale_a);
+		else if (ActivePeriphSensor->GetPrimary() == PRIM_WATT) lv_img_set_src(objects.img_meter_top, &meter_scale_w);
+		
+		lv_img_set_zoom(objects.img_meter_top, newSize);
+		lv_obj_set_width(objects.img_meter_top, LV_SIZE_CONTENT);   /// 1
+		lv_obj_set_height(objects.img_meter_top, LV_SIZE_CONTENT);    /// 1
+		
+		lv_obj_clear_flag(objects.img_meter_top, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_SCROLL_ELASTIC | LV_OBJ_FLAG_SCROLL_MOMENTUM | LV_OBJ_FLAG_SCROLL_CHAIN);     /// Flags
+		lv_obj_move_background(objects.img_meter_top);
+			
+		lv_img_set_zoom(objects.img_meter_zeiger, newSize);
+		lv_obj_set_width(objects.img_meter_zeiger, LV_SIZE_CONTENT);   /// 1
+		lv_obj_set_height(objects.img_meter_zeiger, LV_SIZE_CONTENT);    /// 1
+		
+		lv_img_set_pivot(objects.img_meter_zeiger, 5, 150); 
+		
+		lv_obj_add_flag(objects.img_meter_zeiger, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+		lv_obj_clear_flag(objects.img_meter_zeiger, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+		
+		switch (SCREEN_RES_VER)
+		{
+			case 240:
+				lv_obj_set_y(objects.img_meter_zeiger, lv_pct(-17)); 
+				break;
+			case 360:
+				lv_obj_set_y(objects.img_meter_zeiger, lv_pct(30));    
+				break;
+			case 466:
+				lv_obj_set_y(objects.img_meter_zeiger, lv_pct(2));    
+				break;
+			default:
+				lv_obj_set_y(objects.img_meter_zeiger, lv_pct(-4));    
+				break;
+		}   
+
+		static uint32_t user_data = 10;
+		
+		if (Timer_Scr_Meter) 
+		{
+			lv_timer_resume(Timer_Scr_Meter);
+		}
+		else 
+		{
+			Timer_Scr_Meter = lv_timer_create(Scr_Meter_Timer_update, 100,  &user_data);
+		}
+	}
+}
+void Scr_Meter_Timer_update(lv_timer_t * timer)
+{
+	if (millis() - TSLastClickMeter > 1000)
+	{
+		lv_obj_add_flag(objects.btn_meter_prev, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(objects.btn_meter_next, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(objects.btn_meter_up,   LV_OBJ_FLAG_HIDDEN);
+		TSLastClickMeter = -1;
+	}
+	
+	PeerClass *peer = PeerOf(ActivePeriphShown);
+	if (peer->GetName()) lv_label_set_text_fmt(objects.lbl_meter_peername, "%.6s (%d dBm)", peer->GetName(), peer->GetdBm());
+	if (ActivePeriphShown->GetName()) lv_label_set_text_fmt(objects.lbl_meter_periphname, "%.6s", ActivePeriphShown->GetName());
+    
+	char buf[10];
+	int nk = 0;
+	float value = 0;
+    int Range = 485;	
+    int Angle = 0;
+    int Tick = 0;
+    
+    switch (ActivePeriphShown->GetPrimary())
+    {
+        case PRIM_AMP:  value = ActivePeriphShown->GetValue(V_AMP); 
+                        Angle = -Range + (int)((value * 2.0f * 30) / 15.0f); //KI
+                        break;
+        case PRIM_VOLT: value = ActivePeriphShown->GetValue(V_VOLT); 
+                        Tick = 2*Range/15;
+                        Angle = -Range+value*Tick;
+                        break;
+        case PRIM_WATT: value = ActivePeriphShown->GetValue(V_VOLT) * ActivePeriphShown->GetValue(V_AMP); 
+                        Tick = 2*Range/400;
+                        Angle = -Range+value*Tick;
+                        break;
+    }
+	static int TestV;
+	TestV++;
+	if (TestV > 300) TestV=0;
+
+    lv_img_set_angle(objects.img_meter_zeiger, Angle);
+    
+	if (abs(value) < SCHWELLE) value = 0;
+
+	if      (value<10)  nk = 2;
+	else if (value<100) nk = 1;
+	else                nk = 0;
+
+	if (value == -99) strcpy(buf, "--"); 
+	else dtostrf(value, 0, nk, buf);
+	
+	if (ActivePeriphShown->GetPrimary() == PRIM_AMP)       strcat(buf, " A");
+	else if (ActivePeriphShown->GetPrimary() == PRIM_VOLT) strcat(buf, " V");
+	else if (ActivePeriphShown->GetPrimary() == PRIM_WATT) strcat(buf, " W");
+	
+	lv_label_set_text(objects.lbl_meter_value, buf);
+	
+	uint32_t TimeDiff = millis() - peer->GetTSLastSeen();
+	if (TimeDiff < 2000) 
+	{
+		if (peer->GetdBm() > -90) 
+		{
+			lv_obj_set_style_arc_color(objects.arc_meter, lv_color_hex(0x398F30), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+		}
+		else 
+		{
+			lv_obj_set_style_arc_color(objects.arc_meter, lv_color_hex(0x7C7E26), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+		}
+	}
+	else 
+	{
+		lv_obj_set_style_arc_color(objects.arc_meter, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+	}
+	
+	lv_arc_set_value(objects.arc_meter, TimeDiff / 100);
+}
+void Scr_Meter_unloaded(lv_event_t * e)
+{
+	//Scr_Simple_ClearScreen(e);
+}
+void Scr_Meter_pressed(lv_event_t * e)
+{
+	lv_obj_clear_flag(objects.btn_meter_prev, LV_OBJ_FLAG_HIDDEN);
+	lv_obj_clear_flag(objects.btn_meter_next, LV_OBJ_FLAG_HIDDEN);
+	lv_obj_clear_flag(objects.btn_meter_up,   LV_OBJ_FLAG_HIDDEN);
+	TSLastClickMeter = millis();
+}
+void Btn_Meter_Prev_clicked(lv_event_t * e)
+{
+	int PrimType = ActivePeriphShown->GetPrimary();
+	if (PrimType == 0) return;
+
+	if (PrimType == PRIM_SWITCH)
+	{
+		ActivePeriphSwitch = FindPrevPeriph(NULL, ActivePeriphShown, P_IS_PRIMARY_SWITCH, CIRCULAR);
+		ActivePeriphShown  = ActivePeriphSwitch;
+	}
+	else  
+	{
+		ActivePeriphSensor = FindPrevPeriph(NULL, ActivePeriphShown, P_IS_PRIMARY_SENSOR, CIRCULAR);
+		ActivePeriphShown  = ActivePeriphSensor;
+		lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+	}
+}
+void Btn_Meter_Next_clicked(lv_event_t * e)
+{	
+	int PrimType = ActivePeriphShown->GetPrimary();
+	if (PrimType == 0) return;
+
+	if (PrimType == PRIM_SWITCH)
+	{
+		ActivePeriphSwitch = FindNextPeriph(NULL, ActivePeriphShown, P_IS_PRIMARY_SWITCH, CIRCULAR);
+		ActivePeriphShown  = ActivePeriphSwitch;
+	}
+	else  
+	{
+		ActivePeriphSensor = FindNextPeriph(NULL, ActivePeriphShown, P_IS_PRIMARY_SENSOR, CIRCULAR);
+		ActivePeriphShown  = ActivePeriphSensor;
+		lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+	}
+}
+void Btn_Meter_Up_clicked(lv_event_t * e)
+{
+	lv_scr_load_anim(objects.scr_start, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+}
+void Scr_Meter_clicked(lv_event_t * e)
+{
+	Btn_Meter_Next_clicked(e);
+}
+void Scr_Meter_long_clicked(lv_event_t * e)
+{
+	PeriphClass *Periph = ActivePeriphShown;
+	DEBUG3("Primary of %s is switched from %d ", Periph->GetName(), Periph->GetPrimary());
+	switch (Periph->GetPrimary())
+	{
+		case PRIM_SWITCH: 	if (Periph->IsVolt() and Periph->IsAmp()) 	Periph->SetPrimary(PRIM_WATT); 
+							else if (Periph->IsVolt()) 					Periph->SetPrimary(PRIM_VOLT); 
+							else if (Periph->IsAmp()) 					Periph->SetPrimary(PRIM_AMP); 
+							break;
+		case PRIM_WATT:   	Periph->SetPrimary(PRIM_VOLT); break;
+		case PRIM_VOLT:   	if (Periph->IsAmp()) 						Periph->SetPrimary(PRIM_AMP); 
+							else if (Periph->IsSwitch()) 				Periph->SetPrimary(PRIM_SWITCH); 
+							break;
+		case PRIM_AMP:    	if (Periph->IsSwitch()) 					Periph->SetPrimary(PRIM_SWITCH); 
+							else if (Periph->IsVolt()) 					Periph->SetPrimary(PRIM_WATT); 
+							break;
+	}
+	DEBUG3("to %d\n\r", Periph->GetPrimary());
+	lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+}
+void Scr_Meter_Gesture(lv_event_t * e)
+{
+	lv_event_code_t event_code = lv_event_get_code(e);
+    
+    if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) {
+        lv_indev_wait_release(lv_indev_get_act());
+        Btn_Meter_Next_clicked(e);
+    }
+    else if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT) {
+        lv_indev_wait_release(lv_indev_get_act());
+        Btn_Meter_Prev_clicked(e);
+	}
+}
+#pragma endregion Scr_Meter
+#pragma region Scr_Switch
+void Btn_Switch_Prev_clicked(lv_event_t * e)
+{}
+void Btn_Switch_Next_clicked(lv_event_t * e)
+{}
+void Btn_Switch_Up_clicked(lv_event_t * e)
+{}
+
+#pragma endregion Scr_Switch
 #pragma region Scr_JSON
-void Scr_JSON_loaded()
+void Scr_JSON_loaded(lv_event_t * e)
 {
     if (jsondataBuf[0] != '\0') 
     { 
@@ -389,7 +529,7 @@ void Scr_JSON_loaded()
         jsondataBuf[0] = '\0'; 
     }
 }
-void Scr_JSON_unloaded()
+void Scr_JSON_unloaded(lv_event_t * e)
 {
 }   
 void Scr_JSON_Gesture(lv_event_t * e)
@@ -398,19 +538,17 @@ void Scr_JSON_Gesture(lv_event_t * e)
 }
 #pragma endregion Scr_JSON
 #pragma region Scr_Simple
-lv_timer_t *Timer_Scr_Simple = NULL;
+/*lv_timer_t *Timer_Scr_Simple = NULL;
 uint32_t TSLastClickSimple = -1;
 
-void Scr_Simple_loaded()
+void Scr_Simple_loaded(lv_event_t * e)
 {
-	int Pos = 0;
-
 	if (ActivePeriphShown)
 	{
-		Scr_Simple_ClearScreen();
+		Scr_Simple_ClearScreen(e);
 
 		//size noch nicht gut
-		Scr_Simple_FillScreen();
+		Scr_Simple_FillScreen(e);
 		
 		static uint32_t user_data = 10;
 		
@@ -458,11 +596,11 @@ void Scr_Simple_Timer_update(lv_timer_t * timer)
 		lv_arc_set_value(objects.arc_simple, TimeDiff / 100);
 	}
 }
-void Scr_Simple_unloaded()
+void Scr_Simple_unloaded(lv_event_t * e)
 {
-	Scr_Simple_ClearScreen();
+	Scr_Simple_ClearScreen(e);
 }
-void Scr_Simple_FillScreen()
+void Scr_Simple_FillScreen(lv_event_t * e)
 {	
 	
 	switch (ActivePeriphShown->GetPrimary())
@@ -484,7 +622,7 @@ void Scr_Simple_FillScreen()
 	
 	CompThingArray[0]->Update();
 }
-void Scr_Simple_ClearScreen()
+void Scr_Simple_ClearScreen(lv_event_t * e)
 {
 	if (CompThingArray[0]) 
 	{
@@ -499,7 +637,7 @@ void Scr_Simple_pressed(lv_event_t * e)
 	lv_obj_clear_flag(objects.btn_simple_up,   LV_OBJ_FLAG_HIDDEN);
 	TSLastClickSimple = millis();
 }
-void Btn_Simple_Prev_clicked()
+void Btn_Simple_Prev_clicked(lv_event_t * e)
 {
 	int PrimType = ActivePeriphShown->GetPrimary();
 	if (PrimType == 0) return;
@@ -518,11 +656,11 @@ void Btn_Simple_Prev_clicked()
 
 	if (ActivePeriphShown)
 	{
-		Scr_Simple_ClearScreen();
-		Scr_Simple_FillScreen();
+		Scr_Simple_ClearScreen(e);
+		Scr_Simple_FillScreen(e);
 	}
 }
-void Btn_Simple_Next_clicked()
+void Btn_Simple_Next_clicked(lv_event_t * e)
 {	
 	int PrimType = ActivePeriphShown->GetPrimary();
 	if (PrimType == 0) return;
@@ -540,11 +678,11 @@ void Btn_Simple_Next_clicked()
 
 	if (ActivePeriphShown)
 	{
-		Scr_Simple_ClearScreen();
-		Scr_Simple_FillScreen();
+		Scr_Simple_ClearScreen(e);
+		Scr_Simple_FillScreen(e);
 	}
 }
-void Btn_Simple_Up_clicked()
+void Btn_Simple_Up_clicked(lv_event_t * e)
 {
 	lv_scr_load_anim(objects.scr_start, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }
@@ -556,11 +694,11 @@ void Scr_Simple_clicked(lv_event_t * e)
 
     if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) {
         lv_indev_wait_release(lv_indev_get_act());
-        Btn_Simple_Next_clicked();
+        Btn_Simple_Next_clicked(e);
     }
     else if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT) {
         lv_indev_wait_release(lv_indev_get_act());
-        Btn_Simple_Prev_clicked();
+        Btn_Simple_Prev_clicked(e);
 	}
 	else if (event_code == LV_EVENT_CLICKED) 
 	{
@@ -596,22 +734,22 @@ void Scr_Simple_clicked(lv_event_t * e)
 										break;
 				}
 				DEBUG3("to %d\n\r", Periph->GetPrimary());
-				Scr_Simple_loaded();
+				Scr_Simple_loaded(e);
 			}
             else 
             {
                 // Standardverhalten: Wenn irgendwo anders auf den Sensor geklickt wird
-                Btn_Simple_Next_clicked();
+                Btn_Simple_Next_clicked(e);
             }
         }
 	}
-}
+}*/
 #pragma endregion Scr_Simple
 #pragma region Scr_Peer
 lv_timer_t *Timer_Scr_Peer = NULL;
 uint32_t TSLastClickPeer = -1;
 
-void Scr_Peer_loaded()
+void Scr_Peer_loaded(lv_event_t * e)
 {
     lv_label_set_recolor(objects.lbl_peer_scrname, true);
 	
@@ -628,7 +766,7 @@ void Scr_Peer_loaded()
 
 	if (!ActivePeer) ActivePeer = FindNextPeer(NULL, MODULE_ALL, CIRCULAR);
 }
-void Scr_Peer_unloaded()
+void Scr_Peer_unloaded(lv_event_t * e)
 {
     if (Timer_Scr_Peer) lv_timer_del(Timer_Scr_Peer);
 	Timer_Scr_Peer = NULL;
@@ -756,20 +894,19 @@ void Scr_Peer_Gesture(lv_event_t * e)
 
 #pragma endregion Scr_Peer
 #pragma region Scr_Eichen
-void Scr_Eichen_loaded()
+void Scr_Eichen_loaded(lv_event_t * e)
 {
 	if (ActivePeer) lv_label_set_text(objects.lbl_eichen_scrname, ActivePeer->GetName());
 	else lv_scr_load_anim(objects.scr_peer, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }
-void Scr_Eichen_unloaded()
+void Scr_Eichen_unloaded(lv_event_t * e)
 {
 }
 void Scr_Eichen_Gesture(lv_event_t * e)
 {
 	lv_scr_load_anim(objects.scr_start, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }
-
-void Btn_Eichen_Eichen_clicked()
+void Btn_Eichen_Eichen_clicked(lv_event_t * e)
 {
     if (ActivePeer) 
     {
@@ -779,18 +916,15 @@ void Btn_Eichen_Eichen_clicked()
 }
 #pragma endregion Scr_Eichen
 #pragma region Scr_Volt
-void Scr_Volt_loaded()
+void Scr_Volt_loaded(lv_event_t * e)
 {
-    if (ActivePeer) {
-        lv_label_set_text(objects.lbl_volt_scrname, "12.00 V");
-        lv_img_set_src(objects.img_simple_top, &meter_scale_v);
-    }
+    if (ActivePeer) lv_label_set_text(objects.lbl_volt_scrname, "12.00 V");
 }
-void Arc_Volt_change()
+void Arc_Volt_change(lv_event_t * e)
 {
     lv_label_set_text_fmt(objects.lbl_volt_volt_value, "%.2f V", lv_arc_get_value(objects.arc_volt));
 }
-void Btn_Volt_Save_clicked()
+void Btn_Volt_Save_clicked(lv_event_t * e)
 {
     if (ActivePeer) {
         float volt = lv_arc_get_value(objects.arc_volt);
@@ -798,7 +932,7 @@ void Btn_Volt_Save_clicked()
     }
     lv_scr_load_anim(objects.scr_peer, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }
-void Scr_Volt_unloaded()
+void Scr_Volt_unloaded(lv_event_t * e)
 {
 }
 void Scr_Volt_Gesture(lv_event_t * e)
@@ -836,7 +970,7 @@ void Scr_Settings_Timer_update(lv_timer_t *timer)
     }
 
 }
-void Scr_Settings_loaded()
+void Scr_Settings_loaded(lv_event_t * e)
 {
     uint32_t user_data = 10;
 	if (Timer_Scr_Settings) 
@@ -848,31 +982,31 @@ void Scr_Settings_loaded()
 			Timer_Scr_Settings = lv_timer_create(Scr_Settings_Timer_update, 500,  &user_data);
 		}
 }
-void Scr_Settings_unloaded()
+void Scr_Settings_unloaded(lv_event_t * e)
 {
     if (Timer_Scr_Settings) lv_timer_del(Timer_Scr_Settings);
 	Timer_Scr_Settings = NULL;
 }   
-void Btn_Settings_Restart_clicked()
+void Btn_Settings_Restart_clicked(lv_event_t * e)
 {
 	ESP.restart();
 }	
-void Btn_Settings_Reset_clicked()
+void Btn_Settings_Reset_clicked(lv_event_t * e)
 {
 }	
-void Btn_Settings_Peers_clicked()
+void Btn_Settings_Peers_clicked(lv_event_t * e)
 {
 	 lv_scr_load_anim(objects.scr_peer, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }	
-void Btn_Settings_Pair_clicked()
+void Btn_Settings_Pair_clicked(lv_event_t * e)
 {
 	TogglePairMode();
 }	
-void Btn_Settings_WebSvr_clicked()
+void Btn_Settings_WebSvr_clicked(lv_event_t * e)
 {
 	ToggleWebServer();
 }	
-void Btn_Settings_Save_clicked()
+void Btn_Settings_Save_clicked(lv_event_t * e)
 {
     SavePeers();
 	Module.SetChanged(false);
@@ -918,7 +1052,7 @@ void Scr_Multi_pressed(lv_event_t * e)
 	lv_obj_clear_flag(objects.btn_multi_up,   LV_OBJ_FLAG_HIDDEN);
 
 }
-void Scr_Multi_ClearScreen()
+void Scr_Multi_ClearScreen(lv_event_t * e)
 {
 	for (int Pos = 0; Pos<PERIPH_PER_SCREEN; Pos++)
 	{
@@ -930,7 +1064,7 @@ void Scr_Multi_ClearScreen()
 	}
 	lv_obj_invalidate(lv_scr_act());
 }
-void Scr_Multi_FillScreen()
+void Scr_Multi_FillScreen(lv_event_t * e)
 {
 	lv_label_set_text(objects.lbl_multi_scrname, Screen[ActiveMultiScreen].GetName());
 					
@@ -987,7 +1121,7 @@ void Scr_Multi_loaded(lv_event_t * e)
 {
 	static uint32_t user_data = 10;
 	
-	Scr_Multi_FillScreen();
+	Scr_Multi_FillScreen(e);
 	
 	if (Timer_Scr_Multi) 
 	{
@@ -1002,7 +1136,7 @@ void Scr_Multi_loaded(lv_event_t * e)
 }
 void Scr_Multi_unloaded(lv_event_t * e)
 {
-	Scr_Multi_ClearScreen();
+	Scr_Multi_ClearScreen(e);
 
 	if (Timer_Scr_Multi) lv_timer_del(Timer_Scr_Multi);
 	Timer_Scr_Multi = NULL;
@@ -1010,17 +1144,17 @@ void Scr_Multi_unloaded(lv_event_t * e)
 }
 void Btn_Multi_Next_clicked(lv_event_t * e)
 {
-	Scr_Multi_ClearScreen();
+	Scr_Multi_ClearScreen(e);
 	ActiveMultiScreen++;
 	if (ActiveMultiScreen == MULTI_SCREENS) ActiveMultiScreen = 0;
-	Scr_Multi_FillScreen();
+	Scr_Multi_FillScreen(e);
 }
 void Btn_Multi_Prev_clicked(lv_event_t * e)
 {
-	Scr_Multi_ClearScreen();
+	Scr_Multi_ClearScreen(e);
 	ActiveMultiScreen--;
 	if (ActiveMultiScreen == -1) ActiveMultiScreen = MULTI_SCREENS-1;
-	Scr_Multi_FillScreen();
+	Scr_Multi_FillScreen(e);
 }
 void Btn_Multi_Up_clicked(lv_event_t * e)
 {
@@ -1085,7 +1219,7 @@ void Scr_Multi_clicked(lv_event_t * e) //Handler für picoButtons und picoMeter
 			ActivePeriphSensor = Periph;
 			ActivePeriphShown  = ActivePeriphSensor;
 			ActivePeer   = PeerOf(Periph);
-			lv_scr_load_anim(objects.scr_simple, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+			lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 		}
 		
     }	

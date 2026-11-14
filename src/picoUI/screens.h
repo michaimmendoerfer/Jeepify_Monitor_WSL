@@ -11,7 +11,7 @@ extern "C" {
 typedef struct _objects_t {
     lv_obj_t *scr_periphchoice;
     lv_obj_t *scr_top;
-    lv_obj_t *scr_simple;
+    lv_obj_t *scr_meter;
     lv_obj_t *scr_preferences;
     lv_obj_t *scr_json;
     lv_obj_t *scr_volt;
@@ -20,6 +20,11 @@ typedef struct _objects_t {
     lv_obj_t *scr_settings;
     lv_obj_t *scr_multi;
     lv_obj_t *scr_start;
+    lv_obj_t *scr_switch;
+    lv_obj_t *btn_switch_next;
+    lv_obj_t *btn_switch_prev;
+    lv_obj_t *btn_switch_up;
+    lv_obj_t *arc_switch;
     lv_obj_t *btn_start_single;
     lv_obj_t *btn_start_switch;
     lv_obj_t *btn_start_settings;
@@ -71,19 +76,17 @@ typedef struct _objects_t {
     lv_obj_t *cmp_lbl_periphname;
     lv_obj_t *cmp_lbl_value;
     lv_obj_t *label_1;
-    lv_obj_t *img_simple_base;
-    lv_obj_t *img_simple_top;
-    lv_obj_t *lbl_simple_peername;
-    lv_obj_t *lbl_simple_periphname;
-    lv_obj_t *lbl_simple_value;
-    lv_obj_t *btn_simple_next;
-    lv_obj_t *btn_simple_prev;
-    lv_obj_t *btn_simple_up;
-    lv_obj_t *img_simple_zeiger;
-    lv_obj_t *arc_simple;
-    lv_obj_t *btn_top_up;
-    lv_obj_t *btn_top_next;
-    lv_obj_t *btn_top_prev;
+    lv_obj_t *img_meter_base;
+    lv_obj_t *img_meter_top;
+    lv_obj_t *lbl_meter_peername;
+    lv_obj_t *lbl_meter_periphname;
+    lv_obj_t *lbl_meter_value;
+    lv_obj_t *btn_meter_next;
+    lv_obj_t *btn_meter_prev;
+    lv_obj_t *btn_meter_up;
+    lv_obj_t *img_meter_zeiger;
+    lv_obj_t *arc_meter;
+    lv_obj_t *label_2;
     lv_obj_t *img_top_wifi;
     lv_obj_t *img_periphchoice_bg;
     lv_obj_t *lbl_periphchoice_scrname;
@@ -94,6 +97,9 @@ typedef struct _objects_t {
     lv_obj_t *btn_periphchoice_next;
     lv_obj_t *btn_periphchoice_prev;
     lv_obj_t *btn_periphchoice_up;
+    lv_obj_t *btn_switch_next_label;
+    lv_obj_t *btn_switch_prev_label;
+    lv_obj_t *btn_switch_up_label;
     lv_obj_t *btn_start_single_label;
     lv_obj_t *btn_start_switch_label;
     lv_obj_t *btn_start_settings_label;
@@ -126,12 +132,9 @@ typedef struct _objects_t {
     lv_obj_t *btn_peer_up_label;
     lv_obj_t *btn_eichen_eichen_label;
     lv_obj_t *btn_volt_save_label;
-    lv_obj_t *btn_simple_next_label;
-    lv_obj_t *btn_simple_prev_label;
-    lv_obj_t *btn_simple_up_label;
-    lv_obj_t *btn_top_up_label;
-    lv_obj_t *btn_top_next_label;
-    lv_obj_t *btn_top_prev_label;
+    lv_obj_t *btn_meter_next_label;
+    lv_obj_t *btn_meter_prev_label;
+    lv_obj_t *btn_meter_up_label;
     lv_obj_t *btn_periphchoice_next_label;
     lv_obj_t *btn_periphchoice_prev_label;
     lv_obj_t *btn_periphchoice_up_label;
@@ -142,7 +145,7 @@ extern objects_t objects;
 enum ScreensEnum {
     SCREEN_ID_SCR_PERIPHCHOICE = 1,
     SCREEN_ID_SCR_TOP = 2,
-    SCREEN_ID_SCR_SIMPLE = 3,
+    SCREEN_ID_SCR_METER = 3,
     SCREEN_ID_SCR_PREFERENCES = 4,
     SCREEN_ID_SCR_JSON = 5,
     SCREEN_ID_SCR_VOLT = 6,
@@ -151,6 +154,7 @@ enum ScreensEnum {
     SCREEN_ID_SCR_SETTINGS = 9,
     SCREEN_ID_SCR_MULTI = 10,
     SCREEN_ID_SCR_START = 11,
+    SCREEN_ID_SCR_SWITCH = 12,
 };
 
 void create_screen_scr_periphchoice();
@@ -159,9 +163,9 @@ void delete_screen_scr_periphchoice();
 void create_screen_scr_top();
 void tick_screen_scr_top();
 void delete_screen_scr_top();
-void create_screen_scr_simple();
-void tick_screen_scr_simple();
-void delete_screen_scr_simple();
+void create_screen_scr_meter();
+void tick_screen_scr_meter();
+void delete_screen_scr_meter();
 void create_screen_scr_preferences();
 void tick_screen_scr_preferences();
 void delete_screen_scr_preferences();
@@ -186,6 +190,9 @@ void delete_screen_scr_multi();
 void create_screen_scr_start();
 void tick_screen_scr_start();
 void delete_screen_scr_start();
+void create_screen_scr_switch();
+void tick_screen_scr_switch();
+void delete_screen_scr_switch();
 
 void tick_screen_by_id(enum ScreensEnum screenId);
 void tick_screen(int screen_index);

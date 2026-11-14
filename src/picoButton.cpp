@@ -621,16 +621,16 @@ CompMeter::CompMeter()
 }
 CompMeter::~CompMeter() 
 {
-	lv_obj_del(ui_ImgMeter2);
+	/*lv_obj_del(ui_ImgMeter2);
 	lv_obj_del(ui_ImgZeiger);
     lv_obj_del(_LblPeer);
     lv_obj_del(_LblPeriph); 
     lv_obj_del(_LblValue);
-    lv_obj_del(_LblCentral);
+    lv_obj_del(_LblCentral);*/
 }
 void CompMeter::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, PeriphClass *Periph, lv_event_cb_t event_cb) 
 {
-	_Periph = Periph;
+	/*_Periph = Periph;
     _event_cb = event_cb;
     _Pos = Pos;
     _x = x;
@@ -642,6 +642,12 @@ void CompMeter::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, P
     _Y_Value =  0;
     uint16_t newSize = 256*SCREEN_RES_HOR/360; //+5
     
+    _LblPeer    = objects.lbl_simple_peername;
+    _LblPeriph  = objects.lbl_simple_periphname;
+    _LblCentral = NULL;
+    _LblValue   = objects.lbl_simple_value;
+    
+
     if (_Periph->GetPrimary() == PRIM_VOLT)
     { 
         lv_img_set_src(objects.img_simple_top, &meter_scale_v);
@@ -654,20 +660,19 @@ void CompMeter::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, P
     { 
         lv_img_set_src(objects.img_simple_top, &meter_scale_w);
     }
+
     lv_img_set_zoom(objects.img_simple_top,     newSize);
     lv_obj_set_width(objects.img_simple_top, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(objects.img_simple_top, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(objects.img_simple_top, LV_ALIGN_CENTER);
-    lv_obj_set_pos(objects.img_simple_top, 0, 0);
-    //lv_obj_add_flag(ui_ImgMeter2, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    
     lv_obj_clear_flag(objects.img_simple_top, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_SCROLL_ELASTIC | LV_OBJ_FLAG_SCROLL_MOMENTUM | LV_OBJ_FLAG_SCROLL_CHAIN);     /// Flags
     lv_obj_move_background(objects.img_simple_top);
           
     lv_img_set_zoom(objects.img_simple_zeiger, newSize);
     lv_obj_set_width(objects.img_simple_zeiger, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(objects.img_simple_zeiger, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(objects.img_simple_zeiger, LV_ALIGN_CENTER);
-    lv_obj_set_x(objects.img_simple_zeiger, 0);
+    //lv_obj_set_align(objects.img_simple_zeiger, LV_ALIGN_CENTER);
+    //lv_obj_set_x(objects.img_simple_zeiger, 0);
     
     int pivotY;
 
@@ -730,12 +735,13 @@ void CompMeter::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, P
     lv_obj_set_align(_LblValue, LV_ALIGN_CENTER);
     SetValuePos(0, lv_pct(5));
     lv_obj_set_style_text_font(_LblValue, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);
-    */
+    
     lv_obj_move_foreground(objects.img_simple_zeiger);
+    */
 }
 void CompMeter::Update() 
 {    
-    uint16_t newSize = 256*SCREEN_RES_HOR/360+5;
+    /*uint16_t newSize = 256*SCREEN_RES_HOR/360+5;
     
     //lv_obj_set_pos(_LblPeer,   _X_Peer,   _Y_Peer);
     //lv_obj_set_pos(_LblPeriph, _X_Periph, _Y_Periph);
@@ -799,20 +805,20 @@ void CompMeter::Update()
         if (_Periph->GetPrimary() == PRIM_AMP)  
         { 
             strcat(buf, " A");
-            if (value > 20) lv_obj_set_pos(_LblValue,   lv_pct(-_X_Value), lv_pct(_Y_Value));
-            else            lv_obj_set_pos(_LblValue,   lv_pct( _X_Value), lv_pct(_Y_Value));
+            if (value > 20) lv_obj_set_pos(objects.lbl_simple_value,   lv_pct(-_X_Value), lv_pct(_Y_Value));
+            else            lv_obj_set_pos(objects.lbl_simple_value,   lv_pct( _X_Value), lv_pct(_Y_Value));
         }
 		else if (_Periph->GetPrimary() == PRIM_VOLT)
         { 
             strcat(buf, " V");
-            if (value > 7.5) lv_obj_set_pos(_LblValue,  lv_pct(-_X_Value), lv_pct(_Y_Value));
-            else             lv_obj_set_pos(_LblValue,   lv_pct(_X_Value), lv_pct(_Y_Value));
+            if (value > 7.5) lv_obj_set_pos(objects.lbl_simple_value,  lv_pct(-_X_Value), lv_pct(_Y_Value));
+            else             lv_obj_set_pos(objects.lbl_simple_value,  lv_pct(_X_Value),  lv_pct(_Y_Value));
         }
         else if (_Periph->GetPrimary() == PRIM_WATT)
         { 
             strcat(buf, " W");
-            if (value > 200) lv_obj_set_pos(_LblValue,  lv_pct(-_X_Value), lv_pct(_Y_Value));
-            else             lv_obj_set_pos(_LblValue,   lv_pct(_X_Value), lv_pct(_Y_Value));
+            if (value > 200) lv_obj_set_pos(objects.lbl_simple_value,  lv_pct(-_X_Value), lv_pct(_Y_Value));
+            else             lv_obj_set_pos(objects.lbl_simple_value,   lv_pct(_X_Value), lv_pct(_Y_Value));
         }
         lv_label_set_text(objects.lbl_simple_value, buf);
         
@@ -825,13 +831,14 @@ void CompMeter::Update()
             SetValuePos(lv_pct(-25), lv_pct(12));
         }   
 
-		lv_obj_clear_flag(_LblValue, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_clear_flag(objects.lbl_simple_value, LV_OBJ_FLAG_HIDDEN);
 	}
 	else 
 	{
-		lv_obj_add_flag(_LblValue, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(objects.lbl_simple_value, LV_OBJ_FLAG_HIDDEN);
 	}
 
     if (_GraphVisible) ChartUpdate();
+    */
 }
 #pragma endregion CompMeter

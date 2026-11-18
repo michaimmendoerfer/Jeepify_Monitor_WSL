@@ -19,62 +19,103 @@ int Scr_Peers_Mode;
 CompThing   *CompThingArray[4] = {NULL, NULL, NULL, NULL};
 
 #pragma region Scr_Navi
-/*void InitNavigation()
+lv_timer_t *Timer_Scr_Navi = NULL;
+lv_obj_t *Img_Wifi;
+
+void Scr_Navi_init()
 {
-    lv_obj_t *obj = lv_obj_create(0);
-    objects.scr_top = obj;
-    lv_obj_set_pos(obj, 0, 0);
-    lv_obj_set_size(obj, 360, 360);
-    {
-        lv_obj_t *parent_obj = obj;
-        {
-            // btn_top_up
-            lv_obj_t *obj = lv_btn_create(lv_layer_top());
-            objects.btn_top_up = obj;
-            lv_obj_set_pos(obj, LV_PCT(45), LV_PCT(3));
-            lv_obj_set_size(obj, LV_PCT(10), LV_PCT(10));
-            lv_obj_set_style_bg_color(obj, lv_color_hex(common_9a0101), LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_bg_opa(obj, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_border_side(obj, 15, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_border_color(obj, lv_color_hex(common_ffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_border_width(obj, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_radius(obj, 15, LV_PART_MAIN | LV_STATE_CHECKED);
-            lv_obj_set_style_radius(obj, 15, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_bg_color(obj, lv_color_hex(common_ff0000), LV_PART_MAIN | LV_STATE_CHECKED);
-            lv_obj_set_style_bg_opa(obj, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_CHECKED);
-            {
-                lv_obj_t *parent_obj = obj;
-                {
-                    // btn_top_up_label
-                    lv_obj_t *obj = lv_label_create(parent_obj);
-                    objects.btn_top_up_label = obj;
-                    lv_label_set_text(obj, "^");
-                    lv_obj_center(obj);
-                }
-            }
-        }
-        
-        {
-            // img_top_wifi
-            lv_obj_t *obj = lv_img_create(parent_obj);
-            objects.img_top_wifi = obj;
-            lv_obj_set_pos(obj, 165, 332);
-            lv_obj_set_size(obj, 31, 26);
-            lv_obj_set_style_img_recolor(obj, lv_color_hex(common_dc1010), LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_img_recolor_opa(obj, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_img_set_src(obj, &icon_wlan);
-            lv_img_set_size_mode(obj, LV_IMG_SIZE_MODE_REAL);
-            lv_img_set_zoom(obj, 220);
-            lv_img_set_antialias(obj, true);
-        }
-    }
+	lv_obj_t *parent_obj = lv_layer_top();
+	{
+		// img_top_wifi
+		lv_obj_t *obj = lv_img_create(parent_obj);
+		Img_Wifi = obj;
+		lv_obj_set_pos(obj, 165, 332);
+		lv_obj_set_size(obj, 31, 26);
+		lv_obj_set_style_img_recolor(obj, lv_color_hex(common_dc1010), LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_img_recolor_opa(obj, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_img_set_src(obj, &icon_wlan);
+		lv_img_set_size_mode(obj, LV_IMG_SIZE_MODE_REAL);
+		lv_img_set_zoom(obj, 220);
+		lv_img_set_antialias(obj, true);
+	}
 
-    tick_screen_scr_top();
+	static uint32_t user_data = 10;
+		
+	if (Timer_Scr_Navi) 
+	{
+		lv_timer_resume(Timer_Scr_Navi);
+	}
+	else 
+	{
+		Timer_Scr_Navi = lv_timer_create(Scr_Navi_Timer_update, 100,  &user_data);
+		DEBUG3("Navi-Timer created\n\r");
+	}
+    tick_screen_scr_navi();
 }
+void Scr_Navi_SendIcon(int color)
+{
+	switch (color)
+	{
+		case 0: //off
+				lv_obj_set_style_img_recolor(Img_Wifi, lv_color_hex(0x555555), LV_PART_MAIN | LV_STATE_DEFAULT); break;
+		case 1: //red
+				lv_obj_set_style_img_recolor(Img_Wifi, lv_color_hex(0x990000), LV_PART_MAIN | LV_STATE_DEFAULT); break;
+		case 2: //green
+				lv_obj_set_style_img_recolor(Img_Wifi, lv_color_hex(0x009900), LV_PART_MAIN | LV_STATE_DEFAULT); break;
+		case 3: //blue
+				lv_obj_set_style_img_recolor(Img_Wifi, lv_color_hex(0x000099), LV_PART_MAIN | LV_STATE_DEFAULT); break;
+	}
+}
+void Scr_Navi_Timer_update(lv_timer_t * timer)
+{
+	DEBUG3("Navi-Timer...: snd: %d, Rcv: %d\n\r", TSMsgSnd, TSMsgRcv);
+	if ((TSMsgSnd) and (millis() - TSMsgSnd < MSGLIGHT_INTERVAL)) {
+		Scr_Navi_SendIcon(1);
+	}
+	else {
+		Scr_Navi_SendIcon(0);
+		TSMsgSnd = 0;
 
-void tick_screen_scr_top() {
+	}
+	if ((TSMsgRcv) and (millis() - TSMsgRcv < MSGLIGHT_INTERVAL)) {
+		DEBUG3("Wifi green\n\r");
+		Scr_Navi_SendIcon(2);
+	}
+	else {
+		Scr_Navi_SendIcon(0);
+		TSMsgRcv = 0;
+	}
+
+	if ((TSPair)  and (millis() - TSPair < PAIR_INTERVAL)){
+		Scr_Navi_SendIcon(2);
+	}
+	else {
+		Scr_Navi_SendIcon(0);
+		TSPair = 0;
+		Module.SetPairMode(false);
+	}
+	static int BattCount;
+	static int BattRaw;
+
+	#ifdef BATTERY_PORT
+		char buf[10];
+		
+		BattRaw += analogRead(BATTERY_PORT);
+		BattCount++;
+
+		if (BattCount == 20)
+		{
+			float Batt = 3.3/4095 * BattRaw/BattCount * BATTERY_DEVIDER;
+			dtostrf(Batt, 0, 2, buf);
+			strcat(buf, "V");
+			lv_label_set_text(ui_LblMenuBatt, buf);
+			BattCount = 0;
+			BattRaw   = 0;
+		}
+	#endif
 }
-*/
+void tick_screen_scr_navi() {
+}
 #pragma endregion Scr_Navi
 #pragma region Scr_Top
 #pragma endregion Scr_Top
@@ -252,7 +293,7 @@ void Scr_PeriphChoice_Gesture(lv_event_t * e)
 #pragma region Scr_Start
 void Scr_Start_loaded(lv_event_t * e)
 {
-	//InitNavigation();
+	//Scr_Navi_init();
 }
 void Scr_Start_unloaded(lv_event_t * e)
 {
@@ -263,7 +304,7 @@ void Btn_Start_1_clicked(lv_event_t * e)
 	if (ActivePeriphSensor) 
 	{	
 		DEBUG3("PeriphName = %s\n\r", ActivePeriphSensor->GetName());
-		ActivePeriphShown = ActivePeriphSensor;
+		//ActivePeriphShown = ActivePeriphSensor;
 		lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 	}
 }
@@ -272,8 +313,8 @@ void Btn_Start_2_clicked(lv_event_t * e)
 	if (!ActivePeriphSwitch) ActivePeriphSwitch = FindNextPeriph(NULL, NULL, P_IS_PRIMARY_SWITCH, CIRCULAR, FUCKLINE);
 	if (ActivePeriphSwitch) 
 	{
-		ActivePeriphShown = ActivePeriphSwitch;
-		Serial.printf("Menu - 2 - ActivePeriphShown is %s\n\r", ActivePeriphShown->GetName());
+		//ActivePeriphShown = ActivePeriphSwitch;
+		Serial.printf("Menu - 2 - ActivePeriphSwitch is %s\n\r", ActivePeriphSwitch->GetName());
 		lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 	}
 }
@@ -350,9 +391,9 @@ void Scr_Meter_Timer_update(lv_timer_t * timer)
 		TSLastClickMeter = -1;
 	}
 	
-	PeerClass *peer = PeerOf(ActivePeriphShown);
+	PeerClass *peer = PeerOf(ActivePeriphSensor);
 	if (peer->GetName()) lv_label_set_text_fmt(objects.lbl_meter_peername, "%.6s (%d dBm)", peer->GetName(), peer->GetdBm());
-	if (ActivePeriphShown->GetName()) lv_label_set_text_fmt(objects.lbl_meter_periphname, "%.6s", ActivePeriphShown->GetName());
+	if (ActivePeriphSensor->GetName()) lv_label_set_text_fmt(objects.lbl_meter_periphname, "%.6s", ActivePeriphSensor->GetName());
     
 	char buf[10];
 	int nk = 0;
@@ -361,16 +402,16 @@ void Scr_Meter_Timer_update(lv_timer_t * timer)
     int Angle = 0;
     int Tick = 0;
     
-    switch (ActivePeriphShown->GetPrimary())
+    switch (ActivePeriphSensor->GetPrimary())
     {
-        case PRIM_AMP:  value = ActivePeriphShown->GetValue(V_AMP); 
+        case PRIM_AMP:  value = ActivePeriphSensor->GetValue(V_AMP); 
                         Angle = -Range + (int)((value * 2.0f * 30) / 15.0f); //KI
                         break;
-        case PRIM_VOLT: value = ActivePeriphShown->GetValue(V_VOLT); 
+        case PRIM_VOLT: value = ActivePeriphSensor->GetValue(V_VOLT); 
                         Tick = 2*Range/15;
                         Angle = -Range+value*Tick;
                         break;
-        case PRIM_WATT: value = ActivePeriphShown->GetValue(V_VOLT) * ActivePeriphShown->GetValue(V_AMP); 
+        case PRIM_WATT: value = ActivePeriphSensor->GetValue(V_VOLT) * ActivePeriphSensor->GetValue(V_AMP); 
                         Tick = 2*Range/400;
                         Angle = -Range+value*Tick;
                         break;
@@ -390,9 +431,9 @@ void Scr_Meter_Timer_update(lv_timer_t * timer)
 	if (value == -99) strcpy(buf, "--"); 
 	else dtostrf(value, 0, nk, buf);
 	
-	if (ActivePeriphShown->GetPrimary() == PRIM_AMP)       strcat(buf, " A");
-	else if (ActivePeriphShown->GetPrimary() == PRIM_VOLT) strcat(buf, " V");
-	else if (ActivePeriphShown->GetPrimary() == PRIM_WATT) strcat(buf, " W");
+	if (ActivePeriphSensor->GetPrimary() == PRIM_AMP)       strcat(buf, " A");
+	else if (ActivePeriphSensor->GetPrimary() == PRIM_VOLT) strcat(buf, " V");
+	else if (ActivePeriphSensor->GetPrimary() == PRIM_WATT) strcat(buf, " W");
 	
 	lv_label_set_text(objects.lbl_meter_value, buf);
 	
@@ -421,44 +462,26 @@ void Scr_Meter_unloaded(lv_event_t * e)
 }
 void Scr_Meter_pressed(lv_event_t * e)
 {
+	lv_event_code_t event_code = lv_event_get_code(e);
+	
 	lv_obj_clear_flag(objects.btn_meter_prev, LV_OBJ_FLAG_HIDDEN);
 	lv_obj_clear_flag(objects.btn_meter_next, LV_OBJ_FLAG_HIDDEN);
 	lv_obj_clear_flag(objects.btn_meter_up,   LV_OBJ_FLAG_HIDDEN);
 	TSLastClickMeter = millis();
+
 }
 void Btn_Meter_Prev_clicked(lv_event_t * e)
 {
-	int PrimType = ActivePeriphShown->GetPrimary();
-	if (PrimType == 0) return;
-
-	if (PrimType == PRIM_SWITCH)
-	{
-		ActivePeriphSwitch = FindPrevPeriph(NULL, ActivePeriphShown, P_IS_PRIMARY_SWITCH, CIRCULAR);
-		ActivePeriphShown  = ActivePeriphSwitch;
-	}
-	else  
-	{
-		ActivePeriphSensor = FindPrevPeriph(NULL, ActivePeriphShown, P_IS_PRIMARY_SENSOR, CIRCULAR);
-		ActivePeriphShown  = ActivePeriphSensor;
-		lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
-	}
+	ActivePeriphSensor = FindPrevPeriph(NULL, ActivePeriphSensor, P_IS_PRIMARY_SENSOR, CIRCULAR);
+	//ActivePeriphShown  = ActivePeriphSensor;
+	lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }
 void Btn_Meter_Next_clicked(lv_event_t * e)
 {	
-	int PrimType = ActivePeriphShown->GetPrimary();
-	if (PrimType == 0) return;
-
-	if (PrimType == PRIM_SWITCH)
-	{
-		ActivePeriphSwitch = FindNextPeriph(NULL, ActivePeriphShown, P_IS_PRIMARY_SWITCH, CIRCULAR);
-		ActivePeriphShown  = ActivePeriphSwitch;
-	}
-	else  
-	{
-		ActivePeriphSensor = FindNextPeriph(NULL, ActivePeriphShown, P_IS_PRIMARY_SENSOR, CIRCULAR);
-		ActivePeriphShown  = ActivePeriphSensor;
-		lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
-	}
+	ActivePeriphSensor = FindNextPeriph(NULL, ActivePeriphSensor, P_IS_PRIMARY_SENSOR, CIRCULAR);
+	//ActivePeriphShown  = ActivePeriphSensor;
+	DEBUG3("Next Periph will be: %s", ActivePeriphSensor->GetName());
+	lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }
 void Btn_Meter_Up_clicked(lv_event_t * e)
 {
@@ -470,7 +493,7 @@ void Scr_Meter_clicked(lv_event_t * e)
 }
 void Scr_Meter_long_clicked(lv_event_t * e)
 {
-	PeriphClass *Periph = ActivePeriphShown;
+	PeriphClass *Periph = ActivePeriphSensor;
 	DEBUG3("Primary of %s is switched from %d ", Periph->GetName(), Periph->GetPrimary());
 	switch (Periph->GetPrimary())
 	{
@@ -504,13 +527,127 @@ void Scr_Meter_Gesture(lv_event_t * e)
 }
 #pragma endregion Scr_Meter
 #pragma region Scr_Switch
-void Btn_Switch_Prev_clicked(lv_event_t * e)
-{}
-void Btn_Switch_Next_clicked(lv_event_t * e)
-{}
-void Btn_Switch_Up_clicked(lv_event_t * e)
-{}
+lv_timer_t *Timer_Scr_Switch = NULL;
+uint32_t TSLastClickSwitch = -1;
 
+void Scr_Switch_loaded(lv_event_t * e)
+{
+	CompThingArray[0] = new CompButton;
+	CompThingArray[0]->Setup(lv_scr_act(), 0, 0, 0, 2, ActivePeriphSwitch, Scr_Switch_clicked);
+	CompThingArray[0]->Update();
+	
+	static uint32_t user_data = 10;
+	
+	if (Timer_Scr_Switch) 
+	{
+		lv_timer_resume(Timer_Scr_Switch);
+	}
+	else 
+	{
+		Timer_Scr_Switch = lv_timer_create(Scr_Switch_Timer_update, 100,  &user_data);
+	}
+}
+void Scr_Switch_Timer_update(lv_timer_t * timer)
+{
+	if (millis() - TSLastClickSwitch > 1000)
+	{
+		lv_obj_add_flag(objects.btn_switch_prev, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(objects.btn_switch_next, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(objects.btn_switch_up,   LV_OBJ_FLAG_HIDDEN);
+		TSLastClickSwitch = -1;
+	}
+	if (CompThingArray[0]) 
+	{
+		CompThingArray[0]->Update();
+		PeerClass *peer = PeerOf(ActivePeriphSwitch);
+		
+		uint32_t TimeDiff = millis() - peer->GetTSLastSeen();
+		if (TimeDiff < 2000) 
+		{
+			if (peer->GetdBm() > -90) 
+			{
+				lv_obj_set_style_arc_color(objects.arc_switch, lv_color_hex(0x398F30), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+			}
+			else 
+			{
+				lv_obj_set_style_arc_color(objects.arc_switch, lv_color_hex(0x7C7E26), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+			}
+		}
+		else 
+		{
+			lv_obj_set_style_arc_color(objects.arc_switch, lv_color_hex(0xFF0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+		}
+		
+		lv_arc_set_value(objects.arc_switch, TimeDiff / 100);
+	}
+}
+void Scr_Switch_unloaded(lv_event_t * e)
+{
+	if (CompThingArray[0]) 
+	{
+		delete CompThingArray[0];
+		CompThingArray[0] = NULL;
+	}
+}
+void Scr_Switch_pressed(lv_event_t * e)
+{
+	lv_obj_clear_flag(objects.btn_switch_prev, LV_OBJ_FLAG_HIDDEN);
+	lv_obj_clear_flag(objects.btn_switch_next, LV_OBJ_FLAG_HIDDEN);
+	lv_obj_clear_flag(objects.btn_switch_up,   LV_OBJ_FLAG_HIDDEN);
+	TSLastClickSwitch = millis();
+}
+void Btn_Switch_Prev_clicked(lv_event_t * e)
+{
+	ActivePeriphSwitch = FindPrevPeriph(NULL, ActivePeriphSwitch, P_IS_PRIMARY_SWITCH, CIRCULAR);
+	//ActivePeriphShown  = ActivePeriphSwitch;
+
+	if (ActivePeriphSwitch) lv_scr_load_anim(objects.scr_switch, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+	//Update??
+}
+void Btn_Switch_Next_clicked(lv_event_t * e)
+{	
+	ActivePeriphSwitch = FindNextPeriph(NULL, ActivePeriphSwitch, P_IS_PRIMARY_SWITCH, CIRCULAR);
+	//ActivePeriphShown  = ActivePeriphSwitch;
+
+	if (ActivePeriphSwitch) lv_scr_load_anim(objects.scr_switch, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+	//Update??
+}
+void Btn_Switch_Up_clicked(lv_event_t * e)
+{
+	lv_scr_load_anim(objects.scr_start, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+}
+void Scr_Switch_Gesture(lv_event_t * e)
+{
+	lv_event_code_t event_code = lv_event_get_code(e);
+    
+    if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) {
+        lv_indev_wait_release(lv_indev_get_act());
+        Btn_Switch_Next_clicked(e);
+    }
+    else if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT) {
+        lv_indev_wait_release(lv_indev_get_act());
+        Btn_Switch_Prev_clicked(e);
+	}
+	else if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP) {
+        lv_indev_wait_release(lv_indev_get_act());
+        Btn_Switch_Up_clicked(e);
+	}
+}
+void Scr_Switch_clicked(lv_event_t * e)
+{
+	lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * target = lv_event_get_target(e);
+	
+	if (event_code == LV_EVENT_CLICKED) 
+	{
+		ActivePeriphSwitch->SetChanged(true);
+			
+			if (lv_obj_get_state(target) == LV_IMGBTN_STATE_DISABLED) 		  ActivePeriphSwitch->SetValue(0.0);
+			if (lv_obj_get_state(target) == LV_IMGBTN_STATE_CHECKED_RELEASED) ActivePeriphSwitch->SetValue(1.0);
+			
+			ToggleSwitch(ActivePeriphSwitch);
+	}	
+}
 #pragma endregion Scr_Switch
 #pragma region Scr_JSON
 void Scr_JSON_loaded(lv_event_t * e)
@@ -1217,7 +1354,7 @@ void Scr_Multi_clicked(lv_event_t * e) //Handler für picoButtons und picoMeter
 		else //if (Periph->IsPrimarySensor())
 		{
 			ActivePeriphSensor = Periph;
-			ActivePeriphShown  = ActivePeriphSensor;
+			//ActivePeriphShown  = ActivePeriphSensor;
 			ActivePeer   = PeerOf(Periph);
 			lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 		}

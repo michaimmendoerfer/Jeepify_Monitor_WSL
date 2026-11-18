@@ -8,6 +8,11 @@
 extern "C" {
 #endif
 
+void Scr_Navi_init();
+void Scr_Navi_Timer_update(lv_timer_t * timer);
+void tick_screen_scr_navi();
+void Scr_Navi_SendIcon(int color);
+
 void Scr_Peer_loaded(lv_event_t * e);
 void Scr_Peer_unloaded(lv_event_t * e);
 void Scr_Peer_Timer_update(lv_timer_t * timer);
@@ -89,6 +94,13 @@ void Scr_Meter_long_clicked(lv_event_t * e);
 void Btn_Switch_Prev_clicked(lv_event_t * e);
 void Btn_Switch_Next_clicked(lv_event_t * e);
 void Btn_Switch_Up_clicked(lv_event_t * e);
+void Scr_Switch_Gesture(lv_event_t * e);
+void Scr_Switch_loaded(lv_event_t * e);
+void Scr_Switch_unloaded(lv_event_t * e);
+void Scr_Switch_pressed(lv_event_t * e);
+void Scr_Switch_Timer_update(lv_timer_t * timer);
+void Scr_Switch_clicked(lv_event_t * e);
+
 
 void Scr_PeriphChoice_loaded(lv_event_t * e);
 void Scr_PeriphChoice_unloaded(lv_event_t * e);

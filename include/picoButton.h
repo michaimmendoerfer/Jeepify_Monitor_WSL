@@ -180,7 +180,7 @@ class CompSensor : public CompThing {
         lv_obj_t *GetArc() 		{ return _Arc; }
 };
 
-class CompMeter : public CompThing {
+/*class CompMeter : public CompThing {
 	private:
         //lv_obj_t *ui_ImgMeter2;
         //lv_obj_t *ui_ImgZeiger;
@@ -192,5 +192,5 @@ class CompMeter : public CompThing {
 		void Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, PeriphClass *Periph, lv_event_cb_t event_cb);
         void Update();	
 };
-
+*/
 #endif

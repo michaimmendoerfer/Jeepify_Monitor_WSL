@@ -13,7 +13,7 @@ void btn_multi_2_clicked_cb(lv_event_t * e);
 void btn_start_settings_clicked_cb(lv_event_t * e);
 void scr_switch_screen_loaded_cb(lv_event_t * e);
 void scr_switch_screen_unloaded_cb(lv_event_t * e);
-void scr_switch_clicked_cb(lv_event_t * e);
+void scr_switch_gesture_cb(lv_event_t * e);
 void btn_peer_volt_clicked_cb(lv_event_t * e);
 void btn_meter_prev_clicked_cb(lv_event_t * e);
 void btn_volt_save_clicked_cb(lv_event_t * e);

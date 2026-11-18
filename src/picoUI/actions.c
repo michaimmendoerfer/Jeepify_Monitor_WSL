@@ -33,19 +33,19 @@ void btn_start_settings_clicked_cb(lv_event_t * e) {
 
 // Event callback for scr_switch on screen-loaded
 void scr_switch_screen_loaded_cb(lv_event_t * e) {
-    Scr_Meter_loaded(e);
+    Scr_Switch_loaded(e);
 }
 
 
 // Event callback for scr_switch on screen-unloaded
 void scr_switch_screen_unloaded_cb(lv_event_t * e) {
-    Scr_Meter_unloaded(e);
+    Scr_Switch_unloaded(e);
 }
 
 
-// Event callback for scr_switch on clicked
-void scr_switch_clicked_cb(lv_event_t * e) {
-    Scr_Meter_clicked(e);
+// Event callback for scr_switch on gesture
+void scr_switch_gesture_cb(lv_event_t * e) {
+    Scr_Switch_Gesture(e);
 }
 
 

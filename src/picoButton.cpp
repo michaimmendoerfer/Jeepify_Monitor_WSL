@@ -609,7 +609,7 @@ void CompSensor::Update()
 #pragma endregion CompSensor
 
 #pragma region CompMeter
-CompMeter::CompMeter() 
+/*CompMeter::CompMeter() 
 {
     _PeerVisible = true;
     _PeriphVisible = true;
@@ -626,11 +626,11 @@ CompMeter::~CompMeter()
     lv_obj_del(_LblPeer);
     lv_obj_del(_LblPeriph); 
     lv_obj_del(_LblValue);
-    lv_obj_del(_LblCentral);*/
+    lv_obj_del(_LblCentral);
 }
 void CompMeter::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, PeriphClass *Periph, lv_event_cb_t event_cb) 
 {
-	/*_Periph = Periph;
+	_Periph = Periph;
     _event_cb = event_cb;
     _Pos = Pos;
     _x = x;
@@ -702,7 +702,7 @@ void CompMeter::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, P
         if (_GraphVisible) ChartInit(SCREEN_RES_HOR/2, SCREEN_RES_VER*0.7, SCREEN_RES_HOR/3, SCREEN_RES_VER/15, RECORDED_VALUES);
     }
 
-    /*_LblPeer = lv_label_create(comp_parent);
+    _LblPeer = lv_label_create(comp_parent);
     lv_obj_set_width(_LblPeer, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(_LblPeer, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_align(_LblPeer, LV_ALIGN_CENTER);
@@ -737,7 +737,7 @@ void CompMeter::Setup(lv_obj_t * comp_parent, int x, int y, int Pos, int size, P
     lv_obj_set_style_text_font(_LblValue, MY_FONT4, LV_PART_MAIN | LV_STATE_DEFAULT);
     
     lv_obj_move_foreground(objects.img_simple_zeiger);
-    */
+
 }
 void CompMeter::Update() 
 {    
@@ -839,6 +839,6 @@ void CompMeter::Update()
 	}
 
     if (_GraphVisible) ChartUpdate();
-    */
-}
+    
+}*/
 #pragma endregion CompMeter

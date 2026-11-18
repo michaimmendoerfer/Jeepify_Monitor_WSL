@@ -375,6 +375,7 @@ void setup()
     #endif
 
     create_screens();
+    Scr_Navi_init();
     loadScreen(SCREEN_ID_SCR_START);
 
     if (strcmp(buf, "Menu") == 0) 
@@ -430,12 +431,17 @@ void setup()
                 if (strcmp(PeriphName, Periph->GetName()) == 0)
                     if (strcmp(PeerName, FindPeerById(Periph->GetPeerId())->GetName()) == 0)
                     {
-                        //ActivePeriphSensor = Periph;
-                        ActivePeriphShown  = ActivePeriphSensor;
                         ActivePeer   = PeerOf(Periph);
-                        //loadScreen(SCREEN_ID_SCR_SINGLE);
-                        //_ui_screen_change(&ui_ScrSingle, MY_ANIM, 500, 0, &ui_ScrSingle_screen_init);
-                        break;
+                        
+                        if (Periph->GetPrimary() == PRIM_SWITCH)
+                        {   ActivePeriphSwitch = Periph;
+                            loadScreen(SCREEN_ID_SCR_SWITCH);
+                        }
+                        else
+                        {
+                            ActivePeriphSensor = Periph;
+                            loadScreen(SCREEN_ID_SCR_METER);
+                        };
                     }
         }
     }

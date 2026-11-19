@@ -17,7 +17,6 @@
 #define VALUE_W_GREEN   300
 #define VALUE_W_YELLOW  350
 
-extern lv_obj_t *ui_LblMenuBatt;
 float testvalue;
 
 #pragma region CompThing

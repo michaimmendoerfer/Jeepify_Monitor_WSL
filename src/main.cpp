@@ -269,8 +269,8 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t* incomingData, int 
                                 P->SetPairMode  ((bool) bitRead(_Status, 3));
                             } 
                             
-                            DEBUG3 ("%s->%s values are: %.2f - %.2f - %.2f - %.2f\n\r", P->GetName(), P->GetPeriphName(Si), 
-                                P->GetPeriphValue(Si, 0), P->GetPeriphValue(Si, 1), P->GetPeriphValue(Si, 2), P->GetPeriphValue(Si, 3));
+                            //DEBUG3 ("%s->%s values are: %.2f - %.2f - %.2f - %.2f\n\r", P->GetName(), P->GetPeriphName(Si), 
+                            //    P->GetPeriphValue(Si, 0), P->GetPeriphValue(Si, 1), P->GetPeriphValue(Si, 2), P->GetPeriphValue(Si, 3));
                         }
                     }
                 }
@@ -547,51 +547,38 @@ void loop()
                 Btn_Peer_Next_clicked(NULL);
             }
         }
-        /*
-        else if (active_screen == ui_ScrPeers) 
+        else if (active_screen == objects.scr_meter) 
         {
-            // Reaktion für die Roller-Auswahl
             if (Knob.Diff < 0) {
-                ActiveRollerId--;
-                if (ActiveRollerId < 0) ActiveRollerId = MaxRollerItems - 1;
+                Btn_Meter_Prev_clicked(NULL);
             } else {
-                ActiveRollerId++;
-                if (ActiveRollerId == MaxRollerItems) ActiveRollerId = 0;
-            }
-            lv_roller_set_selected(ui_RollerPeers1, ActiveRollerId, LV_ANIM_ON);
-        }
-        else if (active_screen == ui_ScrMulti) 
-        {
-            // Reaktion für den MultiMeter-Screen (Wechselt die Screens)
-            Ui_Multi_ClearScreen();
-            if (Knob.Diff < 0) {
-                ActiveMultiScreen--;
-                if (ActiveMultiScreen == -1) ActiveMultiScreen = MULTI_SCREENS - 1;
-            } else {
-                ActiveMultiScreen++;
-                if (ActiveMultiScreen == MULTI_SCREENS) ActiveMultiScreen = 0;
-            }
-            Ui_Multi_FillScreen();
-        }
-        else if (active_screen == ui_ScrPeriph) 
-        {
-            // Reaktion für den Auswahlscreen der Peripherals
-            if (Knob.Diff < 0) {
-                Ui_PeriphChoice_Last(NULL);
-            } else {
-                Ui_PeriphChoice_Next(NULL);
+                Btn_Meter_Next_clicked(NULL);
             }
         }
-        else if (active_screen == ui_ScrSingle) 
+        else if (active_screen == objects.scr_switch) 
         {
-            // Reaktion für die Einzelansicht (Single-Screen)
             if (Knob.Diff < 0) {
-                Ui_Single_Prev(NULL); // Ruft deine Funktion aus CustomScreens auf
+                Btn_Switch_Prev_clicked(NULL);
             } else {
-                Ui_Single_Next(NULL);
+                Btn_Switch_Next_clicked(NULL);
             }
         }
-        */
+        else if (active_screen == objects.scr_periphchoice) 
+        {
+            if (Knob.Diff < 0) {
+                Btn_PeriphChoice_Prev_clicked(NULL);
+            } else {
+                Btn_PeriphChoice_Next_clicked(NULL);
+            }
+        }
+        else if (active_screen == objects.scr_multi) 
+        {
+            if (Knob.Diff < 0) {
+                Btn_Multi_Prev_clicked(NULL);
+            } else {
+                Btn_Multi_Next_clicked(NULL);
+            }
+        }
         // ERST HIER, nachdem alle Event-Wege durchlaufen wurden, wird genullt!
         Knob.Clicked = 0; 
     }

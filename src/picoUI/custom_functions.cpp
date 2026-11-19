@@ -15,7 +15,6 @@ int ActiveRollerId;
 int MaxRollerItems;
 int Scr_Peers_Mode;
 
-
 CompThing   *CompThingArray[4] = {NULL, NULL, NULL, NULL};
 
 #pragma region Scr_Navi
@@ -68,38 +67,20 @@ void Scr_Navi_SendIcon(int color)
 }
 void Scr_Navi_Timer_update(lv_timer_t * timer)
 {
-	DEBUG3("Navi-Timer...: snd: %d, Rcv: %d\n\r", TSMsgSnd, TSMsgRcv);
-	if ((TSMsgSnd) and (millis() - TSMsgSnd < MSGLIGHT_INTERVAL)) {
-		Scr_Navi_SendIcon(1);
-	}
-	else {
-		Scr_Navi_SendIcon(0);
-		TSMsgSnd = 0;
+	uint32_t aktZeit = millis();
+	int color = 0;
 
-	}
-	if ((TSMsgRcv) and (millis() - TSMsgRcv < MSGLIGHT_INTERVAL)) {
-		DEBUG3("Wifi green\n\r");
-		Scr_Navi_SendIcon(2);
-	}
-	else {
-		Scr_Navi_SendIcon(0);
-		TSMsgRcv = 0;
-	}
-
-	if ((TSPair)  and (millis() - TSPair < PAIR_INTERVAL)){
-		Scr_Navi_SendIcon(2);
-	}
-	else {
-		Scr_Navi_SendIcon(0);
-		TSPair = 0;
-		Module.SetPairMode(false);
-	}
-	static int BattCount;
-	static int BattRaw;
+	if (aktZeit - TSMsgSnd < MSGLIGHT_INTERVAL) color = 1; 
+	if (aktZeit - TSMsgRcv < MSGLIGHT_INTERVAL) color = 2;
+	if (aktZeit - TSPair   < PAIR_INTERVAL)     color = 3;
+	
+	Scr_Navi_SendIcon(color);
 
 	#ifdef BATTERY_PORT
 		char buf[10];
-		
+		static int BattCount;
+		static int BattRaw;
+
 		BattRaw += analogRead(BATTERY_PORT);
 		BattCount++;
 
@@ -108,7 +89,7 @@ void Scr_Navi_Timer_update(lv_timer_t * timer)
 			float Batt = 3.3/4095 * BattRaw/BattCount * BATTERY_DEVIDER;
 			dtostrf(Batt, 0, 2, buf);
 			strcat(buf, "V");
-			lv_label_set_text(ui_LblMenuBatt, buf);
+			lv_label_set_text(objects.lbl_start_bat, buf);
 			BattCount = 0;
 			BattRaw   = 0;
 		}
@@ -293,7 +274,6 @@ void Scr_PeriphChoice_Gesture(lv_event_t * e)
 #pragma region Scr_Start
 void Scr_Start_loaded(lv_event_t * e)
 {
-	//Scr_Navi_init();
 }
 void Scr_Start_unloaded(lv_event_t * e)
 {
@@ -462,6 +442,7 @@ void Scr_Meter_unloaded(lv_event_t * e)
 }
 void Scr_Meter_pressed(lv_event_t * e)
 {
+	DEBUG3("Meter - pressed\n\r");
 	lv_event_code_t event_code = lv_event_get_code(e);
 	
 	lv_obj_clear_flag(objects.btn_meter_prev, LV_OBJ_FLAG_HIDDEN);
@@ -489,6 +470,7 @@ void Btn_Meter_Up_clicked(lv_event_t * e)
 }
 void Scr_Meter_clicked(lv_event_t * e)
 {
+	DEBUG3("Meter - clicked\n\r");
 	Btn_Meter_Next_clicked(e);
 }
 void Scr_Meter_long_clicked(lv_event_t * e)
@@ -519,10 +501,16 @@ void Scr_Meter_Gesture(lv_event_t * e)
     if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) {
         lv_indev_wait_release(lv_indev_get_act());
         Btn_Meter_Next_clicked(e);
+		DEBUG3("Meter - Gesture - left\n\r");
     }
     else if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT) {
         lv_indev_wait_release(lv_indev_get_act());
         Btn_Meter_Prev_clicked(e);
+		DEBUG3("Meter - Gesture - right\n\r");
+	}
+	else
+	{
+		DEBUG3("Meter - Gesture - not recognized !\n\r");
 	}
 }
 #pragma endregion Scr_Meter
@@ -888,8 +876,11 @@ uint32_t TSLastClickPeer = -1;
 
 void Scr_Peer_loaded(lv_event_t * e)
 {
-    lv_label_set_recolor(objects.lbl_peer_scrname, true);
+    if (!ActivePeer) ActivePeer = FindNextPeer(NULL, MODULE_ALL, CIRCULAR);
 	
+	lv_label_set_recolor(objects.lbl_peer_scrname, true);
+	lv_label_set_text(objects.lbl_peer_scrname, ActivePeer->GetName());
+
 	static uint32_t user_data = 10;
 	
 	if (Timer_Scr_Peer) 
@@ -900,8 +891,6 @@ void Scr_Peer_loaded(lv_event_t * e)
 	{
 		Timer_Scr_Peer = lv_timer_create(Scr_Peer_Timer_update, 100,  &user_data);
 	}
-
-	if (!ActivePeer) ActivePeer = FindNextPeer(NULL, MODULE_ALL, CIRCULAR);
 }
 void Scr_Peer_unloaded(lv_event_t * e)
 {
@@ -923,7 +912,7 @@ void Scr_Peer_Timer_update(lv_timer_t * timer)
 		char buf[50];
 		if ((ActivePeer->GetTSLastSeen() == 0) or (millis()- ActivePeer->GetTSLastSeen() > OFFLINE_INTERVAL))
 		{
-			strcpy(buf, "#f00000");
+			strcpy(buf, "#f00000 ");
 			strcat(buf, ActivePeer->GetName());
 			strcat(buf, "#");
 		}
@@ -931,6 +920,7 @@ void Scr_Peer_Timer_update(lv_timer_t * timer)
 		{
 			strcpy(buf, ActivePeer->GetName());
 		}
+		
 		lv_label_set_text(objects.lbl_peer_scrname, buf);	
 		
         if (ActivePeer->GetSleepMode()) {

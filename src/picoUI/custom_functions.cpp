@@ -1331,7 +1331,13 @@ void Scr_Multi_clicked(lv_event_t * e) //Handler für picoButtons und picoMeter
 	MultiPosToChange = TargetCompThing->GetPos();
 	DEBUG3("Scr_Multi_clicked: Periph=%s, Pos=%d\n\r", Periph->GetName(), MultiPosToChange);
 	
-	if (event_code == LV_EVENT_CLICKED) {
+	if (event_code == LV_EVENT_LONG_PRESSED)
+	{
+		DEBUG3("Scr_Multi_longclicked: Periph=%s, Pos=%d\n\r", Periph->GetName(), MultiPosToChange);
+		Btn_Multi_Change_Pos(MultiPosToChange);
+    }
+	else if (event_code == LV_EVENT_CLICKED) 
+	{
 		if (Screen[ActiveMultiScreen].GetPrimToShow(MultiPosToChange) == PRIM_SWITCH)
 		{
 			Periph->SetChanged(true);
@@ -1341,18 +1347,13 @@ void Scr_Multi_clicked(lv_event_t * e) //Handler für picoButtons und picoMeter
 			
 			ToggleSwitch(Periph);
 		}
-		else //if (Periph->IsPrimarySensor())
+		else 
 		{
 			ActivePeriphSensor = Periph;
-			//ActivePeriphShown  = ActivePeriphSensor;
 			ActivePeer   = PeerOf(Periph);
 			lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 		}
 		
     }	
-	else if (event_code == LV_EVENT_LONG_PRESSED)
-	{
-		Btn_Multi_Change_Pos(MultiPosToChange);
-    }
 }
 #pragma endregion Scr_Multi

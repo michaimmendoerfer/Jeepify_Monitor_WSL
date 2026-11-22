@@ -10,7 +10,6 @@ extern "C" {
 
 typedef struct _objects_t {
     lv_obj_t *scr_periphchoice;
-    lv_obj_t *scr_top;
     lv_obj_t *scr_meter;
     lv_obj_t *scr_preferences;
     lv_obj_t *scr_json;
@@ -25,6 +24,7 @@ typedef struct _objects_t {
     lv_obj_t *btn_switch_prev;
     lv_obj_t *btn_switch_up;
     lv_obj_t *arc_switch;
+    lv_obj_t *lbl_start_bat;
     lv_obj_t *btn_start_single;
     lv_obj_t *btn_start_switch;
     lv_obj_t *btn_start_settings;
@@ -37,7 +37,6 @@ typedef struct _objects_t {
     lv_obj_t *btn_multi_2;
     lv_obj_t *btn_multi_3;
     lv_obj_t *btn_multi_4;
-    lv_obj_t *button_1;
     lv_obj_t *btn_multi_next;
     lv_obj_t *btn_multi_prev;
     lv_obj_t *btn_multi_up;
@@ -72,11 +71,13 @@ typedef struct _objects_t {
     lv_obj_t *lbl_volt_volt_value;
     lv_obj_t *btn_volt_save;
     lv_obj_t *txt_json_1;
-    lv_obj_t *chart_1;
-    lv_obj_t *arc_1;
-    lv_obj_t *cmp_lbl_periphname;
-    lv_obj_t *cmp_lbl_value;
-    lv_obj_t *label_1;
+    lv_obj_t *lbl_pref_navi;
+    lv_obj_t *switch_pref_navi;
+    lv_obj_t *lbl_prev_background;
+    lv_obj_t *switch_1;
+    lv_obj_t *lbl_prev_animation;
+    lv_obj_t *switch_2;
+    lv_obj_t *lbl_prev_scrname;
     lv_obj_t *img_meter_base;
     lv_obj_t *img_meter_top;
     lv_obj_t *lbl_meter_peername;
@@ -87,8 +88,6 @@ typedef struct _objects_t {
     lv_obj_t *btn_meter_up;
     lv_obj_t *img_meter_zeiger;
     lv_obj_t *arc_meter;
-    lv_obj_t *label_2;
-    lv_obj_t *img_top_wifi;
     lv_obj_t *img_periphchoice_bg;
     lv_obj_t *lbl_periphchoice_scrname;
     lv_obj_t *img_periphchoice;
@@ -109,7 +108,6 @@ typedef struct _objects_t {
     lv_obj_t *btn_multi_2_label;
     lv_obj_t *btn_multi_3_label;
     lv_obj_t *btn_multi_4_label;
-    lv_obj_t *button_1_label;
     lv_obj_t *btn_multi_next_label;
     lv_obj_t *btn_multi_prev_label;
     lv_obj_t *btn_multi_up_label;
@@ -146,25 +144,21 @@ extern objects_t objects;
 
 enum ScreensEnum {
     SCREEN_ID_SCR_PERIPHCHOICE = 1,
-    SCREEN_ID_SCR_TOP = 2,
-    SCREEN_ID_SCR_METER = 3,
-    SCREEN_ID_SCR_PREFERENCES = 4,
-    SCREEN_ID_SCR_JSON = 5,
-    SCREEN_ID_SCR_VOLT = 6,
-    SCREEN_ID_SCR_EICHEN = 7,
-    SCREEN_ID_SCR_PEER = 8,
-    SCREEN_ID_SCR_SETTINGS = 9,
-    SCREEN_ID_SCR_MULTI = 10,
-    SCREEN_ID_SCR_START = 11,
-    SCREEN_ID_SCR_SWITCH = 12,
+    SCREEN_ID_SCR_METER = 2,
+    SCREEN_ID_SCR_PREFERENCES = 3,
+    SCREEN_ID_SCR_JSON = 4,
+    SCREEN_ID_SCR_VOLT = 5,
+    SCREEN_ID_SCR_EICHEN = 6,
+    SCREEN_ID_SCR_PEER = 7,
+    SCREEN_ID_SCR_SETTINGS = 8,
+    SCREEN_ID_SCR_MULTI = 9,
+    SCREEN_ID_SCR_START = 10,
+    SCREEN_ID_SCR_SWITCH = 11,
 };
 
 void create_screen_scr_periphchoice();
 void tick_screen_scr_periphchoice();
 void delete_screen_scr_periphchoice();
-void create_screen_scr_top();
-void tick_screen_scr_top();
-void delete_screen_scr_top();
 void create_screen_scr_meter();
 void tick_screen_scr_meter();
 void delete_screen_scr_meter();

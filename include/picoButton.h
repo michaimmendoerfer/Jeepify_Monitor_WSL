@@ -21,10 +21,10 @@
     #define WIDTH_BTN1            45
     #define HEIGHT_BTN1           77
     
-    #define IMG_BTN2_RELEASED     &kipp_2_off_70
-    #define IMG_BTN2_PRESSED      &kipp_2_neutral_70
-    #define IMG_BTN2_CHK_PRESSED  &kipp_2_neutral_70
-    #define IMG_BTN2_CHK_RELEASED &kipp_2_on_70
+    #define IMG_BTN2_RELEASED     &kipp_1_off_70
+    #define IMG_BTN2_PRESSED      &kipp_1_neutral_70
+    #define IMG_BTN2_CHK_PRESSED  &kipp_1_neutral_70
+    #define IMG_BTN2_CHK_RELEASED &kipp_1_on_70
     #define WIDTH_BTN2            70
     #define HEIGHT_BTN2           120
 #endif

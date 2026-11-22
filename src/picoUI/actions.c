@@ -5,6 +5,20 @@
 #include "ui.h"
 #include "picoUI/custom_functions.h"
 
+// Custom event ID storage
+uint32_t EVT_LV_EVENT_ALL = 0;
+
+// Register custom event IDs (call before screen creation)
+void pp_register_custom_events(void) {
+    EVT_LV_EVENT_ALL = lv_event_register_id();
+}
+
+// Trigger functions -- call these from application code
+void trigger_LV_EVENT_ALL(void) {
+    lv_event_send(objects.scr_meter, EVT_LV_EVENT_ALL, NULL);
+}
+
+
 // Animation timeline helpers
 void pp_anim_stop_timelines_for_deleted_tree(lv_obj_t * root) {
     (void)root;
@@ -307,6 +321,12 @@ void scr_meter_pressed_cb(lv_event_t * e) {
 }
 
 
+// Event callback for scr_meter on custom-event
+void scr_meter_LV_EVENT_ALL_cb(lv_event_t * e) {
+    Scr_Meter_Eventhandler(e);
+}
+
+
 // Event callback for btn_periphchoice_next on clicked
 void btn_periphchoice_next_clicked_cb(lv_event_t * e) {
     Btn_PeriphChoice_Next_clicked(e);
@@ -346,6 +366,24 @@ void btn_meter_up_clicked_cb(lv_event_t * e) {
 // Event callback for btn_start_single on clicked
 void btn_start_single_clicked_cb(lv_event_t * e) {
     Btn_Start_1_clicked(e);
+}
+
+
+// Event callback for scr_preferences on screen-loaded
+void scr_preferences_screen_loaded_cb(lv_event_t * e) {
+    Scr_Prev_loaded(e);
+}
+
+
+// Event callback for scr_preferences on screen-unloaded
+void scr_preferences_screen_unloaded_cb(lv_event_t * e) {
+    Scr_Pref_unloaded(e);
+}
+
+
+// Event callback for scr_preferences on gesture
+void scr_preferences_gesture_cb(lv_event_t * e) {
+    /* Export warning: invalid Call Function name */
 }
 
 

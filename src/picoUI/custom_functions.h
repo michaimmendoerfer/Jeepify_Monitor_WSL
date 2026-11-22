@@ -113,6 +113,9 @@ void Btn_PeriphChoice_Prev_clicked(lv_event_t * e);
 void Btn_PeriphChoice_Up_clicked(lv_event_t * e);
 void Scr_PeriphChoice_Gesture(lv_event_t * e);
 
+void Scr_Prev_loaded(lv_event_t * e);
+void Scr_Prev_unloaded(lv_event_t * e);
+void Scr_Prev_Gesture(lv_event_t * e);
 
 extern char jsondataBuf[ESP_MAX_LEN+1];
 #ifdef __cplusplus

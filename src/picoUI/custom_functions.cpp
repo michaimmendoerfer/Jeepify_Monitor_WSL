@@ -17,6 +17,17 @@ int Scr_Peers_Mode;
 
 CompThing   *CompThingArray[4] = {NULL, NULL, NULL, NULL};
 
+#pragma region Scr_Prev
+void Scr_Prev_loaded(lv_event_t * e)
+{
+}
+void Scr_Prev_unloaded(lv_event_t * e)
+{
+}
+void Scr_Prev_Gesture(lv_event_t * e)
+{
+}
+#pragma endregion Scr_Prev
 #pragma region Scr_Navi
 lv_timer_t *Timer_Scr_Navi = NULL;
 lv_obj_t *Img_Wifi;

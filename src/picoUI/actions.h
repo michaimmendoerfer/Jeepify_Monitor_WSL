@@ -57,6 +57,7 @@ void scr_meter_clicked_cb(lv_event_t * e);
 void scr_meter_long_pressed_cb(lv_event_t * e);
 void scr_meter_gesture_cb(lv_event_t * e);
 void scr_meter_pressed_cb(lv_event_t * e);
+void scr_meter_LV_EVENT_ALL_cb(lv_event_t * e);
 void btn_periphchoice_next_clicked_cb(lv_event_t * e);
 void scr_periphchoice_screen_loaded_cb(lv_event_t * e);
 void scr_periphchoice_screen_unloaded_cb(lv_event_t * e);
@@ -64,6 +65,9 @@ void scr_periphchoice_gesture_cb(lv_event_t * e);
 void btn_meter_next_clicked_cb(lv_event_t * e);
 void btn_meter_up_clicked_cb(lv_event_t * e);
 void btn_start_single_clicked_cb(lv_event_t * e);
+void scr_preferences_screen_loaded_cb(lv_event_t * e);
+void scr_preferences_screen_unloaded_cb(lv_event_t * e);
+void scr_preferences_gesture_cb(lv_event_t * e);
 void btn_peer_reset_clicked_cb(lv_event_t * e);
 void btn_periphchoice_up_clicked_cb(lv_event_t * e);
 void scr_settings_gesture_cb(lv_event_t * e);
@@ -83,6 +87,16 @@ void scr_multi_screen_unloaded_cb(lv_event_t * e);
 void scr_volt_screen_loaded_cb(lv_event_t * e);
 void scr_volt_screen_unloaded_cb(lv_event_t * e);
 void scr_volt_gesture_cb(lv_event_t * e);
+
+// Custom event IDs
+extern uint32_t EVT_LV_EVENT_ALL;
+
+// Custom event registration
+void pp_register_custom_events(void);
+
+// Custom event trigger functions
+void trigger_LV_EVENT_ALL(void);
+
 void pp_anim_stop_timelines_for_deleted_tree(lv_obj_t * root);
 
 #ifdef __cplusplus

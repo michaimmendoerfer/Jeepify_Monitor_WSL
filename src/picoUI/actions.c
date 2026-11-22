@@ -297,33 +297,9 @@ void scr_meter_screen_unloaded_cb(lv_event_t * e) {
 }
 
 
-// Event callback for scr_meter on clicked
-void scr_meter_clicked_cb(lv_event_t * e) {
-    Scr_Meter_clicked(e);
-}
-
-
-// Event callback for scr_meter on long-pressed
-void scr_meter_long_pressed_cb(lv_event_t * e) {
-    Scr_Meter_long_clicked(e);
-}
-
-
-// Event callback for scr_meter on gesture
-void scr_meter_gesture_cb(lv_event_t * e) {
-    Scr_Meter_Gesture(e);
-}
-
-
-// Event callback for scr_meter on pressed
-void scr_meter_pressed_cb(lv_event_t * e) {
-    Scr_Meter_pressed(e);
-}
-
-
 // Event callback for scr_meter on custom-event
 void scr_meter_LV_EVENT_ALL_cb(lv_event_t * e) {
-    Scr_Meter_Eventhandler(e);
+    Scr_Meter_event(e);
 }
 
 
@@ -371,7 +347,7 @@ void btn_start_single_clicked_cb(lv_event_t * e) {
 
 // Event callback for scr_preferences on screen-loaded
 void scr_preferences_screen_loaded_cb(lv_event_t * e) {
-    Scr_Prev_loaded(e);
+    Scr_Pref_loaded(e);
 }
 
 
@@ -383,7 +359,7 @@ void scr_preferences_screen_unloaded_cb(lv_event_t * e) {
 
 // Event callback for scr_preferences on gesture
 void scr_preferences_gesture_cb(lv_event_t * e) {
-    /* Export warning: invalid Call Function name */
+    Scr_Pref_Gesture(e);
 }
 
 

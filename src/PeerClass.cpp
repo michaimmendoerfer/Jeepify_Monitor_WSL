@@ -402,7 +402,7 @@ PeriphClass *FindNextPeriph(PeerClass *Peer, PeriphClass *Periph, int TypeMask, 
     bool P_Switch_wanted = TypeMask & P_IS_PRIMARY_SWITCH;
     bool P_Sensor_wanted = TypeMask & P_IS_PRIMARY_SENSOR;
     
-    Serial.printf("P_Type:%d, P_Switch_wanted:%d, P_Sensor_wanted:%d\n\r", P_Type, P_Switch_wanted, P_Sensor_wanted);
+    //Serial.printf("P_Type:%d, P_Switch_wanted:%d, P_Sensor_wanted:%d\n\r", P_Type, P_Switch_wanted, P_Sensor_wanted);
 
     PeriphPos = FindPeriphListPos(Periph);
     
@@ -422,12 +422,12 @@ PeriphClass *FindNextPeriph(PeerClass *Peer, PeriphClass *Periph, int TypeMask, 
         // Peer fits
         if ((Peer == NULL) or (Peer->GetId() == TPeriph->GetPeerId()))
         {
-            Serial.printf("TPeriph->GetType() :%d & P_Type:%d == %d, Primary = %d\n\r", TPeriph->GetType(), P_Type, TPeriph->GetType() & P_Type, TPeriph->GetPrimary());
+            //Serial.printf("TPeriph->GetType() :%d & P_Type:%d == %d, Primary = %d\n\r", TPeriph->GetType(), P_Type, TPeriph->GetType() & P_Type, TPeriph->GetPrimary());
             
             //Periph hat die gefordeten Attribute
             if ((TPeriph->GetType() & P_Type) == P_Type) 
             {
-                Serial.printf("%s könnte passen\n\r", TPeriph->GetName());
+                //Serial.printf("%s könnte passen\n\r", TPeriph->GetName());
                 // und Primary stimmt oder ist nicht gewünscht
                 if  ( (P_Switch_wanted and TPeriph->GetPrimary() == PRIM_SWITCH) or 
                       (P_Sensor_wanted and TPeriph->GetPrimary() == PRIM_VOLT) or
@@ -436,14 +436,14 @@ PeriphClass *FindNextPeriph(PeerClass *Peer, PeriphClass *Periph, int TypeMask, 
                       (P_Sensor_wanted == false and P_Switch_wanted == false) )
                 {
                     // online-Status wie gewünscht
-                    Serial.printf("online?:%d\n\r", IsOnline(TPeriph));
+                    //Serial.printf("online?:%d\n\r", IsOnline(TPeriph));
                     switch (Status)
                     {
                         case OFFLINE:  if (!IsOnline(TPeriph)) return TPeriph; 
                                 break; // Periph ist offline
                         case ONLINE:   if (IsOnline(TPeriph)) return TPeriph;
                                 break; // Periph ist  online
-                        case FUCKLINE: Serial.println("FUCKLINE"); return TPeriph; 
+                        case FUCKLINE: return TPeriph; 
                                 break; // Status egal
                     }
                 } 
@@ -464,7 +464,7 @@ PeriphClass *FindPrevPeriph(PeerClass *Peer, PeriphClass *Periph, int TypeMask, 
     bool P_Switch_wanted = TypeMask & P_IS_PRIMARY_SWITCH;
     bool P_Sensor_wanted = TypeMask & P_IS_PRIMARY_SENSOR;
     
-    Serial.printf("P_Type:%d, P_Switch_wanted:%d, P_Sensor_wated:%d\n\r", P_Type, P_Switch_wanted, P_Sensor_wanted);
+    //Serial.printf("P_Type:%d, P_Switch_wanted:%d, P_Sensor_wated:%d\n\r", P_Type, P_Switch_wanted, P_Sensor_wanted);
 
     int PeriphPos = FindPeriphListPos(Periph);
     if (PeriphPos == -1) PeriphPos = PeriphList.size(); // if not found prev will start at last element
@@ -486,7 +486,7 @@ PeriphClass *FindPrevPeriph(PeerClass *Peer, PeriphClass *Periph, int TypeMask, 
         if ((Peer == NULL) or (Peer->GetId() == TPeriph->GetPeerId()))
         {
             //Periph hat die gefordeten Attribute
-            Serial.printf("TPeriph->GetType() :%d & P_Type:%d == %d, Primary = %d\n\r", TPeriph->GetType(), P_Type, TPeriph->GetType() & P_Type, TPeriph->GetPrimary());
+            //Serial.printf("TPeriph->GetType() :%d & P_Type:%d == %d, Primary = %d\n\r", TPeriph->GetType(), P_Type, TPeriph->GetType() & P_Type, TPeriph->GetPrimary());
             if ((TPeriph->GetType() & P_Type) == P_Type) 
             {
                 // und Primary stimmt oder ist nicht gewünscht

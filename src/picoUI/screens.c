@@ -407,14 +407,6 @@ void create_screen_scr_meter() {
     lv_obj_add_flag(objects.scr_meter, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.scr_meter, scr_meter_screen_unloaded_cb, LV_EVENT_SCREEN_UNLOADED, NULL);
     lv_obj_add_flag(objects.scr_meter, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.scr_meter, scr_meter_clicked_cb, LV_EVENT_CLICKED, NULL);
-    lv_obj_add_flag(objects.scr_meter, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.scr_meter, scr_meter_long_pressed_cb, LV_EVENT_LONG_PRESSED, NULL);
-    lv_obj_add_flag(objects.scr_meter, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.scr_meter, scr_meter_gesture_cb, LV_EVENT_GESTURE, NULL);
-    lv_obj_add_flag(objects.scr_meter, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.scr_meter, scr_meter_pressed_cb, LV_EVENT_PRESSED, NULL);
-    lv_obj_add_flag(objects.scr_meter, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.scr_meter, scr_meter_LV_EVENT_ALL_cb, EVT_LV_EVENT_ALL, NULL);
     lv_obj_add_flag(objects.btn_meter_next, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.btn_meter_next, btn_meter_next_clicked_cb, LV_EVENT_CLICKED, NULL);

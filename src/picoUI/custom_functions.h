@@ -82,14 +82,11 @@ void Scr_Start_Gesture(lv_event_t * e);
 
 void Scr_Meter_loaded(lv_event_t * e);
 void Scr_Meter_unloaded(lv_event_t * e);
-void Scr_Meter_pressed(lv_event_t * e);
 void Btn_Meter_Prev_clicked(lv_event_t * e);
 void Btn_Meter_Next_clicked(lv_event_t * e);
 void Scr_Meter_Timer_update(lv_timer_t * timer);
 void Btn_Meter_Up_clicked(lv_event_t * e);
-void Scr_Meter_clicked(lv_event_t * e);
-void Scr_Meter_Gesture(lv_event_t * e);
-void Scr_Meter_long_clicked(lv_event_t * e);
+void Scr_Meter_event(lv_event_t * e);
 
 void Btn_Switch_Prev_clicked(lv_event_t * e);
 void Btn_Switch_Next_clicked(lv_event_t * e);
@@ -113,9 +110,9 @@ void Btn_PeriphChoice_Prev_clicked(lv_event_t * e);
 void Btn_PeriphChoice_Up_clicked(lv_event_t * e);
 void Scr_PeriphChoice_Gesture(lv_event_t * e);
 
-void Scr_Prev_loaded(lv_event_t * e);
-void Scr_Prev_unloaded(lv_event_t * e);
-void Scr_Prev_Gesture(lv_event_t * e);
+void Scr_Pref_loaded(lv_event_t * e);
+void Scr_Pref_unloaded(lv_event_t * e);
+void Scr_Pref_Gesture(lv_event_t * e);
 
 extern char jsondataBuf[ESP_MAX_LEN+1];
 #ifdef __cplusplus

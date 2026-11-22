@@ -18,13 +18,13 @@ int Scr_Peers_Mode;
 CompThing   *CompThingArray[4] = {NULL, NULL, NULL, NULL};
 
 #pragma region Scr_Prev
-void Scr_Prev_loaded(lv_event_t * e)
+void Scr_Pref_loaded(lv_event_t * e)
 {
 }
-void Scr_Prev_unloaded(lv_event_t * e)
+void Scr_Pref_unloaded(lv_event_t * e)
 {
 }
-void Scr_Prev_Gesture(lv_event_t * e)
+void Scr_Pref_Gesture(lv_event_t * e)
 {
 }
 #pragma endregion Scr_Prev
@@ -41,7 +41,7 @@ void Scr_Navi_init()
 		Img_Wifi = obj;
 		lv_obj_set_pos(obj, 165, 332);
 		lv_obj_set_size(obj, 31, 26);
-		lv_obj_set_style_img_recolor(obj, lv_color_hex(common_dc1010), LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_img_recolor(obj, lv_color_hex(0xdc1010), LV_PART_MAIN | LV_STATE_DEFAULT);
 		lv_obj_set_style_img_recolor_opa(obj, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 		lv_img_set_src(obj, &icon_wlan);
 		lv_img_set_size_mode(obj, LV_IMG_SIZE_MODE_REAL);
@@ -451,77 +451,103 @@ void Scr_Meter_unloaded(lv_event_t * e)
 {
 	//Scr_Simple_ClearScreen(e);
 }
-void Scr_Meter_pressed(lv_event_t * e)
-{
-	DEBUG3("Meter - pressed\n\r");
-	lv_event_code_t event_code = lv_event_get_code(e);
-	
-	lv_obj_clear_flag(objects.btn_meter_prev, LV_OBJ_FLAG_HIDDEN);
-	lv_obj_clear_flag(objects.btn_meter_next, LV_OBJ_FLAG_HIDDEN);
-	lv_obj_clear_flag(objects.btn_meter_up,   LV_OBJ_FLAG_HIDDEN);
-	TSLastClickMeter = millis();
-
-}
 void Btn_Meter_Prev_clicked(lv_event_t * e)
 {
+	DEBUG3("Prev Periph will be: %s\n\r", ActivePeriphSensor->GetName());
 	ActivePeriphSensor = FindPrevPeriph(NULL, ActivePeriphSensor, P_IS_PRIMARY_SENSOR, CIRCULAR);
 	//ActivePeriphShown  = ActivePeriphSensor;
 	lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }
 void Btn_Meter_Next_clicked(lv_event_t * e)
 {	
+	DEBUG3("Next Periph will be: %s\n\r", ActivePeriphSensor->GetName());
 	ActivePeriphSensor = FindNextPeriph(NULL, ActivePeriphSensor, P_IS_PRIMARY_SENSOR, CIRCULAR);
 	//ActivePeriphShown  = ActivePeriphSensor;
-	DEBUG3("Next Periph will be: %s", ActivePeriphSensor->GetName());
 	lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }
 void Btn_Meter_Up_clicked(lv_event_t * e)
 {
 	lv_scr_load_anim(objects.scr_start, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
 }
-void Scr_Meter_clicked(lv_event_t * e)
-{
-	DEBUG3("Meter - clicked\n\r");
-	Btn_Meter_Next_clicked(e);
-}
-void Scr_Meter_long_clicked(lv_event_t * e)
-{
-	PeriphClass *Periph = ActivePeriphSensor;
-	DEBUG3("Primary of %s is switched from %d ", Periph->GetName(), Periph->GetPrimary());
-	switch (Periph->GetPrimary())
-	{
-		case PRIM_SWITCH: 	if (Periph->IsVolt() and Periph->IsAmp()) 	Periph->SetPrimary(PRIM_WATT); 
-							else if (Periph->IsVolt()) 					Periph->SetPrimary(PRIM_VOLT); 
-							else if (Periph->IsAmp()) 					Periph->SetPrimary(PRIM_AMP); 
-							break;
-		case PRIM_WATT:   	Periph->SetPrimary(PRIM_VOLT); break;
-		case PRIM_VOLT:   	if (Periph->IsAmp()) 						Periph->SetPrimary(PRIM_AMP); 
-							else if (Periph->IsSwitch()) 				Periph->SetPrimary(PRIM_SWITCH); 
-							break;
-		case PRIM_AMP:    	if (Periph->IsSwitch()) 					Periph->SetPrimary(PRIM_SWITCH); 
-							else if (Periph->IsVolt()) 					Periph->SetPrimary(PRIM_WATT); 
-							break;
-	}
-	DEBUG3("to %d\n\r", Periph->GetPrimary());
-	lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
-}
-void Scr_Meter_Gesture(lv_event_t * e)
+void Scr_Meter_event(lv_event_t * e)
 {
 	lv_event_code_t event_code = lv_event_get_code(e);
+	lv_obj_t * target = lv_event_get_target(e); 
     
-    if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) {
-        lv_indev_wait_release(lv_indev_get_act());
-        Btn_Meter_Next_clicked(e);
-		DEBUG3("Meter - Gesture - left\n\r");
-    }
-    else if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT) {
-        lv_indev_wait_release(lv_indev_get_act());
-        Btn_Meter_Prev_clicked(e);
-		DEBUG3("Meter - Gesture - right\n\r");
-	}
-	else
+	if (event_code == LV_EVENT_PRESSED)
 	{
-		DEBUG3("Meter - Gesture - not recognized !\n\r");
+		DEBUG3("Meter - pressed\n\r");
+	
+		lv_obj_clear_flag(objects.btn_meter_prev, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_clear_flag(objects.btn_meter_next, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_clear_flag(objects.btn_meter_up,   LV_OBJ_FLAG_HIDDEN);
+		TSLastClickMeter = millis();
+	}
+	if (event_code == LV_EVENT_GESTURE)
+	{
+		if (lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) 
+		{
+			lv_indev_wait_release(lv_indev_get_act());
+			DEBUG3("Meter - Gesture - left\n\r");
+			Btn_Meter_Next_clicked(e);
+			
+    	}
+    	else if (lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT) 
+		{
+			lv_indev_wait_release(lv_indev_get_act());
+			DEBUG3("Meter - Gesture - right\n\r");
+			Btn_Meter_Prev_clicked(e);
+			
+		}
+		else if (lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP) 
+		{
+			lv_indev_wait_release(lv_indev_get_act());
+			DEBUG3("Meter - Gesture - up\n\r");
+			Btn_Meter_Up_clicked(e);
+		}
+		else
+		{
+			DEBUG3("Meter - Gesture - not recognized ! Gesture was %d...\n\r", lv_indev_get_gesture_dir(lv_indev_get_act()));
+		}
+	}
+	else if (event_code == LV_EVENT_LONG_PRESSED)
+	{
+		PeriphClass *Periph = ActivePeriphSensor;
+		DEBUG3("Primary of %s is switched from %d ", Periph->GetName(), Periph->GetPrimary());
+		switch (Periph->GetPrimary())
+		{
+			case PRIM_SWITCH: 	if (Periph->IsVolt() and Periph->IsAmp()) 	Periph->SetPrimary(PRIM_WATT); 
+								else if (Periph->IsVolt()) 					Periph->SetPrimary(PRIM_VOLT); 
+								else if (Periph->IsAmp()) 					Periph->SetPrimary(PRIM_AMP); 
+								break;
+			case PRIM_WATT:   	Periph->SetPrimary(PRIM_VOLT); break;
+			case PRIM_VOLT:   	if (Periph->IsAmp()) 						Periph->SetPrimary(PRIM_AMP); 
+								else if (Periph->IsSwitch()) 				Periph->SetPrimary(PRIM_SWITCH); 
+								break;
+			case PRIM_AMP:    	if (Periph->IsSwitch()) 					Periph->SetPrimary(PRIM_SWITCH); 
+								else if (Periph->IsVolt()) 					Periph->SetPrimary(PRIM_WATT); 
+								break;
+		}
+		DEBUG3("to %d\n\r", Periph->GetPrimary());
+		lv_scr_load_anim(objects.scr_meter, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+	}
+	else if (event_code == LV_EVENT_CLICKED)
+	{
+		if (target == objects.btn_meter_prev)
+		{
+			DEBUG3("Meter - GesturePrev - clicked\n\r");
+			Btn_Meter_Prev_clicked(e);
+		}
+		else if (target == objects.btn_meter_next)
+		{
+			DEBUG3("Meter - Next - clicked\n\r");
+			Btn_Meter_Next_clicked(e);
+		}
+		else if (target == objects.btn_meter_up)
+		{
+			DEBUG3("Meter - Up - clicked\n\r");
+			Btn_Meter_Up_clicked(e);
+		}
 	}
 }
 #pragma endregion Scr_Meter

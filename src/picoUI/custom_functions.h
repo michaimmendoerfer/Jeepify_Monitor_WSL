@@ -8,10 +8,11 @@
 extern "C" {
 #endif
 
-void Scr_Navi_init();
-void Scr_Navi_Timer_update(lv_timer_t * timer);
-void tick_screen_scr_navi();
-void Scr_Navi_SendIcon(int color);
+void Scr_Top_loaded(lv_event_t *e);
+void Scr_Top_unloaded(lv_event_t *e);
+void Scr_Top_Timer_update(lv_timer_t * timer);
+void Scr_Top_event(lv_event_t *e);
+void Scr_Top_SendIcon(int color);
 
 void Scr_Peer_loaded(lv_event_t * e);
 void Scr_Peer_unloaded(lv_event_t * e);

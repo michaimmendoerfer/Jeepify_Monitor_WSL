@@ -11,6 +11,9 @@ extern "C" {
 void btn_peer_system_clicked_cb(lv_event_t * e);
 void btn_multi_2_clicked_cb(lv_event_t * e);
 void btn_start_settings_clicked_cb(lv_event_t * e);
+void scr_top_LV_EVENT_ALL_cb(lv_event_t * e);
+void scr_top_screen_loaded_cb(lv_event_t * e);
+void scr_top_screen_unloaded_cb(lv_event_t * e);
 void scr_switch_screen_loaded_cb(lv_event_t * e);
 void scr_switch_screen_unloaded_cb(lv_event_t * e);
 void scr_switch_gesture_cb(lv_event_t * e);
@@ -53,7 +56,6 @@ void scr_json_gesture_cb(lv_event_t * e);
 void scr_json_screen_loaded_cb(lv_event_t * e);
 void scr_meter_screen_loaded_cb(lv_event_t * e);
 void scr_meter_screen_unloaded_cb(lv_event_t * e);
-void scr_meter_LV_EVENT_ALL_cb(lv_event_t * e);
 void btn_periphchoice_next_clicked_cb(lv_event_t * e);
 void scr_periphchoice_screen_loaded_cb(lv_event_t * e);
 void scr_periphchoice_screen_unloaded_cb(lv_event_t * e);

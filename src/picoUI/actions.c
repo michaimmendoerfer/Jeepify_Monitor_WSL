@@ -15,7 +15,7 @@ void pp_register_custom_events(void) {
 
 // Trigger functions -- call these from application code
 void trigger_LV_EVENT_ALL(void) {
-    lv_event_send(objects.scr_meter, EVT_LV_EVENT_ALL, NULL);
+    lv_event_send(objects.scr_top, EVT_LV_EVENT_ALL, NULL);
 }
 
 
@@ -42,6 +42,24 @@ void btn_multi_2_clicked_cb(lv_event_t * e) {
 // Event callback for btn_start_settings on clicked
 void btn_start_settings_clicked_cb(lv_event_t * e) {
     lv_scr_load_anim(objects.scr_settings, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
+}
+
+
+// Event callback for scr_top on custom-event
+void scr_top_LV_EVENT_ALL_cb(lv_event_t * e) {
+    Scr_Top_event(e);
+}
+
+
+// Event callback for scr_top on screen-loaded
+void scr_top_screen_loaded_cb(lv_event_t * e) {
+    Scr_Top_loaded(e);
+}
+
+
+// Event callback for scr_top on screen-unloaded
+void scr_top_screen_unloaded_cb(lv_event_t * e) {
+    Scr_Top_unloaded(e);
 }
 
 
@@ -294,12 +312,6 @@ void scr_meter_screen_loaded_cb(lv_event_t * e) {
 // Event callback for scr_meter on screen-unloaded
 void scr_meter_screen_unloaded_cb(lv_event_t * e) {
     Scr_Meter_unloaded(e);
-}
-
-
-// Event callback for scr_meter on custom-event
-void scr_meter_LV_EVENT_ALL_cb(lv_event_t * e) {
-    Scr_Meter_event(e);
 }
 
 

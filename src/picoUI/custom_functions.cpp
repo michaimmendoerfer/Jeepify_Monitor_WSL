@@ -28,55 +28,97 @@ void Scr_Pref_Gesture(lv_event_t * e)
 {
 }
 #pragma endregion Scr_Prev
-#pragma region Scr_Navi
-lv_timer_t *Timer_Scr_Navi = NULL;
-lv_obj_t *Img_Wifi;
-
-void Scr_Navi_init()
+#pragma region Scr_Top
+lv_timer_t *Timer_Scr_Top = NULL;
+uint32_t TSLastClickTop = 0;
+void Scr_Top_loaded(lv_event_t *e)
 {
-	lv_obj_t *parent_obj = lv_layer_top();
-	{
-		// img_top_wifi
-		lv_obj_t *obj = lv_img_create(parent_obj);
-		Img_Wifi = obj;
-		lv_obj_set_pos(obj, 165, 332);
-		lv_obj_set_size(obj, 31, 26);
-		lv_obj_set_style_img_recolor(obj, lv_color_hex(0xdc1010), LV_PART_MAIN | LV_STATE_DEFAULT);
-		lv_obj_set_style_img_recolor_opa(obj, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-		lv_img_set_src(obj, &icon_wlan);
-		lv_img_set_size_mode(obj, LV_IMG_SIZE_MODE_REAL);
-		lv_img_set_zoom(obj, 220);
-		lv_img_set_antialias(obj, true);
-	}
-
+	DEBUG3("Top loaded\n\r");
 	static uint32_t user_data = 10;
 		
-	if (Timer_Scr_Navi) 
-	{
-		lv_timer_resume(Timer_Scr_Navi);
-	}
-	else 
-	{
-		Timer_Scr_Navi = lv_timer_create(Scr_Navi_Timer_update, 100,  &user_data);
-		DEBUG3("Navi-Timer created\n\r");
-	}
-    tick_screen_scr_navi();
+		if (Timer_Scr_Top) 
+		{
+			lv_timer_resume(Timer_Scr_Top);
+		}
+		else 
+		{
+			Timer_Scr_Top = lv_timer_create(Scr_Top_Timer_update, 100,  &user_data);
+		}
 }
-void Scr_Navi_SendIcon(int color)
+void Scr_Top_unloaded(lv_event_t *e)
+{
+	if (Timer_Scr_Top) lv_timer_del(Timer_Scr_Top);
+	Timer_Scr_Top = NULL;
+}
+void Scr_Top_event(lv_event_t *e)
+{
+	lv_event_code_t event_code = lv_event_get_code(e);
+	lv_obj_t * target = lv_event_get_target(e); 
+    DEBUG3("Screen - event\n\r");
+	if (event_code == LV_EVENT_PRESSED)
+	{
+		DEBUG3("Screen - pressed\n\r");
+	
+		lv_obj_clear_flag(objects.btn_top_prev, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_clear_flag(objects.btn_top_next, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_clear_flag(objects.btn_top_up,   LV_OBJ_FLAG_HIDDEN);
+		TSLastClickTop = millis();
+	}
+	if (event_code == LV_EVENT_GESTURE)
+	{
+		if (lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) 
+		{
+			lv_indev_wait_release(lv_indev_get_act());
+			DEBUG3("Screen - Gesture - left\n\r");
+			Knob.Clicked = true;
+			Knob.Diff    = -1;
+    	}
+    	else if (lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT) 
+		{
+			lv_indev_wait_release(lv_indev_get_act());
+			DEBUG3("Screen - Gesture - right\n\r");
+			Knob.Clicked = true;
+			Knob.Diff    = 1;
+			
+		}
+		else if (lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP) 
+		{
+			lv_indev_wait_release(lv_indev_get_act());
+			DEBUG3("Screen - Gesture - up\n\r");
+		}
+		else
+		{
+			DEBUG3("Meter - Gesture - not recognized ! Gesture was %d...\n\r", lv_indev_get_gesture_dir(lv_indev_get_act()));
+		}
+	}
+	else if(event_code == LV_EVENT_CLICKED) 
+	{
+        lv_point_t p;
+		lv_indev_get_point(lv_indev_get_act(), &p);
+        
+        // Passendes Widget auf dem aktiven Screen unter dem Finger suchen
+        target = lv_indev_search_obj(lv_scr_act(), &p); 
+        if (target != NULL)
+		{
+            lv_event_send(target, LV_EVENT_CLICKED, NULL); 
+        }
+    }
+}
+void Scr_Top_SendIcon(int color)
 {
 	switch (color)
 	{
 		case 0: //off
-				lv_obj_set_style_img_recolor(Img_Wifi, lv_color_hex(0x555555), LV_PART_MAIN | LV_STATE_DEFAULT); break;
+				lv_obj_set_style_img_recolor(objects.img_top_wifi, lv_color_hex(0x555555), LV_PART_MAIN | LV_STATE_DEFAULT); break;
 		case 1: //red
-				lv_obj_set_style_img_recolor(Img_Wifi, lv_color_hex(0x990000), LV_PART_MAIN | LV_STATE_DEFAULT); break;
+				lv_obj_set_style_img_recolor(objects.img_top_wifi, lv_color_hex(0x990000), LV_PART_MAIN | LV_STATE_DEFAULT); break;
 		case 2: //green
-				lv_obj_set_style_img_recolor(Img_Wifi, lv_color_hex(0x009900), LV_PART_MAIN | LV_STATE_DEFAULT); break;
+				lv_obj_set_style_img_recolor(objects.img_top_wifi, lv_color_hex(0x009900), LV_PART_MAIN | LV_STATE_DEFAULT); break;
 		case 3: //blue
-				lv_obj_set_style_img_recolor(Img_Wifi, lv_color_hex(0x000099), LV_PART_MAIN | LV_STATE_DEFAULT); break;
+				lv_obj_set_style_img_recolor(objects.img_top_wifi, lv_color_hex(0x000099), LV_PART_MAIN | LV_STATE_DEFAULT); break;
 	}
 }
-void Scr_Navi_Timer_update(lv_timer_t * timer)
+void Scr_Top_Timer_update(lv_timer_t * timer)
 {
 	uint32_t aktZeit = millis();
 	int color = 0;
@@ -85,7 +127,7 @@ void Scr_Navi_Timer_update(lv_timer_t * timer)
 	if (aktZeit - TSMsgRcv < MSGLIGHT_INTERVAL) color = 2;
 	if (aktZeit - TSPair   < PAIR_INTERVAL)     color = 3;
 	
-	Scr_Navi_SendIcon(color);
+	Scr_Top_SendIcon(color);
 
 	#ifdef BATTERY_PORT
 		char buf[10];
@@ -106,11 +148,7 @@ void Scr_Navi_Timer_update(lv_timer_t * timer)
 		}
 	#endif
 }
-void tick_screen_scr_navi() {
-}
 #pragma endregion Scr_Navi
-#pragma region Scr_Top
-#pragma endregion Scr_Top
 #pragma region Scr_PeriphChoice
 lv_timer_t *Timer_Scr_PeriphChoice = NULL;
 void Scr_PeriphChoice_loaded(lv_event_t * e)
@@ -449,7 +487,8 @@ void Scr_Meter_Timer_update(lv_timer_t * timer)
 }
 void Scr_Meter_unloaded(lv_event_t * e)
 {
-	//Scr_Simple_ClearScreen(e);
+	if (Timer_Scr_Meter) lv_timer_del(Timer_Scr_Meter);
+	Timer_Scr_Meter = NULL;
 }
 void Btn_Meter_Prev_clicked(lv_event_t * e)
 {

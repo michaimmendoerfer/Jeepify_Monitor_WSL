@@ -375,7 +375,6 @@ void setup()
     #endif
 
     create_screens();
-    Scr_Navi_init();
     loadScreen(SCREEN_ID_SCR_START);
 
     if (strcmp(buf, "Menu") == 0) 

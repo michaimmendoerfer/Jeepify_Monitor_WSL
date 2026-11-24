@@ -66,6 +66,8 @@ int msgBoxOpa = 200;
 volatile bool saveandrestartRequested = false;
 volatile bool savePeersRequested = false;
 volatile bool saveModuleRequested = false;
+volatile bool GestureUpRecognized = false;
+
 
 #pragma endregion Globals
 
@@ -375,18 +377,11 @@ void setup()
     #endif
 
     create_screens();
+    Scr_Navi_Init();
     loadScreen(SCREEN_ID_SCR_START);
 
-    if (strcmp(buf, "Menu") == 0) 
-    {
-        loadScreen(SCREEN_ID_SCR_START);
-        //_ui_screen_change(&ui_ScrMenu, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrMenu_screen_init);
-    }
-    else if (strcmp(buf, "JSON") == 0) 
-    {
-        loadScreen(SCREEN_ID_SCR_JSON);
-        //_ui_screen_change(&ui_ScrJSON, MY_ANIM, MY_ANIM_TIME, 0, &ui_ScrJSON_screen_init);
-    }
+    if (strcmp(buf, "Menu") == 0)       loadScreen(SCREEN_ID_SCR_START);
+    else if (strcmp(buf, "JSON") == 0)  loadScreen(SCREEN_ID_SCR_JSON);
     else if (strcmp(buf, "Nicey") == 0)
     {
         //loadScreen(SCREEN_ID_SCR_MULTI_GAUGE);
@@ -531,7 +526,7 @@ void loop()
     }
     
     // --- ZENTRALES KNOB-EVENT-HANDLING ---
-    if (Knob.Clicked) 
+    if (GestureUpRecognized or Knob.Clicked) 
     {
         Knob.LastClicked = Knob.Clicked;
         
@@ -540,7 +535,11 @@ void loop()
 
         if (active_screen == objects.scr_peer) 
         {
-            if (Knob.Diff < 0) {
+            if (GestureUpRecognized)
+            {
+                Btn_Peer_Up_clicked(NULL);
+            } 
+            else if (Knob.Diff < 0) {
                 Btn_Peer_Prev_clicked(NULL);
             } else {
                 Btn_Peer_Next_clicked(NULL);
@@ -548,7 +547,11 @@ void loop()
         }
         else if (active_screen == objects.scr_meter) 
         {
-            if (Knob.Diff < 0) {
+            if (GestureUpRecognized)
+            {
+                Btn_Meter_Up_clicked(NULL);
+            } 
+            else if (Knob.Diff < 0) {
                 Btn_Meter_Prev_clicked(NULL);
             } else {
                 Btn_Meter_Next_clicked(NULL);
@@ -556,7 +559,11 @@ void loop()
         }
         else if (active_screen == objects.scr_switch) 
         {
-            if (Knob.Diff < 0) {
+            if (GestureUpRecognized)
+            {
+                Btn_Switch_Up_clicked(NULL);
+            } 
+            else if (Knob.Diff < 0) {
                 Btn_Switch_Prev_clicked(NULL);
             } else {
                 Btn_Switch_Next_clicked(NULL);
@@ -564,7 +571,11 @@ void loop()
         }
         else if (active_screen == objects.scr_periphchoice) 
         {
-            if (Knob.Diff < 0) {
+            if (GestureUpRecognized)
+            {
+                Btn_PeriphChoice_Up_clicked(NULL);
+            } 
+            else if (Knob.Diff < 0) {
                 Btn_PeriphChoice_Prev_clicked(NULL);
             } else {
                 Btn_PeriphChoice_Next_clicked(NULL);
@@ -572,7 +583,11 @@ void loop()
         }
         else if (active_screen == objects.scr_multi) 
         {
-            if (Knob.Diff < 0) {
+            if (GestureUpRecognized)
+            {
+                Btn_Multi_Up_clicked(NULL);
+            } 
+            else if (Knob.Diff < 0) {
                 Btn_Multi_Prev_clicked(NULL);
             } else {
                 Btn_Multi_Next_clicked(NULL);
@@ -580,6 +595,7 @@ void loop()
         }
         // ERST HIER, nachdem alle Event-Wege durchlaufen wurden, wird genullt!
         Knob.Clicked = 0; 
+        GestureUpRecognized = false;
     }
     PrepareJSON(); 
     lv_timer_handler(); 

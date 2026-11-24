@@ -10,7 +10,6 @@ const uint32_t common_2196f3 = 0x2196f3;
 const uint32_t common_3d3d3d = 0x3d3d3d;
 const uint32_t common_9a0101 = 0x9a0101;
 const uint32_t common_b21515 = 0xb21515;
-const uint32_t common_b26314 = 0xb26314;
 const uint32_t common_ff0000 = 0xff0000;
 const uint32_t common_ffffff = 0xffffff;
 

@@ -23,9 +23,8 @@ void loadScreen(enum ScreensEnum screenId) {
 }
 
 void ui_init() {
-    pp_register_custom_events();
     create_screens();
-    loadScreen(SCREEN_ID_SCR_TOP);
+    loadScreen(SCREEN_ID_SCR_PERIPHCHOICE);
 }
 
 void ui_tick() {

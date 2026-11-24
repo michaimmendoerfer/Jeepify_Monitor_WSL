@@ -14,6 +14,11 @@ void Scr_Top_Timer_update(lv_timer_t * timer);
 void Scr_Top_event(lv_event_t *e);
 void Scr_Top_SendIcon(int color);
 
+void Scr_Navi_Init();
+void Scr_Navi_event(lv_event_t *e);
+void Scr_Navi_Timer_update(lv_timer_t * timer);
+
+
 void Scr_Peer_loaded(lv_event_t * e);
 void Scr_Peer_unloaded(lv_event_t * e);
 void Scr_Peer_Timer_update(lv_timer_t * timer);
@@ -116,6 +121,7 @@ void Scr_Pref_unloaded(lv_event_t * e);
 void Scr_Pref_Gesture(lv_event_t * e);
 
 extern char jsondataBuf[ESP_MAX_LEN+1];
+extern volatile bool GestureUpRecognized;
 #ifdef __cplusplus
 }
 #endif

@@ -9,7 +9,6 @@ extern "C" {
 #endif
 
 typedef struct _objects_t {
-    lv_obj_t *scr_top;
     lv_obj_t *scr_periphchoice;
     lv_obj_t *scr_meter;
     lv_obj_t *scr_preferences;
@@ -21,11 +20,7 @@ typedef struct _objects_t {
     lv_obj_t *scr_multi;
     lv_obj_t *scr_start;
     lv_obj_t *scr_switch;
-    lv_obj_t *btn_switch_next;
-    lv_obj_t *btn_switch_prev;
-    lv_obj_t *btn_switch_up;
     lv_obj_t *arc_switch;
-    lv_obj_t *lbl_start_bat;
     lv_obj_t *lbl_start_version;
     lv_obj_t *img_start_rubicon;
     lv_obj_t *btn_start_switch;
@@ -38,9 +33,6 @@ typedef struct _objects_t {
     lv_obj_t *btn_multi_2;
     lv_obj_t *btn_multi_3;
     lv_obj_t *btn_multi_4;
-    lv_obj_t *btn_multi_next;
-    lv_obj_t *btn_multi_prev;
-    lv_obj_t *btn_multi_up;
     lv_obj_t *cnt_set;
     lv_obj_t *btn_set_save;
     lv_obj_t *btn_set_json;
@@ -61,9 +53,6 @@ typedef struct _objects_t {
     lv_obj_t *btn_peer_sleep;
     lv_obj_t *btn_peer_reset;
     lv_obj_t *lbl_peer_scrname;
-    lv_obj_t *btn_peer_next;
-    lv_obj_t *btn_peer_prev;
-    lv_obj_t *btn_peer_up;
     lv_obj_t *lbl_eichen_1;
     lv_obj_t *lbl_eichen_scrname;
     lv_obj_t *btn_eichen_eichen;
@@ -89,9 +78,6 @@ typedef struct _objects_t {
     lv_obj_t *lbl_meter_peername;
     lv_obj_t *lbl_meter_periphname;
     lv_obj_t *lbl_meter_value;
-    lv_obj_t *btn_meter_next;
-    lv_obj_t *btn_meter_prev;
-    lv_obj_t *btn_meter_up;
     lv_obj_t *img_meter_zeiger;
     lv_obj_t *arc_meter;
     lv_obj_t *img_periphchoice_bg;
@@ -100,18 +86,6 @@ typedef struct _objects_t {
     lv_obj_t *lbl_periphchoice_type;
     lv_obj_t *lbl_periphchoice_online;
     lv_obj_t *lbl_periphchoice_periphname;
-    lv_obj_t *btn_periphchoice_next;
-    lv_obj_t *btn_periphchoice_prev;
-    lv_obj_t *btn_periphchoice_up;
-    lv_obj_t *btn_top_up;
-    lv_obj_t *btn_top_prev;
-    lv_obj_t *btn_top_next;
-    lv_obj_t *arc_top_timearc;
-    lv_obj_t *lbl_top_battery;
-    lv_obj_t *img_top_wifi;
-    lv_obj_t *btn_switch_next_label;
-    lv_obj_t *btn_switch_prev_label;
-    lv_obj_t *btn_switch_up_label;
     lv_obj_t *btn_start_switch_label;
     lv_obj_t *btn_start_multi_label;
     lv_obj_t *btn_start_settings_label;
@@ -120,9 +94,6 @@ typedef struct _objects_t {
     lv_obj_t *btn_multi_2_label;
     lv_obj_t *btn_multi_3_label;
     lv_obj_t *btn_multi_4_label;
-    lv_obj_t *btn_multi_next_label;
-    lv_obj_t *btn_multi_prev_label;
-    lv_obj_t *btn_multi_up_label;
     lv_obj_t *btn_set_save_label;
     lv_obj_t *btn_set_json_label;
     lv_obj_t *btn_set_pair_label;
@@ -139,42 +110,26 @@ typedef struct _objects_t {
     lv_obj_t *btn_peer_volt_label;
     lv_obj_t *btn_peer_sleep_label;
     lv_obj_t *btn_peer_reset_label;
-    lv_obj_t *btn_peer_next_label;
-    lv_obj_t *btn_peer_prev_label;
-    lv_obj_t *btn_peer_up_label;
     lv_obj_t *btn_eichen_eichen_label;
     lv_obj_t *btn_volt_save_label;
-    lv_obj_t *btn_meter_next_label;
-    lv_obj_t *btn_meter_prev_label;
-    lv_obj_t *btn_meter_up_label;
-    lv_obj_t *btn_periphchoice_next_label;
-    lv_obj_t *btn_periphchoice_prev_label;
-    lv_obj_t *btn_periphchoice_up_label;
-    lv_obj_t *btn_top_up_label;
-    lv_obj_t *btn_top_prev_label;
-    lv_obj_t *btn_top_next_label;
 } objects_t;
 
 extern objects_t objects;
 
 enum ScreensEnum {
-    SCREEN_ID_SCR_TOP = 1,
-    SCREEN_ID_SCR_PERIPHCHOICE = 2,
-    SCREEN_ID_SCR_METER = 3,
-    SCREEN_ID_SCR_PREFERENCES = 4,
-    SCREEN_ID_SCR_JSON = 5,
-    SCREEN_ID_SCR_VOLT = 6,
-    SCREEN_ID_SCR_EICHEN = 7,
-    SCREEN_ID_SCR_PEER = 8,
-    SCREEN_ID_SCR_SETTINGS = 9,
-    SCREEN_ID_SCR_MULTI = 10,
-    SCREEN_ID_SCR_START = 11,
-    SCREEN_ID_SCR_SWITCH = 12,
+    SCREEN_ID_SCR_PERIPHCHOICE = 1,
+    SCREEN_ID_SCR_METER = 2,
+    SCREEN_ID_SCR_PREFERENCES = 3,
+    SCREEN_ID_SCR_JSON = 4,
+    SCREEN_ID_SCR_VOLT = 5,
+    SCREEN_ID_SCR_EICHEN = 6,
+    SCREEN_ID_SCR_PEER = 7,
+    SCREEN_ID_SCR_SETTINGS = 8,
+    SCREEN_ID_SCR_MULTI = 9,
+    SCREEN_ID_SCR_START = 10,
+    SCREEN_ID_SCR_SWITCH = 11,
 };
 
-void create_screen_scr_top();
-void tick_screen_scr_top();
-void delete_screen_scr_top();
 void create_screen_scr_periphchoice();
 void tick_screen_scr_periphchoice();
 void delete_screen_scr_periphchoice();

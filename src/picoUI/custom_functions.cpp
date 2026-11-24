@@ -3,6 +3,7 @@
 #include "picoUI/screens.h"
 #include "picoUI/images.h"
 #include "picoUI/colors.h"
+#include "fonts/fonts.h"
 #include "main.h"
 #include "picoButton.h"
 #include "custom_functions.h"
@@ -17,66 +18,100 @@ int Scr_Peers_Mode;
 
 CompThing   *CompThingArray[4] = {NULL, NULL, NULL, NULL};
 
-#pragma region Scr_Prev
-void Scr_Pref_loaded(lv_event_t * e)
+#pragma region Scr_Navi
+lv_obj_t *Scr_Navi;
+lv_obj_t *Img_Navi_Wifi;
+lv_obj_t *Lbl_Navi_Volt;
+lv_obj_t *Arc_Navi_TimeArc;
+
+lv_timer_t *Timer_Scr_Navi = NULL;
+uint32_t TSLastClickNavi = -1;
+void Scr_Navi_Init()
 {
-}
-void Scr_Pref_unloaded(lv_event_t * e)
-{
-}
-void Scr_Pref_Gesture(lv_event_t * e)
-{
-}
-#pragma endregion Scr_Prev
-#pragma region Scr_Top
-lv_timer_t *Timer_Scr_Top = NULL;
-uint32_t TSLastClickTop = 0;
-void Scr_Top_loaded(lv_event_t *e)
-{
-	DEBUG3("Top loaded\n\r");
+	lv_obj_t * Scr_Navi = lv_layer_top();
+
+	Lbl_Navi_Volt = lv_label_create(Scr_Navi);
+	lv_obj_set_pos(Lbl_Navi_Volt, LV_PCT(45), LV_PCT(88));
+	lv_obj_set_size(Lbl_Navi_Volt, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+	lv_obj_set_style_text_opa(Lbl_Navi_Volt, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(Lbl_Navi_Volt, &font_ubuntu_22, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_transform_zoom(Lbl_Navi_Volt, 256, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_color(Lbl_Navi_Volt, lv_color_hex(0xb26314), LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_label_set_text(Lbl_Navi_Volt, "4.27V");
+
+	Arc_Navi_TimeArc = lv_arc_create(Scr_Navi);
+	lv_obj_set_pos(Arc_Navi_TimeArc, LV_PCT(0), LV_PCT(0));
+	lv_obj_set_size(Arc_Navi_TimeArc, LV_PCT(100), LV_PCT(100));
+	lv_arc_set_bg_angles(Arc_Navi_TimeArc, 135, 45);
+	lv_arc_set_range(Arc_Navi_TimeArc, 0, 100);
+	lv_arc_set_value(Arc_Navi_TimeArc, 50);
+	lv_obj_set_style_arc_rounded(Arc_Navi_TimeArc, true, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+	lv_obj_set_style_arc_color(Arc_Navi_TimeArc, lv_color_hex(common_2196f3), LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_arc_rounded(Arc_Navi_TimeArc, false, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_arc_color(Arc_Navi_TimeArc, lv_color_hex(common_2196f3), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+	lv_obj_set_style_arc_width(Arc_Navi_TimeArc, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_arc_width(Arc_Navi_TimeArc, 3, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+	lv_obj_set_style_transform_zoom(Arc_Navi_TimeArc, 256, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_clear_flag(Arc_Navi_TimeArc, LV_OBJ_FLAG_CLICKABLE);
+
+	Img_Navi_Wifi = lv_img_create(Scr_Navi);
+	lv_obj_set_pos(Img_Navi_Wifi, LV_PCT(46), LV_PCT(92));
+	lv_obj_set_size(Img_Navi_Wifi, LV_PCT(8), LV_PCT(8));
+	lv_obj_clear_flag(Img_Navi_Wifi, LV_OBJ_FLAG_SCROLLABLE);
+	lv_obj_set_style_bg_opa(Img_Navi_Wifi, LV_OPA_TRANSP, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_border_width(Img_Navi_Wifi, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_pad_all(Img_Navi_Wifi, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_img_set_src(Img_Navi_Wifi, &icon_wlan);
+	lv_img_set_size_mode(Img_Navi_Wifi, LV_IMG_SIZE_MODE_REAL);
+	lv_img_set_zoom(Img_Navi_Wifi, 213);
+	lv_img_set_antialias(Img_Navi_Wifi, true);
+	lv_obj_set_size(Img_Navi_Wifi, 30, 25);
+
+	DEBUG3("Navi loaded\n\r");
 	static uint32_t user_data = 10;
 		
-		if (Timer_Scr_Top) 
-		{
-			lv_timer_resume(Timer_Scr_Top);
-		}
-		else 
-		{
-			Timer_Scr_Top = lv_timer_create(Scr_Top_Timer_update, 100,  &user_data);
-		}
+	if (Timer_Scr_Navi) 
+	{
+		lv_timer_resume(Timer_Scr_Navi);
+	}
+	else 
+	{
+		Timer_Scr_Navi = lv_timer_create(Scr_Navi_Timer_update, 100,  &user_data);
+	}
+
+	lv_obj_add_flag(Scr_Navi, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_clear_flag(Scr_Navi, LV_OBJ_FLAG_GESTURE_BUBBLE);
+    lv_obj_add_event_cb(Scr_Navi, Scr_Navi_event, LV_EVENT_ALL, NULL);
 }
-void Scr_Top_unloaded(lv_event_t *e)
-{
-	if (Timer_Scr_Top) lv_timer_del(Timer_Scr_Top);
-	Timer_Scr_Top = NULL;
-}
-void Scr_Top_event(lv_event_t *e)
+void Scr_Navi_event(lv_event_t *e)
 {
 	lv_event_code_t event_code = lv_event_get_code(e);
 	lv_obj_t * target = lv_event_get_target(e); 
-    DEBUG3("Screen - event\n\r");
+    if (event_code == LV_EVENT_SCREEN_UNLOADED)
+	{
+		DEBUG3("Navi unloaded\n\r");
+		if (Timer_Scr_Navi) lv_timer_del(Timer_Scr_Navi);
+		Timer_Scr_Navi = NULL;
+	}
 	if (event_code == LV_EVENT_PRESSED)
 	{
-		DEBUG3("Screen - pressed\n\r");
+		DEBUG3("Navi - pressed\n\r");
 	
-		lv_obj_clear_flag(objects.btn_top_prev, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_clear_flag(objects.btn_top_next, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_clear_flag(objects.btn_top_up,   LV_OBJ_FLAG_HIDDEN);
-		TSLastClickTop = millis();
+		TSLastClickNavi = millis();
 	}
 	if (event_code == LV_EVENT_GESTURE)
 	{
 		if (lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT) 
 		{
 			lv_indev_wait_release(lv_indev_get_act());
-			DEBUG3("Screen - Gesture - left\n\r");
+			DEBUG3("Navi - Gesture - left\n\r");
 			Knob.Clicked = true;
 			Knob.Diff    = -1;
     	}
     	else if (lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT) 
 		{
 			lv_indev_wait_release(lv_indev_get_act());
-			DEBUG3("Screen - Gesture - right\n\r");
+			DEBUG3("Navi - Gesture - right\n\r");
 			Knob.Clicked = true;
 			Knob.Diff    = 1;
 			
@@ -84,11 +119,12 @@ void Scr_Top_event(lv_event_t *e)
 		else if (lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP) 
 		{
 			lv_indev_wait_release(lv_indev_get_act());
-			DEBUG3("Screen - Gesture - up\n\r");
+			DEBUG3("Navi - Gesture - up\n\r");
+			GestureUpRecognized = true;
 		}
 		else
 		{
-			DEBUG3("Meter - Gesture - not recognized ! Gesture was %d...\n\r", lv_indev_get_gesture_dir(lv_indev_get_act()));
+			DEBUG3("Navi - Gesture - not recognized ! Gesture was %d...\n\r", lv_indev_get_gesture_dir(lv_indev_get_act()));
 		}
 	}
 	else if(event_code == LV_EVENT_CLICKED) 
@@ -100,25 +136,26 @@ void Scr_Top_event(lv_event_t *e)
         target = lv_indev_search_obj(lv_scr_act(), &p); 
         if (target != NULL)
 		{
-            lv_event_send(target, LV_EVENT_CLICKED, NULL); 
+            DEBUG3("Navi - event weitergegeben\n\r");
+			lv_event_send(target, LV_EVENT_CLICKED, NULL); 
         }
     }
 }
-void Scr_Top_SendIcon(int color)
+void Scr_Navi_SendIcon(int color)
 {
 	switch (color)
 	{
 		case 0: //off
-				lv_obj_set_style_img_recolor(objects.img_top_wifi, lv_color_hex(0x555555), LV_PART_MAIN | LV_STATE_DEFAULT); break;
+				lv_obj_set_style_img_recolor(Img_Navi_Wifi, lv_color_hex(0x555555), LV_PART_MAIN | LV_STATE_DEFAULT); break;
 		case 1: //red
-				lv_obj_set_style_img_recolor(objects.img_top_wifi, lv_color_hex(0x990000), LV_PART_MAIN | LV_STATE_DEFAULT); break;
+				lv_obj_set_style_img_recolor(Img_Navi_Wifi, lv_color_hex(0x990000), LV_PART_MAIN | LV_STATE_DEFAULT); break;
 		case 2: //green
-				lv_obj_set_style_img_recolor(objects.img_top_wifi, lv_color_hex(0x009900), LV_PART_MAIN | LV_STATE_DEFAULT); break;
+				lv_obj_set_style_img_recolor(Img_Navi_Wifi, lv_color_hex(0x009900), LV_PART_MAIN | LV_STATE_DEFAULT); break;
 		case 3: //blue
-				lv_obj_set_style_img_recolor(objects.img_top_wifi, lv_color_hex(0x000099), LV_PART_MAIN | LV_STATE_DEFAULT); break;
+				lv_obj_set_style_img_recolor(Img_Navi_Wifi, lv_color_hex(0x000099), LV_PART_MAIN | LV_STATE_DEFAULT); break;
 	}
 }
-void Scr_Top_Timer_update(lv_timer_t * timer)
+void Scr_Navi_Timer_update(lv_timer_t * timer)
 {
 	uint32_t aktZeit = millis();
 	int color = 0;
@@ -127,7 +164,7 @@ void Scr_Top_Timer_update(lv_timer_t * timer)
 	if (aktZeit - TSMsgRcv < MSGLIGHT_INTERVAL) color = 2;
 	if (aktZeit - TSPair   < PAIR_INTERVAL)     color = 3;
 	
-	Scr_Top_SendIcon(color);
+	Scr_Navi_SendIcon(color);
 
 	#ifdef BATTERY_PORT
 		char buf[10];
@@ -149,6 +186,17 @@ void Scr_Top_Timer_update(lv_timer_t * timer)
 	#endif
 }
 #pragma endregion Scr_Navi
+#pragma region Scr_Prev
+void Scr_Pref_loaded(lv_event_t * e)
+{
+}
+void Scr_Pref_unloaded(lv_event_t * e)
+{
+}
+void Scr_Pref_Gesture(lv_event_t * e)
+{
+}
+#pragma endregion Scr_Prev
 #pragma region Scr_PeriphChoice
 lv_timer_t *Timer_Scr_PeriphChoice = NULL;
 void Scr_PeriphChoice_loaded(lv_event_t * e)
@@ -411,15 +459,7 @@ void Scr_Meter_loaded(lv_event_t * e)
 	}
 }
 void Scr_Meter_Timer_update(lv_timer_t * timer)
-{
-	if (millis() - TSLastClickMeter > 1000)
-	{
-		lv_obj_add_flag(objects.btn_meter_prev, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_add_flag(objects.btn_meter_next, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_add_flag(objects.btn_meter_up,   LV_OBJ_FLAG_HIDDEN);
-		TSLastClickMeter = -1;
-	}
-	
+{	
 	PeerClass *peer = PeerOf(ActivePeriphSensor);
 	if (peer->GetName()) lv_label_set_text_fmt(objects.lbl_meter_peername, "%.6s (%d dBm)", peer->GetName(), peer->GetdBm());
 	if (ActivePeriphSensor->GetName()) lv_label_set_text_fmt(objects.lbl_meter_periphname, "%.6s", ActivePeriphSensor->GetName());
@@ -516,10 +556,6 @@ void Scr_Meter_event(lv_event_t * e)
 	if (event_code == LV_EVENT_PRESSED)
 	{
 		DEBUG3("Meter - pressed\n\r");
-	
-		lv_obj_clear_flag(objects.btn_meter_prev, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_clear_flag(objects.btn_meter_next, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_clear_flag(objects.btn_meter_up,   LV_OBJ_FLAG_HIDDEN);
 		TSLastClickMeter = millis();
 	}
 	if (event_code == LV_EVENT_GESTURE)
@@ -572,21 +608,7 @@ void Scr_Meter_event(lv_event_t * e)
 	}
 	else if (event_code == LV_EVENT_CLICKED)
 	{
-		if (target == objects.btn_meter_prev)
-		{
-			DEBUG3("Meter - GesturePrev - clicked\n\r");
-			Btn_Meter_Prev_clicked(e);
-		}
-		else if (target == objects.btn_meter_next)
-		{
-			DEBUG3("Meter - Next - clicked\n\r");
-			Btn_Meter_Next_clicked(e);
-		}
-		else if (target == objects.btn_meter_up)
-		{
-			DEBUG3("Meter - Up - clicked\n\r");
-			Btn_Meter_Up_clicked(e);
-		}
+		
 	}
 }
 #pragma endregion Scr_Meter
@@ -613,13 +635,6 @@ void Scr_Switch_loaded(lv_event_t * e)
 }
 void Scr_Switch_Timer_update(lv_timer_t * timer)
 {
-	if (millis() - TSLastClickSwitch > 1000)
-	{
-		lv_obj_add_flag(objects.btn_switch_prev, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_add_flag(objects.btn_switch_next, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_add_flag(objects.btn_switch_up,   LV_OBJ_FLAG_HIDDEN);
-		TSLastClickSwitch = -1;
-	}
 	if (CompThingArray[0]) 
 	{
 		CompThingArray[0]->Update();
@@ -655,9 +670,7 @@ void Scr_Switch_unloaded(lv_event_t * e)
 }
 void Scr_Switch_pressed(lv_event_t * e)
 {
-	lv_obj_clear_flag(objects.btn_switch_prev, LV_OBJ_FLAG_HIDDEN);
-	lv_obj_clear_flag(objects.btn_switch_next, LV_OBJ_FLAG_HIDDEN);
-	lv_obj_clear_flag(objects.btn_switch_up,   LV_OBJ_FLAG_HIDDEN);
+	
 	TSLastClickSwitch = millis();
 }
 void Btn_Switch_Prev_clicked(lv_event_t * e)
@@ -977,9 +990,7 @@ void Scr_Peer_Timer_update(lv_timer_t * timer)
 {
     if ((TSLastClickPeer != -1) && (millis() - TSLastClickPeer > 1000))
 	{
-		lv_obj_add_flag(objects.btn_multi_prev, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_add_flag(objects.btn_multi_next, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_add_flag(objects.btn_multi_up,   LV_OBJ_FLAG_HIDDEN);
+		
 		TSLastClickPeer = -1;
 	}	
 	if (ActivePeer) 
@@ -1023,9 +1034,7 @@ void Scr_Peer_Timer_update(lv_timer_t * timer)
 }
 void Scr_Peer_pressed(lv_event_t * e)
 {
-	lv_obj_clear_flag(objects.btn_peer_prev, LV_OBJ_FLAG_HIDDEN);
-	lv_obj_clear_flag(objects.btn_peer_next, LV_OBJ_FLAG_HIDDEN);
-	lv_obj_clear_flag(objects.btn_peer_up,   LV_OBJ_FLAG_HIDDEN);
+	
 	TSLastClickPeer = millis();
 }
 void Btn_Peer_Next_clicked(lv_event_t * e)
@@ -1236,24 +1245,12 @@ void Scr_Multi_Timer_update(lv_timer_t *timer)
 {
     for (int Pos=0; Pos<PERIPH_PER_SCREEN; Pos++) 
 		if (Screen[ActiveMultiScreen].GetPeriphId(Pos) >= 0) CompThingArray[Pos]->Update();
-	
-	if ((TSLastClickMulti != -1) && (millis() - TSLastClickMulti > 1000))
-	{
-		lv_obj_add_flag(objects.btn_multi_prev, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_add_flag(objects.btn_multi_next, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_add_flag(objects.btn_multi_up,   LV_OBJ_FLAG_HIDDEN);
-		TSLastClickMulti = -1;
-	}	
-	if (TSLastClickMulti != -1) DEBUG3("millis() - TSLastClickMulti = %u\n\r", millis() - TSLastClickMulti);
 }
 void Scr_Multi_pressed(lv_event_t * e)
 {
 	DEBUG3("Scr_Multi_pressed fires\n\r");
 	TSLastClickMulti = millis();
-	lv_obj_clear_flag(objects.btn_multi_prev, LV_OBJ_FLAG_HIDDEN);
-	lv_obj_clear_flag(objects.btn_multi_next, LV_OBJ_FLAG_HIDDEN);
-	lv_obj_clear_flag(objects.btn_multi_up,   LV_OBJ_FLAG_HIDDEN);
-
+	
 }
 void Scr_Multi_ClearScreen(lv_event_t * e)
 {

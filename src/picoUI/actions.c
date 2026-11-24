@@ -5,20 +5,6 @@
 #include "ui.h"
 #include "picoUI/custom_functions.h"
 
-// Custom event ID storage
-uint32_t EVT_LV_EVENT_ALL = 0;
-
-// Register custom event IDs (call before screen creation)
-void pp_register_custom_events(void) {
-    EVT_LV_EVENT_ALL = lv_event_register_id();
-}
-
-// Trigger functions -- call these from application code
-void trigger_LV_EVENT_ALL(void) {
-    lv_event_send(objects.scr_top, EVT_LV_EVENT_ALL, NULL);
-}
-
-
 // Animation timeline helpers
 void pp_anim_stop_timelines_for_deleted_tree(lv_obj_t * root) {
     (void)root;
@@ -42,24 +28,6 @@ void btn_multi_2_clicked_cb(lv_event_t * e) {
 // Event callback for btn_start_settings on clicked
 void btn_start_settings_clicked_cb(lv_event_t * e) {
     lv_scr_load_anim(objects.scr_settings, LV_SCR_LOAD_ANIM_FADE_IN, 500, 0, false);
-}
-
-
-// Event callback for scr_top on custom-event
-void scr_top_LV_EVENT_ALL_cb(lv_event_t * e) {
-    Scr_Top_event(e);
-}
-
-
-// Event callback for scr_top on screen-loaded
-void scr_top_screen_loaded_cb(lv_event_t * e) {
-    Scr_Top_loaded(e);
-}
-
-
-// Event callback for scr_top on screen-unloaded
-void scr_top_screen_unloaded_cb(lv_event_t * e) {
-    Scr_Top_unloaded(e);
 }
 
 
@@ -87,21 +55,9 @@ void btn_peer_volt_clicked_cb(lv_event_t * e) {
 }
 
 
-// Event callback for btn_meter_prev on clicked
-void btn_meter_prev_clicked_cb(lv_event_t * e) {
-    Btn_Meter_Prev_clicked(e);
-}
-
-
 // Event callback for btn_volt_save on clicked
 void btn_volt_save_clicked_cb(lv_event_t * e) {
     Btn_Volt_Save_clicked(e);
-}
-
-
-// Event callback for btn_peer_prev on clicked
-void btn_peer_prev_clicked_cb(lv_event_t * e) {
-    Btn_Peer_Prev_clicked(e);
 }
 
 
@@ -183,12 +139,6 @@ void arc_volt_value_changed_cb(lv_event_t * e) {
 }
 
 
-// Event callback for btn_multi_next on clicked
-void btn_multi_next_clicked_cb(lv_event_t * e) {
-    Btn_Multi_Next_clicked(e);
-}
-
-
 // Event callback for btn_set_pair on clicked
 void btn_set_pair_clicked_cb(lv_event_t * e) {
     Btn_Settings_Pair_clicked(e);
@@ -204,30 +154,6 @@ void btn_peer_pair_clicked_cb(lv_event_t * e) {
 // Event callback for btn_multi_3 on clicked
 void btn_multi_3_clicked_cb(lv_event_t * e) {
     Btn_Multi3_clicked(e);
-}
-
-
-// Event callback for btn_switch_up on clicked
-void btn_switch_up_clicked_cb(lv_event_t * e) {
-    Btn_Switch_Up_clicked(e);
-}
-
-
-// Event callback for btn_switch_next on clicked
-void btn_switch_next_clicked_cb(lv_event_t * e) {
-    Btn_Meter_Next_clicked(e);
-}
-
-
-// Event callback for btn_peer_next on clicked
-void btn_peer_next_clicked_cb(lv_event_t * e) {
-    Btn_Peer_Next_clicked(e);
-}
-
-
-// Event callback for btn_peer_up on clicked
-void btn_peer_up_clicked_cb(lv_event_t * e) {
-    Btn_Peer_Up_clicked(e);
 }
 
 
@@ -258,12 +184,6 @@ void btn_set_json_clicked_cb(lv_event_t * e) {
 // Event callback for img_periphchoice on clicked
 void img_periphchoice_clicked_cb(lv_event_t * e) {
     Btn_PeriphChoice_clicked(e);
-}
-
-
-// Event callback for btn_multi_up on clicked
-void btn_multi_up_clicked_cb(lv_event_t * e) {
-    Btn_Multi_Up_clicked(e);
 }
 
 
@@ -315,12 +235,6 @@ void scr_meter_screen_unloaded_cb(lv_event_t * e) {
 }
 
 
-// Event callback for btn_periphchoice_next on clicked
-void btn_periphchoice_next_clicked_cb(lv_event_t * e) {
-    Btn_PeriphChoice_Next_clicked(e);
-}
-
-
 // Event callback for scr_periphchoice on screen-loaded
 void scr_periphchoice_screen_loaded_cb(lv_event_t * e) {
     Scr_PeriphChoice_loaded(e);
@@ -336,18 +250,6 @@ void scr_periphchoice_screen_unloaded_cb(lv_event_t * e) {
 // Event callback for scr_periphchoice on gesture
 void scr_periphchoice_gesture_cb(lv_event_t * e) {
     Scr_PeriphChoice_Gesture(e);
-}
-
-
-// Event callback for btn_meter_next on clicked
-void btn_meter_next_clicked_cb(lv_event_t * e) {
-    Btn_Meter_Next_clicked(e);
-}
-
-
-// Event callback for btn_meter_up on clicked
-void btn_meter_up_clicked_cb(lv_event_t * e) {
-    Btn_Meter_Up_clicked(e);
 }
 
 
@@ -381,12 +283,6 @@ void btn_peer_reset_clicked_cb(lv_event_t * e) {
 }
 
 
-// Event callback for btn_periphchoice_up on clicked
-void btn_periphchoice_up_clicked_cb(lv_event_t * e) {
-    Btn_PeriphChoice_Up_clicked(e);
-}
-
-
 // Event callback for scr_settings on gesture
 void scr_settings_gesture_cb(lv_event_t * e) {
     Scr_Settings_Gesture(e);
@@ -402,12 +298,6 @@ void scr_settings_screen_loaded_cb(lv_event_t * e) {
 // Event callback for scr_settings on screen-unloaded
 void scr_settings_screen_unloaded_cb(lv_event_t * e) {
     Scr_Settings_unloaded(e);
-}
-
-
-// Event callback for btn_periphchoice_prev on clicked
-void btn_periphchoice_prev_clicked_cb(lv_event_t * e) {
-    Btn_PeriphChoice_Prev_clicked(e);
 }
 
 
@@ -432,18 +322,6 @@ void btn_start_multi_clicked_cb(lv_event_t * e) {
 // Event callback for btn_peer_delete on long-pressed
 void btn_peer_delete_long_pressed_cb(lv_event_t * e) {
     Btn_Peer_Delete_clicked(e);
-}
-
-
-// Event callback for btn_multi_prev on clicked
-void btn_multi_prev_clicked_cb(lv_event_t * e) {
-    Btn_Multi_Prev_clicked(e);
-}
-
-
-// Event callback for btn_switch_prev on clicked
-void btn_switch_prev_clicked_cb(lv_event_t * e) {
-    Btn_Switch_Prev_clicked(e);
 }
 
 

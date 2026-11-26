@@ -160,11 +160,11 @@ char* PeerClass::Export()
     } 
 
     // Ersten Teil schreiben und die Anzahl der geschriebenen Bytes merken
-    int written = snprintf(ExportImportBuffer, sizeof(ExportImportBuffer), "%s;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d", 
+    int written = snprintf(ExportImportBuffer, sizeof(ExportImportBuffer), "%s;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d", 
                         _Name, _Type, 
                         _BroadcastAddress[0], _BroadcastAddress[1], _BroadcastAddress[2],
                         _BroadcastAddress[3], _BroadcastAddress[4], _BroadcastAddress[5],
-                        _SleepMode, _DebugMode, _DemoMode, UsedPeriph);
+                        _SleepMode, _DebugMode, _DemoMode, _Preferences, UsedPeriph);
                         
     for (int Si=0; Si<MAX_PERIPHERALS; Si++)
     { 
@@ -208,9 +208,10 @@ void PeerClass::Import(char *Buf)
     GET_NEXT_TOKEN(); _BroadcastAddress[4] = (byte) atoi(token);
     GET_NEXT_TOKEN(); _BroadcastAddress[5] = (byte) atoi(token);
    
-    GET_NEXT_TOKEN(); _SleepMode = (bool) atoi(token);
-    GET_NEXT_TOKEN(); _DebugMode = (bool) atoi(token);
-    GET_NEXT_TOKEN(); _DemoMode  = (bool) atoi(token);
+    GET_NEXT_TOKEN(); _SleepMode   = (bool) atoi(token);
+    GET_NEXT_TOKEN(); _DebugMode   = (bool) atoi(token);
+    GET_NEXT_TOKEN(); _DemoMode    = (bool) atoi(token);
+    GET_NEXT_TOKEN(); _Preferences = atoi(token);
     GET_NEXT_TOKEN(); int UsedPeriph = atoi(token);
 
     // Schutz vor Buffer Overflow/Underrun bei der Array-Zuweisung

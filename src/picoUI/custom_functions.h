@@ -22,7 +22,6 @@ void Scr_Navi_Timer_update(lv_timer_t * timer);
 void Scr_Peer_loaded(lv_event_t * e);
 void Scr_Peer_unloaded(lv_event_t * e);
 void Scr_Peer_Timer_update(lv_timer_t * timer);
-void Scr_Peer_pressed(lv_event_t * e);
 void Btn_Peer_Next_clicked(lv_event_t * e);
 void Btn_Peer_Prev_clicked(lv_event_t * e);
 void Btn_Peer_Up_clicked(lv_event_t * e);
@@ -34,24 +33,20 @@ void Btn_Peer_Sleep_clicked(lv_event_t * e);
 void Btn_Peer_Pair_clicked(lv_event_t * e);
 void Btn_Peer_Reset_clicked(lv_event_t * e);
 void Btn_Peer_Delete_clicked(lv_event_t * e);
-void Scr_Peer_Gesture(lv_event_t * e);
 
 void Scr_Eichen_loaded(lv_event_t * e);
 void Scr_Eichen_unloaded(lv_event_t * e);
 void Btn_Eichen_Eichen_clicked(lv_event_t * e);
-void Scr_Eichen_Gesture(lv_event_t * e);
 
 void Scr_Volt_loaded(lv_event_t * e);
 void Scr_Volt_unloaded(lv_event_t * e);
 void Arc_Volt_change(lv_event_t * e);
 void Btn_Volt_Save_clicked(lv_event_t * e);
-void Scr_Volt_Gesture(lv_event_t * e);
 
 void Scr_Multi_unloaded(lv_event_t * e);
 void Scr_Multi_loaded(lv_event_t * e);
 void Scr_Multi_FillScreen(lv_event_t * e);
 void Scr_Multi_ClearScreen(lv_event_t * e);
-void Scr_Multi_pressed(lv_event_t * e);
 void Btn_Multi_Next_clicked(lv_event_t * e);
 void Btn_Multi_Prev_clicked(lv_event_t * e);
 void Btn_Multi_Up_clicked(lv_event_t * e);
@@ -61,7 +56,6 @@ void Btn_Multi1_clicked(lv_event_t * e);
 void Btn_Multi2_clicked(lv_event_t * e);
 void Btn_Multi3_clicked(lv_event_t * e);
 void Btn_Multi4_clicked(lv_event_t * e);
-void Scr_Multi_Gesture(lv_event_t * e);
 void Scr_Multi_clicked(lv_event_t * e);
 
 
@@ -74,17 +68,15 @@ void Btn_Settings_Peers_clicked(lv_event_t * e);
 void Btn_Settings_Pair_clicked(lv_event_t * e);
 void Btn_Settings_WebSvr_clicked(lv_event_t * e);
 void Btn_Settings_Save_clicked(lv_event_t * e);
-void Scr_Settings_Gesture(lv_event_t * e);
 
 void Scr_JSON_loaded(lv_event_t * e);
 void Scr_JSON_unloaded(lv_event_t * e);
-void Scr_JSON_Gesture(lv_event_t * e);
 
 void Scr_Start_loaded(lv_event_t * e);
 void Scr_Start_unloaded(lv_event_t * e);
 void Btn_Start_1_clicked(lv_event_t * e);
 void Btn_Start_2_clicked(lv_event_t * e);
-void Scr_Start_Gesture(lv_event_t * e);
+void Btn_Start_Up_clicked(lv_event_t *e);
 
 void Scr_Meter_loaded(lv_event_t * e);
 void Scr_Meter_unloaded(lv_event_t * e);
@@ -97,13 +89,10 @@ void Scr_Meter_event(lv_event_t * e);
 void Btn_Switch_Prev_clicked(lv_event_t * e);
 void Btn_Switch_Next_clicked(lv_event_t * e);
 void Btn_Switch_Up_clicked(lv_event_t * e);
-void Scr_Switch_Gesture(lv_event_t * e);
 void Scr_Switch_loaded(lv_event_t * e);
 void Scr_Switch_unloaded(lv_event_t * e);
-void Scr_Switch_pressed(lv_event_t * e);
 void Scr_Switch_Timer_update(lv_timer_t * timer);
 void Scr_Switch_clicked(lv_event_t * e);
-
 
 void Scr_PeriphChoice_loaded(lv_event_t * e);
 void Scr_PeriphChoice_unloaded(lv_event_t * e);
@@ -114,11 +103,10 @@ void Scr_PeriphChoice_Return(lv_event_t * e);
 void Btn_PeriphChoice_Next_clicked(lv_event_t * e);
 void Btn_PeriphChoice_Prev_clicked(lv_event_t * e);
 void Btn_PeriphChoice_Up_clicked(lv_event_t * e);
-void Scr_PeriphChoice_Gesture(lv_event_t * e);
 
 void Scr_Pref_loaded(lv_event_t * e);
 void Scr_Pref_unloaded(lv_event_t * e);
-void Scr_Pref_Gesture(lv_event_t * e);
+void Scr_Pref_event(lv_event_t *e);
 
 extern char jsondataBuf[ESP_MAX_LEN+1];
 extern volatile bool GestureUpRecognized;

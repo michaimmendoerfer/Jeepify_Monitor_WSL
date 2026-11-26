@@ -50,8 +50,8 @@ void create_screen_scr_periphchoice() {
             // lbl_periphchoice_scrname
             lv_obj_t *obj = lv_label_create(parent_obj);
             objects.lbl_periphchoice_scrname = obj;
-            lv_obj_set_pos(obj, LV_PCT(35), LV_PCT(85));
-            lv_obj_set_size(obj, LV_PCT(30), LV_PCT(7));
+            lv_obj_set_pos(obj, LV_PCT(25), LV_PCT(7));
+            lv_obj_set_size(obj, LV_PCT(50), LV_PCT(7));
             lv_obj_set_style_text_letter_space(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_text_line_space(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_text_align(obj, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -112,8 +112,6 @@ void create_screen_scr_periphchoice() {
     lv_obj_add_event_cb(objects.scr_periphchoice, scr_periphchoice_screen_loaded_cb, LV_EVENT_SCREEN_LOADED, NULL);
     lv_obj_add_flag(objects.scr_periphchoice, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.scr_periphchoice, scr_periphchoice_screen_unloaded_cb, LV_EVENT_SCREEN_UNLOADED, NULL);
-    lv_obj_add_flag(objects.scr_periphchoice, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.scr_periphchoice, scr_periphchoice_gesture_cb, LV_EVENT_GESTURE, NULL);
     lv_obj_add_flag(objects.img_periphchoice, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.img_periphchoice, img_periphchoice_clicked_cb, LV_EVENT_CLICKED, NULL);
 
@@ -219,24 +217,6 @@ void create_screen_scr_meter() {
             lv_img_set_src(obj, &zeiger);
             lv_img_set_antialias(obj, true);
         }
-        {
-            // arc_meter
-            lv_obj_t *obj = lv_arc_create(parent_obj);
-            objects.arc_meter = obj;
-            lv_obj_set_pos(obj, LV_PCT(0), LV_PCT(0));
-            lv_obj_set_size(obj, LV_PCT(100), LV_PCT(100));
-            lv_arc_set_bg_angles(obj, 135, 45);
-            lv_arc_set_range(obj, 0, 100);
-            lv_arc_set_value(obj, 50);
-            lv_obj_set_style_arc_rounded(obj, true, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-            lv_obj_set_style_arc_color(obj, lv_color_hex(common_2196f3), LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_arc_rounded(obj, false, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_arc_color(obj, lv_color_hex(common_2196f3), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-            lv_obj_set_style_arc_width(obj, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_set_style_arc_width(obj, 3, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-            lv_obj_set_style_transform_zoom(obj, 256, LV_PART_MAIN | LV_STATE_DEFAULT);
-            lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
-        }
     }
 
     // Event callback registrations
@@ -313,6 +293,14 @@ void create_screen_scr_preferences() {
             lv_label_set_text(obj, "Show screen animations");
         }
         {
+            // lbl_pref_startscreen
+            lv_obj_t *obj = lv_label_create(parent_obj);
+            objects.lbl_pref_startscreen = obj;
+            lv_obj_set_pos(obj, LV_PCT(13), LV_PCT(62));
+            lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+            lv_label_set_text(obj, "StartScreen");
+        }
+        {
             // switch_pref_animation
             lv_obj_t *obj = lv_switch_create(parent_obj);
             objects.switch_pref_animation = obj;
@@ -333,6 +321,14 @@ void create_screen_scr_preferences() {
             lv_obj_set_style_text_color(obj, lv_color_hex(common_ffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_label_set_text(obj, "Preferences");
         }
+        {
+            // roller_pref_startscreen
+            lv_obj_t *obj = lv_roller_create(parent_obj);
+            objects.roller_pref_startscreen = obj;
+            lv_obj_set_pos(obj, 153, 223);
+            lv_obj_set_size(obj, 145, 85);
+            lv_roller_set_options(obj, "Option 1\nOption 2\nOption 3\nOption 4\nOption 5", LV_ROLLER_MODE_NORMAL);
+        }
     }
 
     // Event callback registrations
@@ -340,8 +336,14 @@ void create_screen_scr_preferences() {
     lv_obj_add_event_cb(objects.scr_preferences, scr_preferences_screen_loaded_cb, LV_EVENT_SCREEN_LOADED, NULL);
     lv_obj_add_flag(objects.scr_preferences, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.scr_preferences, scr_preferences_screen_unloaded_cb, LV_EVENT_SCREEN_UNLOADED, NULL);
-    lv_obj_add_flag(objects.scr_preferences, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.scr_preferences, scr_preferences_gesture_cb, LV_EVENT_GESTURE, NULL);
+    lv_obj_add_flag(objects.switch_pref_navi, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(objects.switch_pref_navi, switch_pref_navi_clicked_cb, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_flag(objects.switch_pref_backgound, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(objects.switch_pref_backgound, switch_pref_backgound_clicked_cb, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_flag(objects.switch_pref_timearc, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(objects.switch_pref_timearc, switch_pref_timearc_clicked_cb, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_flag(objects.switch_pref_animation, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(objects.switch_pref_animation, switch_pref_animation_clicked_cb, LV_EVENT_CLICKED, NULL);
 
     tick_screen_scr_preferences();
 }
@@ -398,8 +400,6 @@ void create_screen_scr_json() {
     }
 
     // Event callback registrations
-    lv_obj_add_flag(objects.scr_json, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.scr_json, scr_json_gesture_cb, LV_EVENT_GESTURE, NULL);
     lv_obj_add_flag(objects.scr_json, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.scr_json, scr_json_screen_loaded_cb, LV_EVENT_SCREEN_LOADED, NULL);
 
@@ -535,8 +535,6 @@ void create_screen_scr_volt() {
     lv_obj_add_event_cb(objects.scr_volt, scr_volt_screen_loaded_cb, LV_EVENT_SCREEN_LOADED, NULL);
     lv_obj_add_flag(objects.scr_volt, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.scr_volt, scr_volt_screen_unloaded_cb, LV_EVENT_SCREEN_UNLOADED, NULL);
-    lv_obj_add_flag(objects.scr_volt, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.scr_volt, scr_volt_gesture_cb, LV_EVENT_GESTURE, NULL);
     lv_obj_add_flag(objects.arc_volt, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.arc_volt, arc_volt_value_changed_cb, LV_EVENT_VALUE_CHANGED, NULL);
     lv_obj_add_flag(objects.btn_volt_save, LV_OBJ_FLAG_CLICKABLE);
@@ -621,8 +619,6 @@ void create_screen_scr_eichen() {
     // Event callback registrations
     lv_obj_add_flag(objects.scr_eichen, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.scr_eichen, scr_eichen_screen_loaded_cb, LV_EVENT_SCREEN_LOADED, NULL);
-    lv_obj_add_flag(objects.scr_eichen, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.scr_eichen, scr_eichen_gesture_cb, LV_EVENT_GESTURE, NULL);
     lv_obj_add_flag(objects.scr_eichen, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.scr_eichen, scr_eichen_screen_unloaded_cb, LV_EVENT_SCREEN_UNLOADED, NULL);
     lv_obj_add_flag(objects.btn_eichen_eichen, LV_OBJ_FLAG_CLICKABLE);
@@ -900,21 +896,21 @@ void create_screen_scr_peer() {
                         }
                     }
                 }
-                {
-                    // lbl_peer_scrname
-                    lv_obj_t *obj = lv_label_create(parent_obj);
-                    objects.lbl_peer_scrname = obj;
-                    lv_obj_set_pos(obj, LV_PCT(35), LV_PCT(90));
-                    lv_obj_set_size(obj, LV_PCT(30), LV_PCT(7));
-                    lv_obj_set_style_text_letter_space(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                    lv_obj_set_style_text_line_space(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                    lv_obj_set_style_text_align(obj, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-                    lv_obj_set_style_text_decor(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                    lv_obj_set_style_text_font(obj, &font_ubuntu_22, LV_PART_MAIN | LV_STATE_DEFAULT);
-                    lv_obj_set_style_text_color(obj, lv_color_hex(common_ffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
-                    lv_label_set_text(obj, "Peer");
-                }
             }
+        }
+        {
+            // lbl_peer_scrname
+            lv_obj_t *obj = lv_label_create(parent_obj);
+            objects.lbl_peer_scrname = obj;
+            lv_obj_set_pos(obj, LV_PCT(25), LV_PCT(7));
+            lv_obj_set_size(obj, LV_PCT(50), LV_PCT(7));
+            lv_obj_set_style_text_letter_space(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_line_space(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_align(obj, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_decor(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_font(obj, &font_ubuntu_22, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_text_color(obj, lv_color_hex(common_ffffff), LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_label_set_text(obj, "Peer");
         }
     }
 
@@ -923,8 +919,6 @@ void create_screen_scr_peer() {
     lv_obj_add_event_cb(objects.scr_peer, scr_peer_screen_loaded_cb, LV_EVENT_SCREEN_LOADED, NULL);
     lv_obj_add_flag(objects.scr_peer, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.scr_peer, scr_peer_screen_unloaded_cb, LV_EVENT_SCREEN_UNLOADED, NULL);
-    lv_obj_add_flag(objects.scr_peer, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.scr_peer, scr_peer_gesture_cb, LV_EVENT_GESTURE, NULL);
     lv_obj_add_flag(objects.btn_peer_system, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.btn_peer_system, btn_peer_system_clicked_cb, LV_EVENT_CLICKED, NULL);
     lv_obj_add_flag(objects.btn_peer_eichen, LV_OBJ_FLAG_CLICKABLE);
@@ -1234,8 +1228,6 @@ void create_screen_scr_settings() {
 
     // Event callback registrations
     lv_obj_add_flag(objects.scr_settings, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.scr_settings, scr_settings_gesture_cb, LV_EVENT_GESTURE, NULL);
-    lv_obj_add_flag(objects.scr_settings, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.scr_settings, scr_settings_screen_loaded_cb, LV_EVENT_SCREEN_LOADED, NULL);
     lv_obj_add_flag(objects.scr_settings, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.scr_settings, scr_settings_screen_unloaded_cb, LV_EVENT_SCREEN_UNLOADED, NULL);
@@ -1275,8 +1267,8 @@ void create_screen_scr_multi() {
             // lbl_multi_scrname
             lv_obj_t *obj = lv_label_create(parent_obj);
             objects.lbl_multi_scrname = obj;
-            lv_obj_set_pos(obj, LV_PCT(35), LV_PCT(85));
-            lv_obj_set_size(obj, LV_PCT(30), LV_PCT(7));
+            lv_obj_set_pos(obj, LV_PCT(25), LV_PCT(7));
+            lv_obj_set_size(obj, LV_PCT(50), LV_PCT(7));
             lv_obj_set_style_text_letter_space(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_text_line_space(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_text_align(obj, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -1400,10 +1392,6 @@ void create_screen_scr_multi() {
 
     // Event callback registrations
     lv_obj_add_flag(objects.scr_multi, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.scr_multi, scr_multi_gesture_cb, LV_EVENT_GESTURE, NULL);
-    lv_obj_add_flag(objects.scr_multi, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.scr_multi, scr_multi_pressed_cb, LV_EVENT_PRESSED, NULL);
-    lv_obj_add_flag(objects.scr_multi, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.scr_multi, scr_multi_screen_loaded_cb, LV_EVENT_SCREEN_LOADED, NULL);
     lv_obj_add_flag(objects.scr_multi, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.scr_multi, scr_multi_screen_unloaded_cb, LV_EVENT_SCREEN_UNLOADED, NULL);
@@ -1447,12 +1435,25 @@ void create_screen_scr_start() {
         }
         {
             // img_start_rubicon
-            lv_obj_t *obj = lv_img_create(parent_obj);
+            lv_obj_t *obj = lv_obj_create(parent_obj);
             objects.img_start_rubicon = obj;
             lv_obj_set_pos(obj, LV_PCT(22), LV_PCT(46));
             lv_obj_set_size(obj, LV_PCT(56), LV_PCT(4));
+            lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
+            lv_obj_set_style_bg_opa(obj, LV_OPA_TRANSP, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_border_width(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_all(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            {
+                lv_obj_t *parent_obj = obj;
+            lv_obj_t *obj = lv_img_create(parent_obj);
             lv_img_set_src(obj, &rubicon);
+            lv_img_set_size_mode(obj, LV_IMG_SIZE_MODE_REAL);
+            lv_img_set_zoom(obj, 239);
             lv_img_set_antialias(obj, true);
+            lv_obj_set_size(obj, 187, 15);
+                lv_obj_set_style_transform_zoom(obj, 400, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_center(obj);
+            }
         }
         {
             // btn_start_switch
@@ -1570,8 +1571,6 @@ void create_screen_scr_start() {
     lv_obj_add_event_cb(objects.scr_start, scr_start_screen_loaded_cb, LV_EVENT_SCREEN_LOADED, NULL);
     lv_obj_add_flag(objects.scr_start, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.scr_start, scr_start_screen_unloaded_cb, LV_EVENT_SCREEN_UNLOADED, NULL);
-    lv_obj_add_flag(objects.scr_start, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.scr_start, scr_start_gesture_cb, LV_EVENT_GESTURE, NULL);
     lv_obj_add_flag(objects.btn_start_switch, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.btn_start_switch, btn_start_switch_clicked_cb, LV_EVENT_CLICKED, NULL);
     lv_obj_add_flag(objects.btn_start_multi, LV_OBJ_FLAG_CLICKABLE);
@@ -1627,8 +1626,6 @@ void create_screen_scr_switch() {
     lv_obj_add_event_cb(objects.scr_switch, scr_switch_screen_loaded_cb, LV_EVENT_SCREEN_LOADED, NULL);
     lv_obj_add_flag(objects.scr_switch, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(objects.scr_switch, scr_switch_screen_unloaded_cb, LV_EVENT_SCREEN_UNLOADED, NULL);
-    lv_obj_add_flag(objects.scr_switch, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(objects.scr_switch, scr_switch_gesture_cb, LV_EVENT_GESTURE, NULL);
 
     tick_screen_scr_switch();
 }
@@ -1685,7 +1682,6 @@ void delete_screen_scr_meter() {
     objects.lbl_meter_periphname = 0;
     objects.lbl_meter_value = 0;
     objects.img_meter_zeiger = 0;
-    objects.arc_meter = 0;
 }
 
 void delete_screen_scr_preferences() {
@@ -1701,8 +1697,10 @@ void delete_screen_scr_preferences() {
     objects.lbl_pref_timearc = 0;
     objects.switch_pref_timearc = 0;
     objects.lbl_pref_animation = 0;
+    objects.lbl_pref_startscreen = 0;
     objects.switch_pref_animation = 0;
     objects.lbl_prev_scrname = 0;
+    objects.roller_pref_startscreen = 0;
 }
 
 void delete_screen_scr_json() {

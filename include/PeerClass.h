@@ -1,6 +1,6 @@
 /*
 include PeerList and PeriphList
-Version 3.50
+Version 3.51
 */
 
 #ifndef PEERCLASS_H
@@ -149,6 +149,7 @@ class PeerClass
         float               _VoltageDevider;
         int                 _Brightness;
         int                 _dBm;
+        int                 _Preferences; // bit: 0-NaviButtons, 1-TimeArc, 2-BG, 3-Animations              
         
     public:
         PeerClass();
@@ -189,6 +190,9 @@ class PeerClass
         int   GetBrightness() { return _Brightness; }
         void  SetBrightness(int Brightness) {_Brightness = Brightness; }
         
+        int   GetPreferences() { return _Preferences; }
+        void  SetPreferences(int i) { _Preferences = i; }
+
         void  PeriphSetup(int Pos, const char* Name, int Type, 
                           int I2CPort0, int I2CPort1, int I2CPort2, int I2CPort3, 
                           int IOPort0, int IOPort1, int IOPort2, int IOPort3,  

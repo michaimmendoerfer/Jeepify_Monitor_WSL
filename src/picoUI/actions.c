@@ -43,12 +43,6 @@ void scr_switch_screen_unloaded_cb(lv_event_t * e) {
 }
 
 
-// Event callback for scr_switch on gesture
-void scr_switch_gesture_cb(lv_event_t * e) {
-    Scr_Switch_Gesture(e);
-}
-
-
 // Event callback for btn_peer_volt on clicked
 void btn_peer_volt_clicked_cb(lv_event_t * e) {
     Btn_Peer_Volt_clicked(e);
@@ -58,6 +52,12 @@ void btn_peer_volt_clicked_cb(lv_event_t * e) {
 // Event callback for btn_volt_save on clicked
 void btn_volt_save_clicked_cb(lv_event_t * e) {
     Btn_Volt_Save_clicked(e);
+}
+
+
+// Event callback for switch_pref_backgound on clicked
+void switch_pref_backgound_clicked_cb(lv_event_t * e) {
+    Scr_Pref_event(e);
 }
 
 
@@ -79,12 +79,6 @@ void scr_eichen_screen_loaded_cb(lv_event_t * e) {
 }
 
 
-// Event callback for scr_eichen on gesture
-void scr_eichen_gesture_cb(lv_event_t * e) {
-    Scr_Eichen_Gesture(e);
-}
-
-
 // Event callback for scr_eichen on screen-unloaded
 void scr_eichen_screen_unloaded_cb(lv_event_t * e) {
     Scr_Eichen_unloaded(e);
@@ -100,6 +94,12 @@ void btn_set_peers_clicked_cb(lv_event_t * e) {
 // Event callback for btn_set_reset on clicked
 void btn_set_reset_clicked_cb(lv_event_t * e) {
     Btn_Settings_Reset_clicked(e);
+}
+
+
+// Event callback for switch_pref_timearc on clicked
+void switch_pref_timearc_clicked_cb(lv_event_t * e) {
+    Scr_Pref_event(e);
 }
 
 
@@ -151,6 +151,12 @@ void btn_peer_pair_clicked_cb(lv_event_t * e) {
 }
 
 
+// Event callback for switch_pref_animation on clicked
+void switch_pref_animation_clicked_cb(lv_event_t * e) {
+    Scr_Pref_event(e);
+}
+
+
 // Event callback for btn_multi_3 on clicked
 void btn_multi_3_clicked_cb(lv_event_t * e) {
     Btn_Multi3_clicked(e);
@@ -166,12 +172,6 @@ void scr_start_screen_loaded_cb(lv_event_t * e) {
 // Event callback for scr_start on screen-unloaded
 void scr_start_screen_unloaded_cb(lv_event_t * e) {
     Scr_Start_unloaded(e);
-}
-
-
-// Event callback for scr_start on gesture
-void scr_start_gesture_cb(lv_event_t * e) {
-    Scr_Start_Gesture(e);
 }
 
 
@@ -205,18 +205,6 @@ void scr_peer_screen_unloaded_cb(lv_event_t * e) {
 }
 
 
-// Event callback for scr_peer on gesture
-void scr_peer_gesture_cb(lv_event_t * e) {
-    Scr_Peer_Gesture(e);
-}
-
-
-// Event callback for scr_json on gesture
-void scr_json_gesture_cb(lv_event_t * e) {
-    Scr_JSON_Gesture(e);
-}
-
-
 // Event callback for scr_json on screen-loaded
 void scr_json_screen_loaded_cb(lv_event_t * e) {
     Scr_JSON_loaded(e);
@@ -247,12 +235,6 @@ void scr_periphchoice_screen_unloaded_cb(lv_event_t * e) {
 }
 
 
-// Event callback for scr_periphchoice on gesture
-void scr_periphchoice_gesture_cb(lv_event_t * e) {
-    Scr_PeriphChoice_Gesture(e);
-}
-
-
 // Event callback for btn_start_single on clicked
 void btn_start_single_clicked_cb(lv_event_t * e) {
     Btn_Start_1_clicked(e);
@@ -271,21 +253,15 @@ void scr_preferences_screen_unloaded_cb(lv_event_t * e) {
 }
 
 
-// Event callback for scr_preferences on gesture
-void scr_preferences_gesture_cb(lv_event_t * e) {
-    Scr_Pref_Gesture(e);
-}
-
-
 // Event callback for btn_peer_reset on clicked
 void btn_peer_reset_clicked_cb(lv_event_t * e) {
     Btn_Peer_Reset_clicked(e);
 }
 
 
-// Event callback for scr_settings on gesture
-void scr_settings_gesture_cb(lv_event_t * e) {
-    Scr_Settings_Gesture(e);
+// Event callback for switch_pref_navi on clicked
+void switch_pref_navi_clicked_cb(lv_event_t * e) {
+    Scr_Pref_event(e);
 }
 
 
@@ -325,18 +301,6 @@ void btn_peer_delete_long_pressed_cb(lv_event_t * e) {
 }
 
 
-// Event callback for scr_multi on gesture
-void scr_multi_gesture_cb(lv_event_t * e) {
-    Scr_Multi_Gesture(e);
-}
-
-
-// Event callback for scr_multi on pressed
-void scr_multi_pressed_cb(lv_event_t * e) {
-    Scr_Multi_pressed(e);
-}
-
-
 // Event callback for scr_multi on screen-loaded
 void scr_multi_screen_loaded_cb(lv_event_t * e) {
     Scr_Multi_loaded(e);
@@ -358,11 +322,5 @@ void scr_volt_screen_loaded_cb(lv_event_t * e) {
 // Event callback for scr_volt on screen-unloaded
 void scr_volt_screen_unloaded_cb(lv_event_t * e) {
     Scr_Volt_unloaded(e);
-}
-
-
-// Event callback for scr_volt on gesture
-void scr_volt_gesture_cb(lv_event_t * e) {
-    Scr_Volt_Gesture(e);
 }
 

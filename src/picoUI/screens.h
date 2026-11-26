@@ -71,15 +71,16 @@ typedef struct _objects_t {
     lv_obj_t *lbl_pref_timearc;
     lv_obj_t *switch_pref_timearc;
     lv_obj_t *lbl_pref_animation;
+    lv_obj_t *lbl_pref_startscreen;
     lv_obj_t *switch_pref_animation;
     lv_obj_t *lbl_prev_scrname;
+    lv_obj_t *roller_pref_startscreen;
     lv_obj_t *img_meter_base;
     lv_obj_t *img_meter_top;
     lv_obj_t *lbl_meter_peername;
     lv_obj_t *lbl_meter_periphname;
     lv_obj_t *lbl_meter_value;
     lv_obj_t *img_meter_zeiger;
-    lv_obj_t *arc_meter;
     lv_obj_t *img_periphchoice_bg;
     lv_obj_t *lbl_periphchoice_scrname;
     lv_obj_t *img_periphchoice;

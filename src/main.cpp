@@ -68,7 +68,6 @@ volatile bool savePeersRequested = false;
 volatile bool saveModuleRequested = false;
 volatile bool GestureUpRecognized = false;
 
-
 #pragma endregion Globals
 
 #pragma region Main
@@ -532,16 +531,25 @@ void loop()
         
         // Welcher Bildschirm ist gerade aktiv?
         lv_obj_t * active_screen = lv_scr_act();
-
-        if (active_screen == objects.scr_peer) 
+        if (active_screen == objects.scr_start) 
+        {
+            if (GestureUpRecognized)
+            {
+                Btn_Start_Up_clicked(NULL);
+            } 
+        }
+        else if (active_screen == objects.scr_peer) 
         {
             if (GestureUpRecognized)
             {
                 Btn_Peer_Up_clicked(NULL);
             } 
-            else if (Knob.Diff < 0) {
+            else if (Knob.Diff < 0) 
+            {
                 Btn_Peer_Prev_clicked(NULL);
-            } else {
+            } 
+            else 
+            {
                 Btn_Peer_Next_clicked(NULL);
             }
         }
@@ -551,9 +559,11 @@ void loop()
             {
                 Btn_Meter_Up_clicked(NULL);
             } 
-            else if (Knob.Diff < 0) {
+            else if (Knob.Diff < 0) 
+            {
                 Btn_Meter_Prev_clicked(NULL);
-            } else {
+            } else 
+            {
                 Btn_Meter_Next_clicked(NULL);
             }
         }
@@ -563,7 +573,8 @@ void loop()
             {
                 Btn_Switch_Up_clicked(NULL);
             } 
-            else if (Knob.Diff < 0) {
+            else if (Knob.Diff < 0) 
+            {
                 Btn_Switch_Prev_clicked(NULL);
             } else {
                 Btn_Switch_Next_clicked(NULL);
